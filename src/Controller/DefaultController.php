@@ -12,6 +12,7 @@ class DefaultController extends AbstractController
      */
     public function index()
     {
+    	dd('test x');
         return $this->render('default/index.html.twig');
     }
 }
