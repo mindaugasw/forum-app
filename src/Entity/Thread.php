@@ -27,7 +27,7 @@ class Thread
     private $title;
 
     /**
-     * @ORM\Column(type="text", nullable=ture)
+     * @ORM\Column(type="text", nullable=true)
      */
     private $content;
 

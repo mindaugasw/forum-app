@@ -3,13 +3,14 @@
 namespace App\DataFixtures;
 
 use App\Entity\User;
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class UserFixtures extends Fixture
+class UserFixtures extends BaseFixture
 {
-	private $em;
+	public const USER_REFERENCE = 'users';
+	public const COUNT = 5;
+	
 	private $passwordEncoder;
 	
 	public function __construct(UserPasswordEncoderInterface $passwordEncoder)
@@ -17,16 +18,15 @@ class UserFixtures extends Fixture
 		$this->passwordEncoder = $passwordEncoder;
 	}
 	
-	public function load(ObjectManager $manager)
+	public function loadData(ObjectManager $manager)
     {
-    	for ($i = 0; $i < 3; $i++)
-		{
+		$this->createMany(self::COUNT, self::USER_REFERENCE, function (int $i) {
 			$user = new User();
 			$user->setUsername("user".($i+1));
 			$user->setPassword($this->passwordEncoder->encodePassword($user, 'password'));
-			$manager->persist($user);
-		}
-    	
+			return $user;
+		});
+		
         $manager->flush();
     }
 }
