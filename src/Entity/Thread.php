@@ -4,12 +4,17 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ThreadRepository;
+use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     collectionOperations={"get", "post"},
+ *     itemOperations={"get", "put", "delete"},
+ *     normalizationContext={"groups"={"thread_read"}}
+ * )
  * @ORM\Entity(repositoryClass=ThreadRepository::class)
  */
 class Thread
@@ -50,6 +55,7 @@ class Thread
     public function __construct()
     {
         $this->comments = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -86,12 +92,17 @@ class Thread
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    /*public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
 
         return $this;
-    }
+    }*/
+	
+	public function getCreatedAtAgo() : string
+	{
+		return Carbon::instance($this->getCreatedAt())->diffForHumans();
+	}
 
     /**
      * @return Collection|Comment[]

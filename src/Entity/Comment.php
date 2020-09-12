@@ -4,10 +4,14 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\CommentRepository;
+use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     collectionOperations={"get", "post"},
+ *     itemOperations={"get", "put", "delete"}
+ * )
  * @ORM\Entity(repositoryClass=CommentRepository::class)
  */
 class Comment
@@ -63,12 +67,17 @@ class Comment
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    /*public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
 
         return $this;
-    }
+    }*/
+	
+	public function getCreatedAtAgo() : string
+	{
+		return Carbon::instance($this->getCreatedAt())->diffForHumans();
+	}
 
     public function getThread(): ?Thread
     {
