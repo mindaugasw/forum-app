@@ -2,17 +2,24 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\CommentRepository;
 use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
  *     collectionOperations={"get", "post"},
- *     itemOperations={"get", "put", "delete"}
+ *     itemOperations={"get", "put", "delete"},
+ *     attributes={
+ *	       "pagination_items_per_page"=5
+ *	   }
  * )
  * @ORM\Entity(repositoryClass=CommentRepository::class)
+ * @ApiFilter(SearchFilter::class, properties={"content": "partial"})
  */
 class Comment
 {

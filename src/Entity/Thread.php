@@ -3,17 +3,21 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\ThreadRepository;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
  *     collectionOperations={"get", "post"},
  *     itemOperations={"get", "put", "delete"},
- *     normalizationContext={"groups"={"thread_read"}}
+ *     normalizationContext={"groups"={"thread_read"}},
+ *     denormalizationContext={"groups"={"thread_write"}}
  * )
  * @ORM\Entity(repositoryClass=ThreadRepository::class)
  */
@@ -28,27 +32,34 @@ class Thread
 
     /**
      * @ORM\Column(type="string", length=255)
+	 * @Assert\NotBlank()
+	 * @Groups({"thread_read", "thread_write"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+	 * @Groups({"thread_read", "thread_write"})
      */
     private $content;
 
     /**
      * @ORM\Column(type="datetime")
+	 * @Groups({"thread_read"})
      */
     private $createdAt;
 
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="thread", orphanRemoval=true)
+	 * @Groups({"thread_read"})
+	 * @ApiSubresource()
      */
     private $comments;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="threads")
      * @ORM\JoinColumn(nullable=false)
+	 * @Groups({"thread_read"})
      */
     private $author;
 

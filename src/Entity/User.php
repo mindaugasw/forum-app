@@ -7,11 +7,19 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     collectionOperations={"get", "post"},
+ *     itemOperations={"get", "put", "delete"},
+ *     normalizationContext={"groups"={"user_read"}},
+ *     denormalizationContext={"groups"={"user_write"}}
+ * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity(fields={"username"})
  */
 class User implements UserInterface
 {
@@ -24,27 +32,32 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+	 * @Groups({"user_read", "user_write", "thread_read"})
      */
     private $username;
 
     /**
      * @ORM\Column(type="json")
+	 * @Groups({"user_read", "thread_read"})
      */
     private $roles = [];
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+	 * @Groups({"user_write"})
      */
     private $password;
 
     /**
      * @ORM\OneToMany(targetEntity=Thread::class, mappedBy="author")
+	 * @Groups({"user_read"})
      */
     private $threads;
 
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="author")
+	 * @Groups({"user_read"})
      */
     private $comments;
 
