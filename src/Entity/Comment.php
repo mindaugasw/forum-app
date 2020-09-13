@@ -52,7 +52,12 @@ class Comment
      */
     private $author;
 
-    public function getId(): ?int
+    public function __construct()
+	{
+		$this->createdAt = new \DateTimeImmutable();
+	}
+	
+	public function getId(): ?int
     {
         return $this->id;
     }

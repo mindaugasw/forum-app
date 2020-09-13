@@ -27,7 +27,7 @@ class ThreadFixtures extends BaseFixture //implements DependentFixtureInterface
 					$thread->setContent($f->text(rand(40, 1000)));
 				
 			}
-			$thread->setCreatedAt($f->dateTimeBetween('-1 months', 'now'));
+			//$thread->setCreatedAt($f->dateTimeBetween('-1 months', 'now'));
 			$thread->setAuthor($f->randomElement($users));
 			return $thread;
 		});

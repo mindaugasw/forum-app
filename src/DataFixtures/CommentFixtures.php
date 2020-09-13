@@ -25,7 +25,7 @@ class CommentFixtures extends BaseFixture //implements DependentFixtureInterface
 			else
 				$comment->setContent($f->text(rand(40, 1000)));
 			
-			$comment->setCreatedAt($f->dateTimeBetween('-1 months', 'now'));
+//			$comment->setCreatedAt($f->dateTimeBetween('-1 months', 'now'));
 			//$comment->setAuthor($users[rand(0, UserFixtures::COUNT-1)]);
 			$comment->setAuthor($f->randomElement($users));
 			$comment->setThread($f->randomElement($threads));
