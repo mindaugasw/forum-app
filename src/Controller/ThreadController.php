@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Thread;
 use App\Form\ThreadType;
 use App\Repository\ThreadRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,21 +41,16 @@ class ThreadController extends BaseController
     
     /**
      * @Route("/", name="thread_new", methods={"POST"})
+	 * @IsGranted("ROLE_USER")
      */
     public function createNew(Request $request)
     {
+    	/** @var Thread $thread */
 		$thread = $this->validator->ValidateJson($request->getContent(), Thread::class);
+    	$thread->setAuthor($this->getUser());
 		
-		
-    	//$thread = (new Thread())
-		//	->setTitle($data['title'])
-		//	->setContent($data['content']);
-    	
-    	// TODO validation, authentication, set author, csrf
-    	dump($thread);
-    	dd('end');
-    	
-    	$this->em->persist($thread);
+    	// TODO csrf
+		$this->em->persist($thread);
     	$this->em->flush();
     	
     	return $this->ApiResponse($thread, 201, ['thread_read']);

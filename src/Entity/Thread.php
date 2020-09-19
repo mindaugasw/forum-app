@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+
 use App\Repository\ThreadRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,16 +15,20 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Thread
 {
+	
+	
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
 	 * @Groups({"thread_read"})
+	 * 
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+	 * @Assert\NotBlank()
 	 * @Assert\Length(
 	 *     min=10,
 	 *     max=255,
@@ -36,6 +41,7 @@ class Thread
     /**
      * @ORM\Column(type="text", nullable=true)
 	 * @Groups({"thread_read"})
+	 * @Assert\NotBlank()
 	 * @Assert\Length(
 	 *     min=1,
 	 *     max=30000,
@@ -56,6 +62,8 @@ class Thread
      */
     private $comments;
 
+    //private $commentCount; // TODO
+    
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="threads")
      * @ORM\JoinColumn(nullable=false)
@@ -66,7 +74,9 @@ class Thread
     public function __construct()
     {
         $this->comments = new ArrayCollection();
-        $this->createdAt = new \DateTimeImmutable();
+        $this->createdAt = new \DateTimeImmutable(); // TODO replace with TimestampableEntity
+		// https://github.com/stof/StofDoctrineExtensionsBundle/pull/415
+		// https://github.com/stof/StofDoctrineExtensionsBundle/issues/413
     }
 
     public function getId(): ?int
