@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource(
+ * ApiResource(
  *     collectionOperations={"get", "post"},
  *     itemOperations={"get", "put", "delete"},
  *     normalizationContext={"groups"={"thread_read"}},
@@ -32,7 +32,7 @@ class Thread
 
     /**
      * @ORM\Column(type="string", length=255)
-	 * @Assert\NotBlank()
+	 * Assert\NotBlank()
 	 * @Groups({"thread_read", "thread_write"})
      */
     private $title;
@@ -52,7 +52,7 @@ class Thread
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="thread", orphanRemoval=true)
 	 * @Groups({"thread_read"})
-	 * @ApiSubresource()
+	 * ApiSubresource()
      */
     private $comments;
 
@@ -110,10 +110,10 @@ class Thread
         return $this;
     }*/
 	
-	public function getCreatedAtAgo() : string
+	/*public function getCreatedAtAgo() : string
 	{
 		return Carbon::instance($this->getCreatedAt())->diffForHumans();
-	}
+	}*/
 
     /**
      * @return Collection|Comment[]

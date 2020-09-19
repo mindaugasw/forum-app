@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource(
+ * ApiResource(
  *     collectionOperations={"get", "post"},
  *     itemOperations={"get", "put", "delete"},
  *     attributes={
@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *	   }
  * )
  * @ORM\Entity(repositoryClass=CommentRepository::class)
- * @ApiFilter(SearchFilter::class, properties={"content": "partial"})
+ * ApiFilter(SearchFilter::class, properties={"content": "partial"})
  */
 class Comment
 {
@@ -86,10 +86,10 @@ class Comment
         return $this;
     }*/
 	
-	public function getCreatedAtAgo() : string
+	/*public function getCreatedAtAgo() : string
 	{
 		return Carbon::instance($this->getCreatedAt())->diffForHumans();
-	}
+	}*/
 
     public function getThread(): ?Thread
     {
