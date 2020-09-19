@@ -7,6 +7,7 @@ use App\Entity\Thread;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 
 abstract class BaseController extends AbstractController
@@ -40,6 +41,15 @@ abstract class BaseController extends AbstractController
 	protected function getUser(): User
 	{
 		return parent::getUser();
+	}
+	
+	protected function ApiResponse($data, array $groups = [], int $status = 200): JsonResponse
+	{
+		$serializedData = $this->serializer->serialize(
+			$data,
+			'json',
+			[/*'groups' => $groups,*/ 'ignored_attributes' => ['author', 'comments']]);
+		return new JsonResponse($serializedData, $status, [], true);
 	}
 	
 }

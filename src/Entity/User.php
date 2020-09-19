@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * ApiResource(
@@ -27,6 +27,7 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+	 * @Groups({"user_read"})
      */
     private $id;
 
@@ -52,12 +53,13 @@ class User implements UserInterface
     /**
      * @ORM\OneToMany(targetEntity=Thread::class, mappedBy="author")
 	 * @Groups({"user_read"})
+	 * @MaxDepth(2)
      */
     private $threads;
 
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="author")
-	 * @Groups({"user_read"})
+	 * Groups({"user_read"})
      */
     private $comments;
 

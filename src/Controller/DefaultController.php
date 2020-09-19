@@ -26,7 +26,14 @@ class DefaultController extends BaseController
 	{
 		$content = $this->em->getRepository(User::class)->findAll();
 		
-		$serialized = $this->serializer->serialize($content, 'jsonld');
-		return new JsonResponse($serialized, 200, [], true);
+		//$serialized = $this->serializer->serialize($content, 'json');
+		
+		//return new JsonResponse($serialized, 200, [], true);
+		
+		
+		return $this->ApiResponse($content
+			, ['user_read', 'thread_read']
+		);
+		
 	}
 }
