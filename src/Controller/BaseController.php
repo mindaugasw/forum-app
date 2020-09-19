@@ -15,9 +15,11 @@ abstract class BaseController extends AbstractController
 	protected $serializer;
 	/** @var EntityManagerInterface */
 	protected $em;
-	
+	/** @var \App\Repository\UserRepository */
 	protected $usersRepo;
+	/** @var \App\Repository\ThreadRepository */
 	protected $threadsRepo;
+	/** @var \App\Repository\CommentRepository */
 	protected $commentsRepo;
 	
 	public function __construct(SerializerInterface $serializer, EntityManagerInterface $em)
@@ -28,6 +30,16 @@ abstract class BaseController extends AbstractController
 		$this->usersRepo = $em->getRepository(User::class);
 		$this->threadsRepo = $em->getRepository(Thread::class);
 		$this->commentsRepo = $em->getRepository(Comment::class);
+	}
+	
+	/**
+	 * @return User|null
+	 * 
+	 * Overrides base getUser method to set User return type (instead of UserInterface) 
+	 */
+	protected function getUser(): User
+	{
+		return parent::getUser();
 	}
 	
 }
