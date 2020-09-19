@@ -36,6 +36,11 @@ class Thread
     /**
      * @ORM\Column(type="text", nullable=true)
 	 * @Groups({"thread_read"})
+	 * @Assert\Length(
+	 *     min=1,
+	 *     max=30000,
+	 *     allowEmptyString=false
+	 * )
      */
     private $content;
 
@@ -76,7 +81,7 @@ class Thread
 
     public function setTitle(string $title): self
     {
-        $this->title = $title;
+        $this->title = trim($title);
 
         return $this;
     }
@@ -88,7 +93,7 @@ class Thread
 
     public function setContent(string $content): self
     {
-        $this->content = $content;
+        $this->content = trim($content);
 
         return $this;
     }

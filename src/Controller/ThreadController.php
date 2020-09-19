@@ -43,15 +43,15 @@ class ThreadController extends BaseController
      */
     public function createNew(Request $request)
     {
-    	$body = $request->getContent();
-    	$data = json_decode($body, true);
-    	
-    	$thread = (new Thread())
-			->setTitle($data['title'])
-			->setContent($data['content']);
+		$thread = $this->validator->ValidateJson($request->getContent(), Thread::class);
+		
+		
+    	//$thread = (new Thread())
+		//	->setTitle($data['title'])
+		//	->setContent($data['content']);
     	
     	// TODO validation, authentication, set author, csrf
-    	dump($data);
+    	dump($thread);
     	dd('end');
     	
     	$this->em->persist($thread);

@@ -5,12 +5,12 @@ namespace App\Controller;
 use App\Entity\Comment;
 use App\Entity\Thread;
 use App\Entity\User;
+use App\Service\Validator\Validator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 abstract class BaseController extends AbstractController
 {
@@ -19,9 +19,9 @@ abstract class BaseController extends AbstractController
 	/** @var EntityManagerInterface */
 	protected $em;
 	/**
-	 * @var ValidatorInterface
+	 * @var Validator
 	 */
-	private $validator;
+	protected $validator;
 	
 	/** @var \App\Repository\UserRepository */
 	protected $usersRepo;
@@ -34,7 +34,7 @@ abstract class BaseController extends AbstractController
 	public function __construct(
 		SerializerInterface $serializer,
 		EntityManagerInterface $em,
-		ValidatorInterface $validator)
+		Validator $validator)
 	{
 		$this->serializer = $serializer;
 		$this->em = $em;
