@@ -33,27 +33,26 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-	 * @Groups({"user_read", "user_write", "thread_read"})
+	 * @Groups({"user_read"})
      */
     private $username;
 
     /**
      * @ORM\Column(type="json")
-	 * @Groups({"user_read", "thread_read"})
+	 * @Groups({"user_read"})
      */
     private $roles = [];
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
-	 * @Groups({"user_write"})
+	 * Groups({"user_write"})
      */
     private $password;
 
     /**
      * @ORM\OneToMany(targetEntity=Thread::class, mappedBy="author")
-	 * @Groups({"user_read"})
-	 * @MaxDepth(2)
+	 * @Groups({"thread_read"})
      */
     private $threads;
 
