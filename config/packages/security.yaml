@@ -29,7 +29,11 @@ security:
 #            remember_me:
 #                secret: '%kernel.secret%'
             
-        login:
+        refresh:        # markitosgv/JWTRefreshTokenBundle
+            pattern: ^/api/token/refresh
+            stateless: true
+            anonymous: true
+        login:          # lexik/LexikJWTAuthenticationBundle
             pattern:  ^/api/login
             stateless: true
             anonymous: true
@@ -37,8 +41,7 @@ security:
                 check_path:               /api/login_check
                 success_handler:          lexik_jwt_authentication.handler.authentication_success
                 failure_handler:          lexik_jwt_authentication.handler.authentication_failure
-
-        api:
+        api:            # lexik/LexikJWTAuthenticationBundle
             pattern:   ^/api
             stateless: true
             anonymous: true
@@ -56,5 +59,6 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
