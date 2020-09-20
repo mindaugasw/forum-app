@@ -7,6 +7,7 @@ use App\Repository\ThreadRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -15,8 +16,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Thread
 {
-	
-	
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -51,10 +50,18 @@ class Thread
     private $content;
 
     /**
+	 * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
 	 * @Groups({"thread_read"})
      */
     private $createdAt;
+	
+	/**
+	 * @Gedmo\Timestampable(on="update")
+	 * @ORM\Column(type="datetime", nullable=true)
+	 * @Groups({"thread_read"})
+	 */
+	private $updatedAt;
 
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="thread", orphanRemoval=true)
@@ -74,7 +81,7 @@ class Thread
     public function __construct()
     {
         $this->comments = new ArrayCollection();
-        $this->createdAt = new \DateTimeImmutable(); // TODO replace with TimestampableEntity
+        //$this->createdAt = new \DateTimeImmutable(); // TODO replace with TimestampableEntity
 		// https://github.com/stof/StofDoctrineExtensionsBundle/pull/415
 		// https://github.com/stof/StofDoctrineExtensionsBundle/issues/413
     }
@@ -119,6 +126,19 @@ class Thread
 
         return $this;
     }*/
+	
+	public function getUpdatedAt(): ?\DateTimeInterface
+	{
+		return $this->updatedAt;
+	}
+	
+	/*public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+	{
+		$this->updatedAt = $updatedAt;
+		
+		return $this;
+	}*/
+	
 	
 	/*public function getCreatedAtAgo() : string
 	{
