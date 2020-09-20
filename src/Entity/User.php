@@ -12,14 +12,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
- * ApiResource(
- *     collectionOperations={"get", "post"},
- *     itemOperations={"get", "put", "delete"},
- *     normalizationContext={"groups"={"user_read"}},
- *     denormalizationContext={"groups"={"user_write"}}
- * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
- * UniqueEntity(fields={"username"})
  */
 class User implements UserInterface
 {

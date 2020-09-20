@@ -7,7 +7,7 @@ use App\Repository\ThreadRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Mapping\Annotation as Gedmo; // TODO replace with original repo
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -21,7 +21,6 @@ class Thread
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
 	 * @Groups({"thread_read"})
-	 * 
      */
     private $id;
 
@@ -33,19 +32,19 @@ class Thread
 	 *     max=255,
 	 *     allowEmptyString=false
 	 * )
-	 * @Groups({"thread_read"})
+	 * @Groups({"thread_read", "thread_write"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="text", nullable=true)
-	 * @Groups({"thread_read"})
 	 * @Assert\NotBlank()
 	 * @Assert\Length(
 	 *     min=1,
 	 *     max=30000,
 	 *     allowEmptyString=false
 	 * )
+	 * @Groups({"thread_read", "thread_write"})
      */
     private $content;
 
@@ -82,9 +81,6 @@ class Thread
     public function __construct()
     {
         $this->comments = new ArrayCollection();
-        //$this->createdAt = new \DateTimeImmutable(); // TODO replace with TimestampableEntity
-		// https://github.com/stof/StofDoctrineExtensionsBundle/pull/415
-		// https://github.com/stof/StofDoctrineExtensionsBundle/issues/413
     }
 
     public function getId(): ?int

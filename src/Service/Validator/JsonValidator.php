@@ -43,19 +43,19 @@ class JsonValidator
 	 * 
 	 * @param string $json Json string to validate
 	 * @param string $model Model to validate against
-	 * @param array $allowedFields Allowed field names whitelist. If empty, all fields are allowed
+	 * @param array $groups Deserialization groups
 	 * @return array|object
 	 */
-	public function ValidateNew(string $json, string $model, array $allowedFields = [])
+	public function ValidateNew(string $json, string $model, array $groups = [])
 	{
 		if (!$json) {
 			throw new BadRequestHttpException('Empty body.');
 		}
 		
-		$this->CheckAllowedFields($json, $allowedFields);
+		//$this->CheckAllowedFields($json, $allowedFields);
 		
 		try {
-			$object = $this->serializer->deserialize($json, $model, 'json');
+			$object = $this->serializer->deserialize($json, $model, 'json', ['groups' => $groups]);
 		} catch (\Throwable $e) {
 			throw new BadRequestHttpException('Invalid body.');
 		}
@@ -72,20 +72,20 @@ class JsonValidator
 	/**
 	 * @param string $json Json string to validate
 	 * @param object $obj Object to update
-	 * @param array $allowedFields Allowed field names whitelist. If empty, all fields are allowed
+	 * @param array $groups Deserialization groups
 	 * @return array|object
 	 */
-	public function ValidateEdit(string $json, object $obj, array $allowedFields = [])
+	public function ValidateEdit(string $json, object $obj, array $groups = [])
 	{
 		if (!$json) {
 			throw new BadRequestHttpException('Empty body.');
 		}
 		
-		$this->CheckAllowedFields($json, $allowedFields);
+		//$this->CheckAllowedFields($json, $allowedFields);
 		$model = get_class($obj);
 		
 		try {
-			$object = $this->serializer->deserialize($json, $model, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $obj]);
+			$object = $this->serializer->deserialize($json, $model, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $obj, 'groups' => $groups]);
 		} catch (\Throwable $e) {
 			throw new BadRequestHttpException('Invalid body.');
 		}
@@ -99,15 +99,16 @@ class JsonValidator
 		return $object;
 	}
 	
-	/**
+	/*
 	 * Ensures that only allowed fields are present in the given Json. Returns true on success
 	 * on throws exception on failure.
 	 * 
 	 * @param string $json Json string to validate
 	 * @param array $allowedFields Allowed field names whitelist. If empty, all fields are allowed
 	 */
-	private function CheckAllowedFields(string $json, array $allowedFields): bool
+	/*private function CheckAllowedFields(string $json, array $allowedFields): bool
 	{
+		// TODO delete method
 		if (!empty($allowedFields)) {
 			$decoded = json_decode($json, true);
 			if ($decoded === null)
@@ -121,5 +122,5 @@ class JsonValidator
 		}
 		
 		return true;
-	}
+	}*/
 }

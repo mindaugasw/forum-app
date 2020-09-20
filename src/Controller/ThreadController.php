@@ -41,7 +41,7 @@ class ThreadController extends BaseController
     public function createNew(Request $request)
     {
     	/** @var Thread $thread */
-		$thread = $this->validator->ValidateNew($request->getContent(), Thread::class, ['title', 'content']);
+		$thread = $this->validator->ValidateNew($request->getContent(), Thread::class, ['thread_write']);
     	$thread->setAuthor($this->getUser());
 		
 		// TODO fix: Thread->updatedAt automatically set also on new creation. Or set updatedAt to not nullable
@@ -56,7 +56,7 @@ class ThreadController extends BaseController
      */
     public function edit(Thread $thread, Request $request)
     {
-		$this->validator->ValidateEdit($request->getContent(), $thread, ['title', 'content']);
+		$this->validator->ValidateEdit($request->getContent(), $thread, ['thread_read']);
 		// TODO voter auth
 		
 		$this->em->flush();
@@ -70,7 +70,7 @@ class ThreadController extends BaseController
     {
     	// TODO voter auth
     	$this->em->remove($thread);
-    	
+    	$this->em->flush();
     	return $this->ApiResponse(null, 204);
     }
 }
