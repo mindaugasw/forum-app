@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2bf7cb9ecce532bf9e70489e0244a670",
+    "content-hash": "1004b43ba1436a7b06a8c3e198c3d9fc",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -1520,17 +1520,11 @@
         },
         {
             "name": "gesdinet/jwt-refresh-token-bundle",
-            "version": "v0.9.1",
+            "version": "dev-feature-cookie-support",
             "source": {
                 "type": "git",
-                "url": "https://github.com/markitosgv/JWTRefreshTokenBundle.git",
-                "reference": "1f2729e45b5eb28d6461d94dadeb0211a96754e8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/markitosgv/JWTRefreshTokenBundle/zipball/1f2729e45b5eb28d6461d94dadeb0211a96754e8",
-                "reference": "1f2729e45b5eb28d6461d94dadeb0211a96754e8",
-                "shasum": ""
+                "url": "git@github.com:lukacovicadam/JWTRefreshTokenBundle.git",
+                "reference": "b3c4b1f1cbf651a6c372a2ec27447e40e307f87b"
             },
             "require": {
                 "lexik/jwt-authentication-bundle": "^1.1|^2.0@dev",
@@ -1555,7 +1549,11 @@
                     "Gesdinet\\JWTRefreshTokenBundle\\": ""
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Gesdinet\\JWTRefreshTokenBundle\\spec\\": "spec/"
+                }
+            },
             "license": [
                 "MIT"
             ],
@@ -1569,7 +1567,7 @@
             "keywords": [
                 "jwt refresh token bundle symfony json web"
             ],
-            "time": "2020-02-04T16:08:46+00:00"
+            "time": "2020-08-10T18:19:00+00:00"
         },
         {
             "name": "lcobucci/jwt",
@@ -7234,6 +7232,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "gesdinet/jwt-refresh-token-bundle": 20,
         "stof/doctrine-extensions-bundle": 20
     },
     "prefer-stable": false,

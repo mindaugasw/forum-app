@@ -13,7 +13,6 @@ class JwtTestController extends BaseController
 {
     /**
      * @Route("/none", methods={"POST"})
-	 * @IsGranted("IS_AUTHENTICATED_ANONYMOUSLY")
      */
     public function testNone()
     {
