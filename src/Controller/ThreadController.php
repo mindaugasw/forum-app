@@ -46,14 +46,15 @@ class ThreadController extends BaseController
     public function createNew(Request $request)
     {
     	/** @var Thread $thread */
-		$thread = $this->validator->ValidateJson($request->getContent(), Thread::class);
+		$thread = $this->validator->ValidateJson($request->getContent(), Thread::class, ['title', 'content']);
     	$thread->setAuthor($this->getUser());
 		
     	// TODO csrf
 		$this->em->persist($thread);
+		// TODO Thread->updatedAt automatically set also on new creation
     	$this->em->flush();
     	
-    	return $this->ApiResponse($thread, 201, ['thread_read']);
+    	return $this->ApiResponse($thread, 201, ['thread_read', 'user_read'], ['threads']);
     }
 
     /**

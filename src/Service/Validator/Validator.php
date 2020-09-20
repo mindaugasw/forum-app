@@ -39,12 +39,25 @@ class Validator
 	/**
 	 * @param string $json Json string to validate
 	 * @param string $model Model to validate against
+	 * @param array $allowedFields String array of allowed field names. If empty, all fields are allowed
 	 * @return array|object
 	 */
-	public function ValidateJson(string $json, string $model)
+	public function ValidateJson(string $json, string $model, array $allowedFields = [])
 	{
 		if (!$json) {
 			throw new BadRequestHttpException('Empty body.');
+		}
+		
+		if (!empty($allowedFields)) {
+			$decoded = json_decode($json, true);
+			if ($decoded === null)
+				throw new BadRequestHttpException('Invalid body.');
+			
+			foreach ($decoded as $key => $value)
+			{
+				if (!in_array($key, $allowedFields))
+					throw new BadRequestHttpException('Unsupported field: ' . $key);
+			}
 		}
 		
 		try {
