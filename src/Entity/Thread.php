@@ -61,6 +61,7 @@ class Thread
 	 * @ORM\Column(type="datetime", nullable=true)
 	 * @Groups({"thread_read"})
 	 */
+	// TODO fix to NOT automatically set on new creation. Or set to not nullable
 	private $updatedAt;
 
     /**
