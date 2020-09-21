@@ -62,8 +62,7 @@ class Thread
 	 * @ORM\Column(type="datetime", nullable=true)
 	 * @Groups({"thread_read"})
 	 */
-	// TODO fix to NOT automatically set on new creation. Or set to not nullable
-	private $updatedAt;
+	private $updatedAt; // TODO fix to NOT automatically set on new creation. Or set to not nullable
 
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="thread", orphanRemoval=true) // TODO EXTRA_LAZY ?
@@ -81,21 +80,11 @@ class Thread
     private $author;
 	
 	/**
+	 * Vote on this item of currently logged in user
 	 * @Groups({"user_read"})
 	 */
-    private $userVote = 'NA';
+    private $userVote = 0;
     
-    public function setUserVote($uv)
-	{
-		$this->userVote = $uv;
-	}
-	public function getUserVote()
-	{
-		return $this->userVote;
-	}
-
-	
-	
 	public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -135,28 +124,14 @@ class Thread
         return $this->createdAt;
     }
 
-    /*public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }*/
-	
 	public function getUpdatedAt(): ?\DateTimeInterface
 	{
 		return $this->updatedAt;
 	}
 	
-	/*public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
-	{
-		$this->updatedAt = $updatedAt;
-		
-		return $this;
-	}*/
-	
-	
 	/*public function getCreatedAtAgo() : string
 	{
+		// TODO
 		return Carbon::instance($this->getCreatedAt())->diffForHumans();
 	}*/
 
@@ -203,21 +178,15 @@ class Thread
         return $this;
     }
 	
-	/*
-	 * Groups({"thread_read"})
-	 */
-    /*public function getUserVote(): string
+	public function setUserVote(int $userVote): self
 	{
-		$user = $this->security->getUser();
+		$this->userVote = $userVote;
 		
-		if ($user == null)
-			return 'none';
-		else {
-			$vote = $this->em->getRepository(VoteThread::class)->findOneBy(['thread' => $this, 'user' => $user]);
-			if ($vote == null)
-				return 'none';
-			else
-				return $vote->isUpvote() == true ? 'up' : 'down';
-		}		
-	}*/
+		return $this;
+	}
+	
+	public function getUserVote(): int
+	{
+		return $this->userVote;
+	}
 }

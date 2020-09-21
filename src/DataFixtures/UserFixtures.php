@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class UserFixtures extends BaseFixture
 {
 	public const USER_REFERENCE = 'users';
-	public const COUNT = 50;
+	public const COUNT = 10;
 	
 	private $passwordEncoder;
 	

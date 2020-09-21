@@ -10,52 +10,48 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class VoteThread
 {
-    /*
-     * ORM\Id
-     * ORM\GeneratedValue
-     * ORM\Column(type="integer")
-     */
-    //private $id;
-
     /**
 	 * @ORM\Id
      * @ORM\ManyToOne(targetEntity=Thread::class)
-     * ORM\JoinColumn(nullable=false)
      */
     private $thread;
 
     /**
 	 * @ORM\Id
      * @ORM\ManyToOne(targetEntity=User::class)
-     * ORM\JoinColumn(nullable=false)
      */
     private $user;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="smallint")
      */
-    private $upvote = true;
-
-    /*public function getId(): ?int
-    {
-        return $this->id;
-    }*/
+    private $vote = 0;
 	
-	public function __construct()
+	public function __construct() {	}
+	
+	/**
+	 * Sets $vote value on $thread
+	 * Shortcut for: $this->$getThread()->setUserVote($this->getVote());
+	 */
+	public function setUserVoteOnThread(): self
 	{
+		$this->getThread()->setUserVote($this->getVote());
+		
+		return $this;
 	}
-	public static function create(Thread $thread, User $user, bool $upvote) : self
+	
+	public static function create(Thread $thread, User $user, int $vote) : self
 	{
 		return (new VoteThread())
 			->setThread($thread)
 			->setUser($user)
-			->setUpvote($upvote);
+			->setVote($vote);
 	}
 	
 	public function getThread(): ?Thread
-    {
-        return $this->thread;
-    }
+	{
+		return $this->thread;
+	}
 
     public function setThread(?Thread $thread): self
     {
@@ -76,15 +72,17 @@ class VoteThread
         return $this;
     }
 
-    public function isUpvote(): ?bool
+    public function getVote(): ?int
     {
-        return $this->upvote;
+        return $this->vote;
     }
 
-    public function setUpvote(bool $upvote): self
+    public function setVote(int $vote): self
     {
-        $this->upvote = $upvote;
-
-        return $this;
-    }
+    	if ($vote === 1 || $vote === 0 || $vote === -1) {
+			$this->vote = $vote;
+			return $this;
+		} else
+			throw new \InvalidArgumentException('Invalid vote value: '.$vote);	
+	}
 }
