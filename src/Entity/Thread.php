@@ -66,7 +66,7 @@ class Thread
 	private $updatedAt;
 
     /**
-     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="thread", orphanRemoval=true, fetch="EXTRA_LAZY")
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="thread", orphanRemoval=true) // TODO EXTRA_LAZY ?
 	 * Groups({"thread_read"})
      */
     private $comments;
@@ -74,7 +74,7 @@ class Thread
     //private $commentCount; // TODO
     
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="threads")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="threads", fetch="EAGER") // TODO EAGER load
      * @ORM\JoinColumn(nullable=false)
 	 * @Groups({"user_read"})
      */

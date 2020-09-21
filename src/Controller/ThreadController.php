@@ -22,7 +22,13 @@ class ThreadController extends BaseController
     {
     	$data = $this->threadsRepo->findAll();
 	
-		foreach ($data as $thread)
+    	$userVotes = $this->voteThreadRepo->findBy(['user' => $this->getUser()->getId(), 'thread' => [$data]]);
+    	
+    	for ($i = 0; $i < count($userVotes); $i++) {
+			$userVotes[$i]->getThread()->setUserVote($userVotes[$i]->isUpvote());
+		}
+    	
+		/*foreach ($data as $thread)
 		{
 			$vote = $this->voteThreadRepo->findOneBy(['user' => $this->getUser(), 'thread' => $thread]);
 			
@@ -30,7 +36,7 @@ class ThreadController extends BaseController
 				$thread->setUserVote('none');
 			else
 				$thread->setUserVote($vote->isUpvote());
-    	}
+    	}*/
     	
     	
 		return $this->ApiResponse(
