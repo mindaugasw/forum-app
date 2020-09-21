@@ -20,10 +20,23 @@ class ThreadController extends BaseController
      */
     public function getList()
     {
+    	//$data = $this->threadsRepo->find(9154); // TODO
+    	
     	$data = $this->threadsRepo->findAll();
+    	
+    	//$this->voteThreadRepo->find
+		/*$userVotes = $this->voteThreadRepo->findBy(['user' => $this->getUser(), 'thread' => $data]);
+	
+		for ($i = 0; $i < count($userVotes); $i++) {
+			$userVotes[$i]->getThread()->setUserVote($userVotes[$i]->getVote());
+		}*/
+    	
 		return $this->ApiResponse(
     		$data, 200, ['thread_read', 'user_read'], ['threads']
 		);
+		/*return $this->ApiResponse(
+			null, 200
+		);*/
 		// TODO pagination, filtering, sorting
 	}
 	

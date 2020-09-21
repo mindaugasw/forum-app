@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\VoteThread;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -14,6 +15,7 @@ abstract class BaseFixture extends Fixture implements OrderedFixtureInterface
 		UserFixtures::class,
 		ThreadFixtures::class,
 		CommentFixtures::class,
+		VoteThreadFixtures::class,
 	];
 	
 	/** @var ObjectManager */
@@ -34,7 +36,9 @@ abstract class BaseFixture extends Fixture implements OrderedFixtureInterface
 		$this->loadData($manager);
 	}
 	
-	/**
+	// TODO: createMany, getRandomReference, getRandomReferences
+	// Looks like these methods together have some bug with objects persisting
+	/*
 	 * Create many objects at once:
 	 *
 	 *      $this->createMany(10, function(int $i) {
@@ -50,7 +54,7 @@ abstract class BaseFixture extends Fixture implements OrderedFixtureInterface
 	 *                            to fetch only from this specific group.
 	 * @param callable $factory
 	 */
-	protected function createMany(int $count, string $groupName, callable $factory)
+	/*protected function createMany(int $count, string $groupName, callable $factory)
 	{
 		for ($i = 0; $i < $count; $i++) {
 			$entity = $factory($i);
@@ -64,9 +68,9 @@ abstract class BaseFixture extends Fixture implements OrderedFixtureInterface
 			// store for usage later as groupName_#COUNT#
 			$this->addReference(sprintf('%s_%d', $groupName, $i), $entity);
 		}
-	}
+	}*/
 	
-	protected function getRandomReference(string $groupName) {
+	/*protected function getRandomReference(string $groupName) {
 		if (!isset($this->referencesIndex[$groupName])) {
 			$this->referencesIndex[$groupName] = [];
 			
@@ -84,15 +88,26 @@ abstract class BaseFixture extends Fixture implements OrderedFixtureInterface
 		$randomReferenceKey = $this->faker->randomElement($this->referencesIndex[$groupName]);
 		
 		return $this->getReference($randomReferenceKey);
-	}
+	}*/
 	
-	protected function getRandomReferences(string $groupName, int $count)
+	/*protected function getRandomReferences(string $groupName, int $count)
 	{
 		$references = [];
 		while (count($references) < $count) {
 			$references[] = $this->getRandomReference($groupName);
 		}
 		
+		return $references;
+	}*/
+	
+	protected function getAllReferences(string $groupName)
+	{
+		$references = [];
+		foreach ($this->referenceRepository->getReferences() as $key => $ref) {
+			if (strpos($key, $groupName.'_') === 0) {
+				$references[] = $ref;
+			}
+		}
 		return $references;
 	}
 	

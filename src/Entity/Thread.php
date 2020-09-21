@@ -62,11 +62,10 @@ class Thread
 	 * @ORM\Column(type="datetime", nullable=true)
 	 * @Groups({"thread_read"})
 	 */
-	// TODO fix to NOT automatically set on new creation. Or set to not nullable
-	private $updatedAt;
+	private $updatedAt; // TODO fix to NOT automatically set on new creation. Or set to not nullable
 
     /**
-     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="thread", orphanRemoval=true, fetch="EXTRA_LAZY")
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="thread", orphanRemoval=true) // TODO EXTRA_LAZY ?
 	 * Groups({"thread_read"})
      */
     private $comments;
@@ -74,27 +73,21 @@ class Thread
     //private $commentCount; // TODO
     
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="threads")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="threads") // TODO EAGER load
      * @ORM\JoinColumn(nullable=false)
 	 * @Groups({"user_read"})
      */
     private $author;
+	
+	/**
+	 * Vote on this item of currently logged in user
+	 * @Groups({"user_read"})
+	 */
+    private $userVote = 0;
     
-	/*
-	 * var Security
-	 */
-	private $security;
-	/*
-	 * var EntityManagerInterface
-	 */
-	private $em;
-	
-	
-	public function __construct(/*Security $security, EntityManagerInterface $em*/)
+	public function __construct()
     {
         $this->comments = new ArrayCollection();
-		//$this->security = $security;
-		//$this->em = $em;
 	}
 
     public function getId(): ?int
@@ -131,28 +124,14 @@ class Thread
         return $this->createdAt;
     }
 
-    /*public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }*/
-	
 	public function getUpdatedAt(): ?\DateTimeInterface
 	{
 		return $this->updatedAt;
 	}
 	
-	/*public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
-	{
-		$this->updatedAt = $updatedAt;
-		
-		return $this;
-	}*/
-	
-	
 	/*public function getCreatedAtAgo() : string
 	{
+		// TODO
 		return Carbon::instance($this->getCreatedAt())->diffForHumans();
 	}*/
 
@@ -199,21 +178,15 @@ class Thread
         return $this;
     }
 	
-	/*
-	 * Groups({"thread_read"})
-	 */
-    /*public function getUserVote(): string
+	public function setUserVote(int $userVote): self
 	{
-		$user = $this->security->getUser();
+		$this->userVote = $userVote;
 		
-		if ($user == null)
-			return 'none';
-		else {
-			$vote = $this->em->getRepository(VoteThread::class)->findOneBy(['thread' => $this, 'user' => $user]);
-			if ($vote == null)
-				return 'none';
-			else
-				return $vote->isUpvote() == true ? 'up' : 'down';
-		}		
-	}*/
+		return $this;
+	}
+	
+	public function getUserVote(): int
+	{
+		return $this->userVote;
+	}
 }
