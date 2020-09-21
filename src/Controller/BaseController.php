@@ -44,16 +44,6 @@ abstract class BaseController extends AbstractController
 		$this->commentsRepo = $em->getRepository(Comment::class);
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 * @return User|null
-	 */
-	// Overrides base getUser method to set User return type (User instead of UserInterface)
-	protected function getUser(): User
-	{
-		return parent::getUser();
-	}
-	
 	protected function ApiResponse($data, int $status = 200, array $groups = [], array $ignoredAttributes = []): JsonResponse
 	{
 		$serializedData = $this->serializer->serialize(

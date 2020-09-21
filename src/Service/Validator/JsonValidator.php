@@ -98,29 +98,4 @@ class JsonValidator
 		
 		return $object;
 	}
-	
-	/*
-	 * Ensures that only allowed fields are present in the given Json. Returns true on success
-	 * on throws exception on failure.
-	 * 
-	 * @param string $json Json string to validate
-	 * @param array $allowedFields Allowed field names whitelist. If empty, all fields are allowed
-	 */
-	/*private function CheckAllowedFields(string $json, array $allowedFields): bool
-	{
-		// TODO delete method
-		if (!empty($allowedFields)) {
-			$decoded = json_decode($json, true);
-			if ($decoded === null)
-				throw new BadRequestHttpException('Invalid body.');
-			
-			foreach ($decoded as $key => $value)
-			{
-				if (!in_array($key, $allowedFields))
-					throw new BadRequestHttpException('Unsupported field: ' . $key);
-			}
-		}
-		
-		return true;
-	}*/
 }

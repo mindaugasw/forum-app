@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -16,8 +15,11 @@ class JwtTestController extends BaseController
      */
     public function testNone()
     {
-    	
-    	return $this->ApiResponse('NO AUTH', 299);
+    	$usr = $this->getUser();
+    	if ($usr === null)
+    		return $this->ApiResponse('NULL USER', 299);
+    	else
+    		return $this->ApiResponse($usr, 299, ['user_read']);
     }
 	
 	/**
@@ -26,7 +28,6 @@ class JwtTestController extends BaseController
 	 */
 	public function testUser()
 	{
-		
 		return $this->ApiResponse($this->getUser(), 298, ['user_read']);
 	}
 	

@@ -18,20 +18,20 @@ class ThreadController extends BaseController
     public function getList()
     {
     	$data = $this->threadsRepo->findAll();
-    	// TODO pagination, filtering, sorting
-    	return $this->ApiResponse(
+		return $this->ApiResponse(
     		$data, 200, ['thread_read', 'user_read'], ['threads']
 		);
-    }
+		// TODO pagination, filtering, sorting
+	}
 	
 	/**
 	 * @Route("/{id}/", name="thread_get", methods={"GET"})
 	 */
 	public function getOne(Thread $thread)
 	{
+		return $this->ApiResponse($thread, 200, ['thread_read', 'user_read'], ['threads']);
 		// TODO add comments
 		// TODO comments pagination
-		return $this->ApiResponse($thread, 200, ['thread_read', 'user_read'], ['threads']);
 	}
     
     /**
@@ -57,10 +57,9 @@ class ThreadController extends BaseController
     public function edit(Thread $thread, Request $request)
     {
 		$this->validator->ValidateEdit($request->getContent(), $thread, ['thread_read']);
-		// TODO voter auth
-		
 		$this->em->flush();
 		return $this->ApiResponse($thread, 200, ['thread_read', 'user_read'], ['threads']);
+		// TODO voter auth
 	}
 
     /**
@@ -68,9 +67,9 @@ class ThreadController extends BaseController
      */
     public function delete(Thread $thread)
     {
-    	// TODO voter auth
-    	$this->em->remove($thread);
-    	$this->em->flush();
-    	return $this->ApiResponse(null, 204);
-    }
+		$this->em->remove($thread);
+		$this->em->flush();
+		return $this->ApiResponse(null, 204);
+		// TODO voter auth
+	}
 }
