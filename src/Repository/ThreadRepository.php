@@ -47,4 +47,6 @@ class ThreadRepository extends ServiceEntityRepository
         ;
     }
     */
+	
+	public function 
 }

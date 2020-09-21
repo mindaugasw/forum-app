@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Thread;
+use App\Entity\VoteThread;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -71,5 +74,57 @@ class ThreadController extends BaseController
 		$this->em->flush();
 		return $this->ApiResponse(null, 204);
 		// TODO voter auth
+	}
+	
+	/**
+	 * @Route("/{id}/vote/{voteValue}/", name="thread_vote", methods={"POST"}, requirements={"voteValue"="up|down|none"})
+	 * @IsGranted("ROLE_USER")
+	 */
+	public function vote(Thread $thread, string $voteValue)
+	{
+		$user = $this->getUser();
+		if ($thread->getAuthor() == $user)
+			throw new BadRequestHttpException('Voting on your own threads is not allowed');
+		
+		// exists true
+			// vote none
+				// do delete
+			// vote same
+				// do nothing
+			// vote different
+				// do update
+		
+		// exists false
+			// vote none
+				// do nothing
+			// vote up/down
+				// do create new vote
+		
+		$upvote = $voteValue === 'up' ? 1 : ($voteValue === 'down' ? 0 : -1);
+		$vote = $this->voteThreadRepo->findOneBy(['user' => $user, 'thread' => $thread]);
+		
+		if ($vote != null) { // vote already exists
+			if ($upvote == -1) {
+				// voted 'none', delete vote
+				$this->em->remove($vote);
+			} else if ($upvote == $vote->isUpvote()) {
+				// voted same as is currently, do nothing
+			} else {
+				// voted differently than currently, swap vote
+				$vote->setUpvote(!$vote->isUpvote());
+			}
+		} else { // vote does not exist
+			if ($upvote == -1) {
+				// voted 'none', do nothing
+			} else {
+				// voted 'up|down', create new vote
+				$vote = VoteThread::create($thread, $user, $upvote);
+				$this->em->persist($vote);
+			}
+		}
+		
+		$this->em->flush();
+		// TODO recount thread votes
+		return $this->ApiResponse('success', 200);
 	}
 }

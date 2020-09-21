@@ -6,8 +6,10 @@ namespace App\Entity;
 use App\Repository\ThreadRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // TODO replace with original repo
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -64,7 +66,7 @@ class Thread
 	private $updatedAt;
 
     /**
-     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="thread", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="thread", orphanRemoval=true, fetch="EXTRA_LAZY")
 	 * Groups({"thread_read"})
      */
     private $comments;
@@ -77,11 +79,23 @@ class Thread
 	 * @Groups({"user_read"})
      */
     private $author;
-
-    public function __construct()
+    
+	/*
+	 * var Security
+	 */
+	private $security;
+	/*
+	 * var EntityManagerInterface
+	 */
+	private $em;
+	
+	
+	public function __construct(/*Security $security, EntityManagerInterface $em*/)
     {
         $this->comments = new ArrayCollection();
-    }
+		//$this->security = $security;
+		//$this->em = $em;
+	}
 
     public function getId(): ?int
     {
@@ -184,4 +198,22 @@ class Thread
 
         return $this;
     }
+	
+	/*
+	 * Groups({"thread_read"})
+	 */
+    /*public function getUserVote(): string
+	{
+		$user = $this->security->getUser();
+		
+		if ($user == null)
+			return 'none';
+		else {
+			$vote = $this->em->getRepository(VoteThread::class)->findOneBy(['thread' => $this, 'user' => $user]);
+			if ($vote == null)
+				return 'none';
+			else
+				return $vote->isUpvote() == true ? 'up' : 'down';
+		}		
+	}*/
 }
