@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\VoteThread;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -13,6 +14,7 @@ abstract class BaseFixture extends Fixture implements OrderedFixtureInterface
 	public static $loadOrder = [
 		UserFixtures::class,
 		ThreadFixtures::class,
+		VoteThreadFixtures::class,
 		CommentFixtures::class,
 	];
 	
@@ -93,6 +95,19 @@ abstract class BaseFixture extends Fixture implements OrderedFixtureInterface
 			$references[] = $this->getRandomReference($groupName);
 		}
 		
+		return $references;
+	}
+	
+	protected function getAllReferences(string $groupName)
+	{
+		$references = [];
+		//dd($this->referenceRepository->getReferences());
+		//foreach ($this->referencesIndex as $key => $value) {
+		foreach ($this->referenceRepository->getReferences() as $key => $ref) {
+			if (strpos($key, $groupName.'_') === 0) {
+				$references[] = $ref;
+			}
+		}
 		return $references;
 	}
 	

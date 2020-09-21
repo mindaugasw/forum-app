@@ -21,6 +21,18 @@ class ThreadController extends BaseController
     public function getList()
     {
     	$data = $this->threadsRepo->findAll();
+	
+		foreach ($data as $thread)
+		{
+			$vote = $this->voteThreadRepo->findOneBy(['user' => $this->getUser(), 'thread' => $thread]);
+			
+			if ($vote === null)
+				$thread->setUserVote('none');
+			else
+				$thread->setUserVote($vote->isUpvote());
+    	}
+    	
+    	
 		return $this->ApiResponse(
     		$data, 200, ['thread_read', 'user_read'], ['threads']
 		);

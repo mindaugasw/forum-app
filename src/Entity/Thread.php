@@ -79,22 +79,26 @@ class Thread
 	 * @Groups({"user_read"})
      */
     private $author;
+	
+	/**
+	 * @Groups({"user_read"})
+	 */
+    private $userVote = 'NA';
     
-	/*
-	 * var Security
-	 */
-	private $security;
-	/*
-	 * var EntityManagerInterface
-	 */
-	private $em;
+    public function setUserVote($uv)
+	{
+		$this->userVote = $uv;
+	}
+	public function getUserVote()
+	{
+		return $this->userVote;
+	}
+
 	
 	
-	public function __construct(/*Security $security, EntityManagerInterface $em*/)
+	public function __construct()
     {
         $this->comments = new ArrayCollection();
-		//$this->security = $security;
-		//$this->em = $em;
 	}
 
     public function getId(): ?int

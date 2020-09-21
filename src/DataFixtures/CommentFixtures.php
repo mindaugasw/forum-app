@@ -14,7 +14,7 @@ class CommentFixtures extends BaseFixture //implements DependentFixtureInterface
 	
     public function loadData(ObjectManager $manager)
     {
-		$f = $this->faker;
+		/*$f = $this->faker;
 		$users = $this->getRandomReferences(UserFixtures::USER_REFERENCE, UserFixtures::COUNT);
 		$threads = $this->getRandomReferences(ThreadFixtures::THREAD_REFERENCE, ThreadFixtures::COUNT);
 		
@@ -32,6 +32,6 @@ class CommentFixtures extends BaseFixture //implements DependentFixtureInterface
 			return $comment;
 		});
 	
-		$manager->flush();
+		$manager->flush();*/
     }
 }

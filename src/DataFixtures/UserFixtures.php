@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class UserFixtures extends BaseFixture
 {
 	public const USER_REFERENCE = 'users';
-	public const COUNT = 5;
+	public const COUNT = 10;
 	
 	private $passwordEncoder;
 	
@@ -20,13 +20,24 @@ class UserFixtures extends BaseFixture
 	
 	public function loadData(ObjectManager $manager)
     {
-		$this->createMany(self::COUNT, self::USER_REFERENCE, function (int $i) {
+    	for ($i = 0; $i < self::COUNT; $i++) {
+			$user = new User();
+			$user->setUsername("user".($i+1));
+			$user->setPassword($this->passwordEncoder->encodePassword($user, 'password'));
+			$this->addReference(self::USER_REFERENCE.'_'.$i, $user);
+			$manager->persist($user);
+		}
+    	
+    	$manager->flush();
+    	
+    	
+		/*$this->createMany(self::COUNT, self::USER_REFERENCE, function (int $i) {
 			$user = new User();
 			$user->setUsername("user".($i+1));
 			$user->setPassword($this->passwordEncoder->encodePassword($user, 'password'));
 			return $user;
 		});
 		
-        $manager->flush();
+        $manager->flush();*/
     }
 }
