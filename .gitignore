@@ -88,3 +88,6 @@ cmake-build-*/
 
 # End of https://www.toptal.com/developers/gitignore/api/phpstorm
 ###< PhpStorm ###
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###
