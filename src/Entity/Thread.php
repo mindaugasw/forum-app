@@ -74,7 +74,7 @@ class Thread
     //private $commentCount; // TODO
     
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="threads", fetch="EAGER") // TODO EAGER load
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="threads") // TODO EAGER load
      * @ORM\JoinColumn(nullable=false)
 	 * @Groups({"user_read"})
      */

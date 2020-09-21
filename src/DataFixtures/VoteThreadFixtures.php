@@ -23,7 +23,7 @@ class VoteThreadFixtures extends BaseFixture //implements DependentFixtureInterf
     	//$threads = $this->getAllReferences(ThreadFixtures::THREAD_REFERENCE);
     	//$threads = $this->getRandomReferences(ThreadFixtures::THREAD_REFERENCE, ThreadFixtures::COUNT);
 	
-    	//$loop = 0;
+    	$loop = 0;
 		foreach ($threads as $t)
 		{
 			foreach ($users as $u)
@@ -42,6 +42,13 @@ class VoteThreadFixtures extends BaseFixture //implements DependentFixtureInterf
 					//$loop += 1;
 				}
 			}
+			$loop += 1;
+			if ($loop > 100) {
+				$manager->flush();
+				dump($t->getId());
+				$loop = 0;
+			}
+			
     	}
 		$manager->flush();
     	

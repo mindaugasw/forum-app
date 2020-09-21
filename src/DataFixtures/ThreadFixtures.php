@@ -11,7 +11,7 @@ use Doctrine\Persistence\ObjectManager;
 class ThreadFixtures extends BaseFixture //implements DependentFixtureInterface
 {
 	public const THREAD_REFERENCE = 'threads';
-	public const COUNT = UserFixtures::COUNT * 40; //5; # TODO
+	public const COUNT = 400; // UserFixtures::COUNT * 40; //5; # TODO
 	
     public function loadData(ObjectManager $manager)
     {

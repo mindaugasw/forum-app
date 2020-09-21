@@ -21,14 +21,14 @@ class ThreadController extends BaseController
     public function getList()
     {
     	$data = $this->threadsRepo->findAll();
-	
-    	$userVotes = $this->voteThreadRepo->findBy(['user' => $this->getUser()->getId(), 'thread' => [$data]]);
     	
-    	for ($i = 0; $i < count($userVotes); $i++) {
+		$userVotes = $this->voteThreadRepo->findBy(['user' => $this->getUser(), 'thread' => $data]);
+	
+		for ($i = 0; $i < count($userVotes); $i++) {
 			$userVotes[$i]->getThread()->setUserVote($userVotes[$i]->isUpvote());
 		}
     	
-		/*foreach ($data as $thread)
+		/*foreach ($data as $thread) // V-1
 		{
 			$vote = $this->voteThreadRepo->findOneBy(['user' => $this->getUser(), 'thread' => $thread]);
 			
@@ -38,9 +38,11 @@ class ThreadController extends BaseController
 				$thread->setUserVote($vote->isUpvote());
     	}*/
     	
-    	
-		return $this->ApiResponse(
+		/*return $this->ApiResponse(
     		$data, 200, ['thread_read', 'user_read'], ['threads']
+		);*/
+		return $this->ApiResponse(
+			null, 200
 		);
 		// TODO pagination, filtering, sorting
 	}
