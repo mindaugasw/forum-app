@@ -4,12 +4,14 @@ namespace App\Repository;
 
 use App\Entity\Thread;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Intl\Exception\NotImplementedException;
 use Symfony\Component\Security\Core\Security;
 
 /**
  * method Thread|null find($id, $lockMode = null, $lockVersion = null)
- * @method Thread|null findOneBy(array $criteria, array $orderBy = null)
+ * method Thread|null findOneBy(array $criteria, array $orderBy = null)
  * @method Thread[]    findAll()
  * method Thread[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -43,9 +45,6 @@ class ThreadRepository extends ServiceEntityRepository
 		return $thread;
 	}
 	
-	// TODO findOneBy
-	// TODO matching??
-	
 	/**
 	 * {@InheritDoc}
 	 */
@@ -56,6 +55,24 @@ class ThreadRepository extends ServiceEntityRepository
 		if (count($threads) !== 0)
 			$this->addMultipleUserVotes($threads);
 		return $threads;
+	}
+	
+	/**
+	 * {@InheritDoc}
+	 */
+	public function findOneBy(array $criteria, array $orderBy = null)
+	{
+		$thread = parent::findOneBy($criteria, $orderBy);
+		
+		if ($thread !== null)
+			$this->addSingleUserVote($thread);
+		return $thread;
+	}
+	
+	public function matching(Criteria $criteria)
+	{
+		throw new NotImplementedException("'matching' method not implemented to include userVote property.");
+		return parent::matching($criteria);
 	}
 	
 	private function addSingleUserVote(Thread $thread)
