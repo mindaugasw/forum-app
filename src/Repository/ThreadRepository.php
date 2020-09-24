@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\Security;
 /**
  * method Thread|null find($id, $lockMode = null, $lockVersion = null)
  * method Thread|null findOneBy(array $criteria, array $orderBy = null)
- * @method Thread[]    findAll()
+ * method Thread[]    findAll()
  * method Thread[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class ThreadRepository extends ServiceEntityRepository
@@ -43,6 +43,35 @@ class ThreadRepository extends ServiceEntityRepository
 		if ($thread !== null)
 			$this->addSingleUserVote($thread);
 		return $thread;
+	}
+	
+	public function findAll()
+	{
+		//return parent::findAll();
+		$user = $this->security->getUser();
+		$userId = $user !== null ? $user->getId() : -1 ;
+		
+		/*SELECT
+			thread.*,
+			vote_thread.vote AS userVote
+		FROM
+			thread
+		LEFT JOIN vote_thread ON thread.id = vote_thread.thread_id AND vote_thread.user_id = 30566
+		WHERE
+			thread.id = 8760*/		
+		// TODO: write plain query and check working first
+		// then do with QueryBuilder
+		
+		// https://stackoverflow.com/questions/18357159/how-to-perform-a-join-query-using-symfony-and-doctrine-query-builder
+		// https://www.google.com/search?sxsrf=ALeKk03NmWZhQLhpucnSQoDfOiQ6lDeZrg%3A1600981981103&ei=3QttX6f2BZe43APolKp4&q=symfony+query+builder+select+as&oq=symfony+query+builder+select+as&gs_lcp=CgZwc3ktYWIQAxgAMgYIABAWEB46BAgAEEc6BAgjECc6AggAOgQIABBDSgUIJhIBblDhFliKKmCpL2gAcAF4AIABaIgBvASSAQM1LjGYAQCgAQGqAQdnd3Mtd2l6yAEIwAEB&sclient=psy-ab
+		// https://stackoverflow.com/questions/18970941/how-to-select-fields-using-doctrine-2-query-builder
+		// http://www.inanzzz.com/index.php/post/4ern/writing-doctrine-query-builder-without-relations-between-entities
+		
+		return $this->createQueryBuilder('t')
+			->select('t.*, vt.')
+			->leftJoin('App\Entity\VoteThread', 'vt', 'ON', 't.id = vt.thread AND vt.user = :uid')
+			->setParameters(['uid' => $userId])
+			->getQuery();
 	}
 	
 	/**
