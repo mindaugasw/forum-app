@@ -20,12 +20,16 @@ class ThreadController extends BaseController
      */
     public function getList(Request $request)
     {
-    	$data = $this->threadsRepo->findAll();
+    	//$query = $this->threadsRepo->findAll();
+    	//$data = $query->getResult();
     	
-		return $this->ApiResponse(
+		$data = $this->threadsRepo->findByPaginated(['author' => $this->getUser()]);
+		//$data = $this->threadsRepo->findBy(['author' => $this->getUser()]);
+		
+		return $this->ApiPaginatedResponse(
     		$data, 200, ['thread_read', 'user_read'], ['threads']
 		);
-		// TODO pagination, filtering, sorting
+		// TODO filtering, sorting
 	}
 	
 	/**

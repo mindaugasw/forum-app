@@ -18,6 +18,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Thread
 {
+	// TODO add sluggable
+	
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -80,7 +82,8 @@ class Thread
     private $author;
 	
 	/**
-	 * Vote on this item of currently logged in user
+	 * Vote on this item of currently logged in user.
+	 * Not stored in DB, joined in repository from VoteThread results.
 	 * @Groups({"user_read"})
 	 */
     private $userVote = 0;

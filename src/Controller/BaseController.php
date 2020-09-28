@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Entity\VoteThread;
 use App\Service\Validator\JsonValidator;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -55,6 +56,19 @@ abstract class BaseController extends AbstractController
 			'json',
 			['groups' => $groups, 'ignored_attributes' => $ignoredAttributes]);
 		return new JsonResponse($serializedData, $status, [], true);
+	}
+	
+	/**
+	 * @param PaginationInterface $data
+	 * @param int $status
+	 * @param array $groups
+	 * @param array $ignoredAttributes
+	 * @return JsonResponse
+	 */
+	protected function ApiPaginatedResponse($data, int $status = 200, array $groups = [], array $ignoredAttributes = []): JsonResponse
+	{
+		$paginatedData = ['items' => $data, 'pagination' => $data->getPaginationData()];
+		return $this->ApiResponse($paginatedData, $status, $groups, $ignoredAttributes);
 	}
 	
 }
