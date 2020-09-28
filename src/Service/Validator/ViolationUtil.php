@@ -5,6 +5,11 @@ namespace App\Service\Validator;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
+/*
+ * Validator, ViolationUtil and TextUtil from:
+ * http://www.inanzzz.com/index.php/post/umax/using-native-symfony-serializer-and-validator-for-json-api
+ */
+
 class ViolationUtil
 {
 	private $textUtil;

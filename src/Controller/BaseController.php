@@ -7,6 +7,7 @@ use App\Entity\Thread;
 use App\Entity\User;
 use App\Entity\VoteThread;
 use App\Service\Validator\JsonValidator;
+use App\Service\Validator\QueryParamsValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,34 +20,38 @@ abstract class BaseController extends AbstractController
 	protected $serializer;
 	/** @var EntityManagerInterface */
 	protected $em;
-	/**
-	 * @var JsonValidator
-	 */
-	protected $validator;
+	/** @var JsonValidator */
+	protected $jsonValidator;
+	/** @var QueryParamsValidator */
+	protected $queryValidator;
 	
-	/** @var \App\Repository\UserRepository */
+	/* var \App\Repository\UserRepository /
 	protected $usersRepo;
-	/** @var \App\Repository\ThreadRepository */
+	/** @var \App\Repository\ThreadRepository /
 	protected $threadsRepo;
-	/** @var \App\Repository\VoteThreadRepository */
+	/** @var \App\Repository\VoteThreadRepository /
 	protected $voteThreadRepo;
-	/** @var \App\Repository\CommentRepository */
-	protected $commentsRepo;
-
+	/** @var \App\Repository\CommentRepository /
+	protected $commentsRepo;*/
+	
+	
 	
 	public function __construct(
 		SerializerInterface $serializer,
 		EntityManagerInterface $em,
-		JsonValidator $validator)
+		JsonValidator $validator,
+		QueryParamsValidator $queryValidator)
 	{
 		$this->serializer = $serializer;
 		$this->em = $em;
-		$this->validator = $validator;
+		$this->jsonValidator = $validator;
+		$this->queryValidator = $queryValidator;
 		
-		$this->usersRepo = $em->getRepository(User::class);
+		/*$this->usersRepo = $em->getRepository(User::class);
 		$this->threadsRepo = $em->getRepository(Thread::class);
 		$this->commentsRepo = $em->getRepository(Comment::class);
-		$this->voteThreadRepo = $em->getRepository(VoteThread::class);
+		$this->voteThreadRepo = $em->getRepository(VoteThread::class);*/
+		
 	}
 	
 	protected function ApiResponse($data, int $status = 200, array $groups = [], array $ignoredAttributes = []): JsonResponse

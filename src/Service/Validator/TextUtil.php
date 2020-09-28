@@ -3,6 +3,10 @@
 
 namespace App\Service\Validator;
 
+/*
+ * Validator, ViolationUtil and TextUtil from:
+ * http://www.inanzzz.com/index.php/post/umax/using-native-symfony-serializer-and-validator-for-json-api
+ */
 
 class TextUtil
 {

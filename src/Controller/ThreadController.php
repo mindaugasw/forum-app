@@ -4,32 +4,49 @@ namespace App\Controller;
 
 use App\Entity\Thread;
 use App\Entity\VoteThread;
+use App\Repository\ThreadRepository;
+use App\Service\Validator\JsonValidator;
+use App\Service\Validator\QueryParamsValidator;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @Route("/api/threads")
  */
 class ThreadController extends BaseController
 {
-    /**
+	/** @var ThreadRepository */
+	private $threadsRepo;
+	
+	public function __construct(SerializerInterface $serializer, EntityManagerInterface $em, JsonValidator $validator, QueryParamsValidator $queryValidator)
+	{
+		parent::__construct($serializer, $em, $validator, $queryValidator);
+		
+		$this->threadsRepo = $em->getRepository(Thread::class);
+	}
+	
+	/**
      * @Route("/", name="thread_list", methods={"GET"})
      */
     public function getList(Request $request)
     {
-    	//$query = $this->threadsRepo->findAll();
-    	//$data = $query->getResult();
+    	$ordering = $this->queryValidator->OrderParams($request, Thread::class, null, ['comments', 'author', 'userVote']);
     	
-		$data = $this->threadsRepo->findByPaginated(['author' => $this->getUser()]);
-		//$data = $this->threadsRepo->findBy(['author' => $this->getUser()]);
-		
-		return $this->ApiPaginatedResponse(
+		//$data = $this->threadsRepo->findByPaginated([]);
+		//$data = $this->threadsRepo->findBy(['title' => 'Here the Queen, who.']);
+		$data = $this->threadsRepo->findByCustomPaginated([], $ordering);
+	
+		//return $this->ApiPaginatedResponse(
+		return $this->ApiResponse(
     		$data, 200, ['thread_read', 'user_read'], ['threads']
 		);
-		// TODO filtering, sorting
+		// TODO filtering/searching
 	}
 	
 	/**
@@ -49,7 +66,7 @@ class ThreadController extends BaseController
     public function createNew(Request $request)
     {
     	/** @var Thread $thread */
-		$thread = $this->validator->ValidateNew($request->getContent(), Thread::class, ['thread_write']);
+		$thread = $this->jsonValidator->ValidateNew($request->getContent(), Thread::class, ['thread_write']);
     	$thread->setAuthor($this->getUser());
 		
 		// TODO fix: Thread->updatedAt automatically set also on new creation. Or set updatedAt to not nullable
@@ -64,7 +81,7 @@ class ThreadController extends BaseController
      */
     public function edit(Thread $thread, Request $request)
     {
-		$this->validator->ValidateEdit($request->getContent(), $thread, ['thread_read']);
+		$this->jsonValidator->ValidateEdit($request->getContent(), $thread, ['thread_read']);
 		$this->em->flush();
 		return $this->ApiResponse($thread, 200, ['thread_read', 'user_read'], ['threads']);
 		// TODO voter auth

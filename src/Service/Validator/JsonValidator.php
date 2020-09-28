@@ -70,6 +70,9 @@ class JsonValidator
 	}
 	
 	/**
+	 * On successful validation returns updated $obj from given Json.
+	 * Throws exception on validation error.
+	 * 
 	 * @param string $json Json string to validate
 	 * @param object $obj Object to update
 	 * @param array $groups Deserialization groups

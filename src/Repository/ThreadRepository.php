@@ -7,6 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\Event\Subscriber\Paginate\Callback\CallbackPagination;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Intl\Exception\NotImplementedException;
 use Symfony\Component\Security\Core\Security;
@@ -19,6 +20,10 @@ use Symfony\Component\Security\Core\Security;
  */
 class ThreadRepository extends ServiceEntityRepository
 {
+	/*
+	 * All overridden methods additionally fill userVote property on Thread.
+	 */
+	
 	/**
 	 * @var VoteThreadRepository
 	 */
@@ -148,11 +153,31 @@ class ThreadRepository extends ServiceEntityRepository
 		
 		$query = $queryBuilder->getQuery();
 		
-		$pagination = $this->paginator->paginate($query, $page, $perPage);
+		$pagination = $this->paginator->paginate($query, $page, $perPage); // TODO: write a custom paginator. This one super slow.
 		
 		if ($pagination->count() !== 0)
 			$this->addMultipleUserVotes($pagination->getItems());
 		return $pagination;
+	}
+	
+	public function findByCustomPaginated(array $criteria = null, array $orderBy = null, $page = 1, $perPage = 10, bool $doCount = true)
+	{
+		$repo = $this;
+		
+		// https://github.com/KnpLabs/knp-components/blob/master/docs/pager/intro.md#custom-data-repository-pagination
+		$countFunc = function () use ($repo, $criteria) {
+			return $repo->count($criteria);
+			// TODO implement checking if doCount is true
+			// Results should not be counted on expensive queries (full text search)
+			
+			// TODO create a custom paginator to use with unknown total items count
+		};
+		$itemsFunc = function ($offset, $limit) use ($repo, $criteria, $orderBy) {
+			return $repo->findBy($criteria, $orderBy, $limit, $offset);
+		};
+		
+		$target = new CallbackPagination($countFunc, $itemsFunc);
+		return $this->paginator->paginate($target, $page, $perPage);
 	}
 	
 	/**

@@ -66,9 +66,12 @@ class Thread
 	 */
 	private $updatedAt; // TODO fix to NOT automatically set on new creation. Or set to not nullable
 
+	// private $lastCommentAt; // TODO
+	
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="thread", orphanRemoval=true) // TODO EXTRA_LAZY ?
 	 * Groups({"thread_read"})
+	 * ORM\OrderBy({"createdAt"="ASC"}) // TODO
      */
     private $comments;
 
