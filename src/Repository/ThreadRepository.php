@@ -229,6 +229,23 @@ class ThreadRepository extends ServiceEntityRepository
 		return $threads;
 	}
 	
+	/**
+	 * Perform a fulltext search on title and content columns. Uses
+	 * Service\DoctrineExtensions\MatchAgainst. Supports boolean operators:
+	 * https://dev.mysql.com/doc/refman/8.0/en/fulltext-boolean.html
+	 *  
+	 * @param $searchTerm
+	 * @return int|mixed|string
+	 */
+	public function fullTextSearch($searchTerm)
+	{
+		return $this->createQueryBuilder('t')
+			->andWhere('MATCH_AGAINST(t.title, t.content) AGAINST(:searchterm boolean)>0')
+			->setParameter('searchterm', $searchTerm)
+			->getQuery()
+			->getResult()
+			;
+	}
 
     // /**
     //  * @return Thread[] Returns an array of Thread objects

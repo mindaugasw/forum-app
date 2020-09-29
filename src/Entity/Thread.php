@@ -15,6 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ThreadRepository::class)
+ * @ORM\Table(indexes={@ORM\Index(columns={"title", "content"}, flags={"fulltext"})})
  */
 class Thread
 {

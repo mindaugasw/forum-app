@@ -38,12 +38,13 @@ class ThreadController extends BaseController
     {
     	$ordering = $this->queryValidator->OrderParams($request, Thread::class, null, ['comments', 'author', 'userVote']);
     	
+    	
 		//$data = $this->threadsRepo->findByPaginated([]);
 		//$data = $this->threadsRepo->findBy(['title' => 'Here the Queen, who.']);
 		$data = $this->threadsRepo->findByCustomPaginated([], $ordering);
-	
-		//return $this->ApiPaginatedResponse(
-		return $this->ApiResponse(
+		
+		return $this->ApiPaginatedResponse(
+		//return $this->ApiResponse(
     		$data, 200, ['thread_read', 'user_read'], ['threads']
 		);
 		// TODO filtering/searching
