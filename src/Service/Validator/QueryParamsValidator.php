@@ -5,8 +5,13 @@ namespace App\Service\Validator;
 
 
 use App\Entity\Thread;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 use ReflectionClass;
 use RuntimeException;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -16,6 +21,8 @@ class QueryParamsValidator
 	// Query params keys
 	public const ORDER_BY = 'orderby';
 	public const ORDER_DIR = 'orderdir';
+	public const PAGE_NUM = 'page';
+	public const PER_PAGE = 'perpage';
 	
 	/*
 	 * // TODO use violator like in JsonValidator
@@ -23,6 +30,13 @@ class QueryParamsValidator
 	 */
 	//private $violator;
 	
+	/** @var ContainerBagInterface */
+	private $params;
+	
+	public function __construct(ParameterBagInterface $params)
+	{
+		$this->params = $params;
+	}
 	
 	/**
 	 * Validates query parameters 'orderby' and 'orderdir' for list ordering.
@@ -31,7 +45,7 @@ class QueryParamsValidator
 	 * 
 	 * Allowed values for 'orderby' are any in the propsWhitelist OR any properties
 	 * on the entity entityName and not in the propsBlackList. Case sensitive. Only
-	 * whitelist or blacklist can be set, other must be null.
+	 * whitelist OR blacklist can be set, other must be null.
 	 * 
 	 * Allowed values for 'orderdir' are ASC, DESC, or blank. Case-insensitive.
 	 * In case of blank defaults to ASC.
@@ -41,12 +55,11 @@ class QueryParamsValidator
 	 * @param array $proprsWhitelist Allow only these properties in 'orderby' 
 	 * @param array $paramsBlacklist Allow all properties on entity entityName except those in the blacklist
 	 */
-	public function OrderParams(Request $request, string $entityName, array $propsWhitelist = null, array $propsBlacklist = null)
+	public function Order(Request $request, string $entityName, array $propsWhitelist = null, array $propsBlacklist = null)
 	{
-		// foreach param check if in whitelist and has direction or ASC
-		
+		// ORDER FIELD NAME
 		if ($propsWhitelist !== null && $propsBlacklist !== null)
-			throw new RuntimeException('Whitelist and blacklist cannot both be set.');
+			throw new RuntimeException('Whitelist and blacklist cannot both be set.'); // TODO change all exceptions to some other 400 exception
 		
 		if (!$request->query->has(self::ORDER_BY))
 			return [];
@@ -69,6 +82,7 @@ class QueryParamsValidator
 				throw new RuntimeException("Ordering by '{$orderBy}' is not allowed.");
 		}
 		
+		// ORDER DIRECTION
 		$direction = 'ASC';
 		if ($request->query->has(self::ORDER_DIR))
 		{
@@ -80,5 +94,25 @@ class QueryParamsValidator
 		return [$orderBy => $direction];
 	}
 	
+	/**
+	 * Returns pagination data in the form [int page, int perpage] from query
+	 * params 'page' and 'perpage'.
+	 * If either one not set, page defaults to 1, perpage is retrieved from config.
+	 * 
+	 * @param Request $request
+	 */
+	public function Pagination(Request $request)
+	{
+		$page = $request->query->getInt(self::PAGE_NUM, 1);
+		
+		if ($page < 1)
+			throw new RuntimeException('Illegal page number: '.$page);
+		
+		$perpage = $request->query->getInt(self::PER_PAGE, $this->params->get('per_page_default'));
+		if ($perpage < 1 || $perpage > 200)
+			throw new RuntimeException('Illegal per page number: '.$perpage);
+		
+		return ['page' => $page, 'perpage' => $perpage];
+	}
 	
 }

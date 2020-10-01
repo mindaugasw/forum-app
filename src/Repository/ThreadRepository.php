@@ -160,7 +160,7 @@ class ThreadRepository extends ServiceEntityRepository
 		return $pagination;
 	}
 	
-	public function findByCustomPaginated(array $criteria = null, array $orderBy = null, $page = 1, $perPage = 10, bool $doCount = true)
+	public function findByCustomPaginated(array $criteria = null, array $orderBy = null, array $pagination = [], bool $doCount = true)
 	{
 		$repo = $this;
 		
@@ -177,7 +177,7 @@ class ThreadRepository extends ServiceEntityRepository
 		};
 		
 		$target = new CallbackPagination($countFunc, $itemsFunc);
-		return $this->paginator->paginate($target, $page, $perPage);
+		return $this->paginator->paginate($target, $pagination['page'], $pagination['perpage']);
 	}
 	
 	/**

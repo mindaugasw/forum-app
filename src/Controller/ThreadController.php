@@ -36,12 +36,12 @@ class ThreadController extends BaseController
      */
     public function getList(Request $request)
     {
-    	$ordering = $this->queryValidator->OrderParams($request, Thread::class, null, ['comments', 'author', 'userVote']);
-    	
-    	
-		//$data = $this->threadsRepo->findByPaginated([]);
+    	$ordering = $this->queryValidator->Order($request, Thread::class, null, ['comments', 'author', 'userVote']);
+    	$pagination = $this->queryValidator->Pagination($request);
+		
+    	//$data = $this->threadsRepo->findByPaginated([]);
 		//$data = $this->threadsRepo->findBy(['title' => 'Here the Queen, who.']);
-		$data = $this->threadsRepo->findByCustomPaginated([], $ordering);
+		$data = $this->threadsRepo->findByCustomPaginated([], $ordering, $pagination);
 		
 		return $this->ApiPaginatedResponse(
 		//return $this->ApiResponse(
