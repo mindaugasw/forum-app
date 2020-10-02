@@ -2,70 +2,69 @@
 
 namespace App\Repository;
 
-use App\Entity\Thread;
-use App\Entity\VoteThread;
+use App\Entity\Comment;
+use App\Entity\VoteComment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * @method VoteThread|null find($id, $lockMode = null, $lockVersion = null)
- * @method VoteThread|null findOneBy(array $criteria, array $orderBy = null)
- * @method VoteThread[]    findAll()
- * @method VoteThread[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method VoteComment|null find($id, $lockMode = null, $lockVersion = null)
+ * @method VoteComment|null findOneBy(array $criteria, array $orderBy = null)
+ * @method VoteComment[]    findAll()
+ * @method VoteComment[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class VoteThreadRepository extends ServiceEntityRepository
+class VoteCommentRepository extends ServiceEntityRepository
 {
 	/** @var Security */
 	private $security;
 	
 	public function __construct(ManagerRegistry $registry, Security $security)
     {
-        parent::__construct($registry, VoteThread::class);
+        parent::__construct($registry, VoteComment::class);
 		$this->security = $security;
 	}
 	
 	/**
 	 * Adds userVote property to given thread.
 	 *
-	 * @param Thread $thread
-	 * @return Thread
+	 * @param Comment $comment
+	 * @return Comment
 	 */
-	public function addUserVoteToSingleThread(Thread $thread)
+	public function addUserVoteToSingleComment(Comment $comment)
 	{
 		$user = $this->security->getUser();
 		if ($user !== null) {
-			$userVote = $this->findOneBy(['thread' => $thread, 'user' => $user]);
+			$userVote = $this->findOneBy(['comment' => $comment, 'user' => $user]);
 			if ($userVote !== null)
-				$userVote->setUserVoteOnThread();
+				$userVote->setUserVoteOnComment();
 		}
 		
-		return $thread;
+		return $comment;
 	}
 	
 	/**
-	 * Adds userVote property to all given threads.
+	 * Adds userVote property to all given comments.
 	 *
-	 * @param array $threads
+	 * @param array $comments
 	 * @return array
 	 */
-	public function addUserVotesToManyThreads(array $threads)
+	public function addUserVotesToManyComments(array $comments)
 	{
 		$user = $this->security->getUser();
 		if ($user !== null) {
-			$userVotes = $this->findBy(['user' => $user, 'thread' => $threads]);
+			$userVotes = $this->findBy(['user' => $user, 'comment' => $comments]);
 			
 			for ($i = 0; $i < count($userVotes); $i++) {
-				$userVotes[$i]->setUserVoteOnThread();
+				$userVotes[$i]->setUserVoteOnComment();
 			}
 		}
-		return $threads;
+		return $comments;
 	}
-    
     
 
     // /**
-    //  * @return VoteThread[] Returns an array of VoteThread objects
+    //  * @return VoteComment[] Returns an array of VoteComment objects
     //  */
     /*
     public function findByExampleField($value)
@@ -82,7 +81,7 @@ class VoteThreadRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?VoteThread
+    public function findOneBySomeField($value): ?VoteComment
     {
         return $this->createQueryBuilder('v')
             ->andWhere('v.exampleField = :val')

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Thread;
 use App\Entity\VoteThread;
 use App\Repository\ThreadRepository;
+use App\Repository\VoteCommentRepository;
 use App\Service\Validator\JsonValidator;
 use App\Service\Validator\QueryParamsValidator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -38,7 +39,7 @@ class ThreadController extends BaseController
 	 * Defaults to 1st page with 20 items, and no ordering.
 	 * More info in QueryParamsValidator.
 	 * 
-     * @Route("/", name="thread_list", methods={"GET"})
+     * @Route("/", methods={"GET"})
      */
     public function getList(Request $request)
     {
@@ -56,18 +57,20 @@ class ThreadController extends BaseController
 	 * Allows comments ordering (only by createdAt) and pagination.
 	 * Defaults 1st page with 20 items, and ASC ordering by createdAt.
 	 * 
-	 * @Route("/{id}/", name="thread_get", methods={"GET"})
+	 * @Route("/{id}/", methods={"GET"})
 	 */
-	public function getOne(Thread $thread)
+	public function getOne(Thread $thread, VoteCommentRepository $voteCommentRepo)
 	{
-		return $this->ApiResponse($thread, 200, ['thread_read', 'user_read'], ['threads']);
+		$voteCommentRepo->addUserVotesToManyComments($thread->getComments()->toArray());
+		
+		return $this->ApiResponse($thread, 200, ['thread_read', 'user_read', 'comment_read'], ['threads']);
 		// TODO add comments
 		// TODO comments pagination
 		// TODO comments sorting
 	}
     
     /**
-     * @Route("/", name="thread_new", methods={"POST"})
+     * @Route("/", methods={"POST"})
 	 * @IsGranted("ROLE_USER")
      */
     public function createNew(Request $request)
@@ -84,7 +87,7 @@ class ThreadController extends BaseController
     }
 
     /**
-     * @Route("/{id}/", name="thread_edit", methods={"PATCH"})
+     * @Route("/{id}/", methods={"PATCH"})
      */
     public function edit(Thread $thread, Request $request)
     {
@@ -95,7 +98,7 @@ class ThreadController extends BaseController
 	}
 
     /**
-     * @Route("/{id}/", name="thread_delete", methods={"DELETE"})
+     * @Route("/{id}/", methods={"DELETE"})
      */
     public function delete(Thread $thread)
     {
@@ -106,10 +109,10 @@ class ThreadController extends BaseController
 	}
 	
 	/**
-	 * @Route("/{id}/vote/{voteValue}/", name="thread_vote", methods={"POST"}, requirements={"voteValue"="up|down|none"})
+	 * @Route("/{id}/vote/{voteValue}/", methods={"POST"}, requirements={"voteValue"="1|0|-1"})
 	 * @IsGranted("ROLE_USER")
 	 */
-	public function vote(Thread $thread, string $voteValue)
+	public function vote(Thread $thread, int $voteValue)
 	{
 		// TODO update logic to match new userVote type (int)
 		

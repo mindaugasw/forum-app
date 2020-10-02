@@ -11,7 +11,7 @@ use Doctrine\Persistence\ObjectManager;
 class CommentFixtures extends BaseFixture //implements DependentFixtureInterface
 {
 	public const COMMENT_REFERENCE = 'comments';
-	//public const COUNT = ThreadFixtures::COUNT * 5;
+	public const COUNT = 25; // Minimum number of comments per thread. Number ranges between x1-2
 	
     public function loadData(ObjectManager $manager)
     {
@@ -21,7 +21,22 @@ class CommentFixtures extends BaseFixture //implements DependentFixtureInterface
 		//$threads = $this->getRandomReferences(ThreadFixtures::THREAD_REFERENCE, ThreadFixtures::COUNT);
 		$threads = $manager->getRepository(Thread::class)->findAll();
 	
-		foreach ($users as $user)
+		foreach ($threads as $thread)
+		{
+			for ($i = 0; $i < $f->numberBetween(self::COUNT, self::COUNT * 2); $i++)
+			{
+				$comment = new Comment();
+				if ($f->boolean(65))
+					$comment->setContent($f->realText(rand(30, 150)));
+				else
+					$comment->setContent($f->text(rand(30, 150)));
+				$comment->setAuthor($f->randomElement($users));
+				$comment->setThread($thread);
+				$manager->persist($comment);
+			}
+		}
+		
+		/*foreach ($users as $user)
 		{
 			foreach ($threads as $thread)
 			{
@@ -38,7 +53,7 @@ class CommentFixtures extends BaseFixture //implements DependentFixtureInterface
 					$manager->persist($comment);
 				}
 			}
-		}
+		}*/
 		
 		$manager->flush();
 		

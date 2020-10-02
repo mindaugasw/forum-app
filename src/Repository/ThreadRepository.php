@@ -42,7 +42,7 @@ class ThreadRepository extends ServiceEntityRepository
 		$thread = parent::find($id, $lockMode, $lockVersion);
 		
 		if ($thread !== null)
-			$this->addSingleUserVote($thread);
+			$this->voteThreadRepo->addUserVoteToSingleThread($thread);
 		return $thread;
 	}
 	
@@ -62,7 +62,7 @@ class ThreadRepository extends ServiceEntityRepository
 		$threads = parent::findBy($criteria, $orderBy, $limit, $offset);
 		
 		if (count($threads) !== 0)
-			$this->addMultipleUserVotes($threads);
+			$this->voteThreadRepo->addUserVotesToManyThreads($threads);
 		return $threads;
 	}
 	
@@ -94,52 +94,15 @@ class ThreadRepository extends ServiceEntityRepository
 		$thread = parent::findOneBy($criteria, $orderBy);
 		
 		if ($thread !== null)
-			$this->addSingleUserVote($thread);
+			$this->voteThreadRepo->addUserVoteToSingleThread($thread);
 		return $thread;
-	}
-	
-	/**
-	 * Adds userVote property to given thread.
-	 * 
-	 * @param Thread $thread
-	 * @return Thread
-	 */
-	private function addSingleUserVote(Thread $thread)
-	{
-		$user = $this->security->getUser();
-		if ($user !== null) {
-			$userVote = $this->voteThreadRepo->findOneBy(['thread' => $thread, 'user' => $user]);
-			if ($userVote !== null)
-				$userVote->setUserVoteOnThread();
-		}
-		
-		return $thread;
-	}
-	
-	/**
-	 * Adds userVote property to all given threads.
-	 * 
-	 * @param array $threads
-	 * @return array
-	 */
-	private function addMultipleUserVotes(array $threads)
-	{
-		$user = $this->security->getUser();
-		if ($user !== null) {
-			$userVotes = $this->voteThreadRepo->findBy(['user' => $user, 'thread' => $threads]);
-			
-			for ($i = 0; $i < count($userVotes); $i++) {
-				$userVotes[$i]->setUserVoteOnThread();
-			}
-		}
-		return $threads;
 	}
 	
 	/**
 	 * Perform a fulltext search on title and content columns. Uses
 	 * Service\DoctrineExtensions\MatchAgainst. Supports boolean operators:
 	 * https://dev.mysql.com/doc/refman/8.0/en/fulltext-boolean.html
-	 *  
+	 *
 	 * @param $searchTerm
 	 * @return int|mixed|string
 	 */
@@ -151,7 +114,11 @@ class ThreadRepository extends ServiceEntityRepository
 			->getQuery()
 			->getResult()
 			;
+		// TODO add pagination
+		// TODO add userVote
 	}
+	
+	
 
     // /**
     //  * @return Thread[] Returns an array of Thread objects

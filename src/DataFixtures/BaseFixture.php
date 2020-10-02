@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\VoteThread;
+use App\Repository\VoteCommentRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -16,6 +17,7 @@ abstract class BaseFixture extends Fixture implements OrderedFixtureInterface
 		ThreadFixtures::class,
 		CommentFixtures::class,
 		VoteThreadFixtures::class,
+		VoteCommentFixtures::class
 	];
 	
 	/** @var ObjectManager */

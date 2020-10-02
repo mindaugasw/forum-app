@@ -62,18 +62,18 @@ class Thread
 	
 	/**
 	 * @Gedmo\Timestampable(on="update")
-	 * @ORM\Column(type="datetime", nullable=true)
+	 * @ORM\Column(type="datetime")
 	 * @Groups({"thread_read"})
 	 */
-	private $updatedAt; // TODO fix to NOT automatically set on new creation. Or set to not nullable
+	private $updatedAt;
 
 	// private bool $edited; // TODO
 	
-	// private $lastCommentAt; // TODO
+	// private $lastComment; // TODO
 	
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="thread", orphanRemoval=true) // TODO EXTRA_LAZY ?
-	 * Groups({"thread_read"})
+	 * @Groups({"comment_read"})
 	 * ORM\OrderBy({"createdAt"="ASC"}) // TODO
      */
     private $comments;
@@ -90,7 +90,7 @@ class Thread
 	/**
 	 * Vote on this item of currently logged in user.
 	 * Not stored in DB, instead joined in repository from VoteThread results.
-	 * @Groups({"user_read"})
+	 * @Groups({"thread_read"})
 	 */
     private $userVote = 0;
     

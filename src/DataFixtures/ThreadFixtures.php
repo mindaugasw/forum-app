@@ -11,7 +11,7 @@ use Doctrine\Persistence\ObjectManager;
 class ThreadFixtures extends BaseFixture //implements DependentFixtureInterface
 {
 	public const THREAD_REFERENCE = 'threads';
-	public const COUNT = 400; // UserFixtures::COUNT * 40; //5; # TODO
+	public const COUNT = 100; // UserFixtures::COUNT * 40; //5; # TODO
 	
     public function loadData(ObjectManager $manager)
     {
@@ -23,13 +23,13 @@ class ThreadFixtures extends BaseFixture //implements DependentFixtureInterface
 		for ($i = 0; $i < self::COUNT; $i++) {
 			$thread = new Thread();
 			$thread->setTitle($f->realText(rand(20, 150), 1));
-			if ($f->boolean(80)) // 20% threads with empty content
-			{
-				if ($f->boolean(65))
-					$thread->setContent($f->realText(rand(40, 1000)));
-				else
-					$thread->setContent($f->text(rand(40, 1000)));
-			}
+			//if ($f->boolean(80)) // 20% threads with empty content
+			//{
+			if ($f->boolean(65))
+				$thread->setContent($f->realText(rand(40, 300)));
+			else
+				$thread->setContent($f->text(rand(40, 300)));
+			//}
 			$thread->setAuthor($f->randomElement($users));
 			$this->addReference(self::THREAD_REFERENCE.'_'.$i, $thread);
 			$manager->persist($thread);

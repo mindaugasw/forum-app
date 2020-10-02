@@ -29,6 +29,14 @@ class VoteThread
 	
 	public function __construct() {	}
 	
+	public static function create(Thread $thread, User $user, int $vote) : self
+	{
+		return (new VoteThread())
+			->setThread($thread)
+			->setUser($user)
+			->setVote($vote);
+	}
+	
 	/**
 	 * Sets $vote value on $thread
 	 * Shortcut for: $this->$getThread()->setUserVote($this->getVote());
@@ -38,14 +46,6 @@ class VoteThread
 		$this->getThread()->setUserVote($this->getVote());
 		
 		return $this;
-	}
-	
-	public static function create(Thread $thread, User $user, int $vote) : self
-	{
-		return (new VoteThread())
-			->setThread($thread)
-			->setUser($user)
-			->setVote($vote);
 	}
 	
 	public function getThread(): ?Thread
