@@ -67,6 +67,8 @@ class Thread
 	 */
 	private $updatedAt; // TODO fix to NOT automatically set on new creation. Or set to not nullable
 
+	// private bool $edited; // TODO
+	
 	// private $lastCommentAt; // TODO
 	
     /**
@@ -87,7 +89,7 @@ class Thread
 	
 	/**
 	 * Vote on this item of currently logged in user.
-	 * Not stored in DB, joined in repository from VoteThread results.
+	 * Not stored in DB, instead joined in repository from VoteThread results.
 	 * @Groups({"user_read"})
 	 */
     private $userVote = 0;

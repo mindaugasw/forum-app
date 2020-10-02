@@ -32,25 +32,30 @@ class ThreadController extends BaseController
 	}
 	
 	/**
+	 * Get a list of threads.
+	 * Allows items ordering and pagination, using query params.
+	 * Supported query params: orderby, orderdir, page, perpage.
+	 * Defaults to 1st page with 20 items, and no ordering.
+	 * More info in QueryParamsValidator.
+	 * 
      * @Route("/", name="thread_list", methods={"GET"})
      */
     public function getList(Request $request)
     {
-    	$ordering = $this->queryValidator->Order($request, Thread::class, null, ['comments', 'author', 'userVote']);
-    	$pagination = $this->queryValidator->Pagination($request);
+		$params = $this->queryValidator->Everything($request, Thread::class, null, ['comments', 'author', 'userVote']);
 		
-    	//$data = $this->threadsRepo->findByPaginated([]);
-		//$data = $this->threadsRepo->findBy(['title' => 'Here the Queen, who.']);
-		$data = $this->threadsRepo->findByCustomPaginated([], $ordering, $pagination);
+		$data = $this->threadsRepo->findByPaginated([], $params['ordering'], $params['pagination']);
 		
 		return $this->ApiPaginatedResponse(
-		//return $this->ApiResponse(
     		$data, 200, ['thread_read', 'user_read'], ['threads']
 		);
-		// TODO filtering/searching
 	}
-	
+
 	/**
+	 * Get a single thread, including its comments.
+	 * Allows comments ordering (only by createdAt) and pagination.
+	 * Defaults 1st page with 20 items, and ASC ordering by createdAt.
+	 * 
 	 * @Route("/{id}/", name="thread_get", methods={"GET"})
 	 */
 	public function getOne(Thread $thread)
@@ -58,6 +63,7 @@ class ThreadController extends BaseController
 		return $this->ApiResponse($thread, 200, ['thread_read', 'user_read'], ['threads']);
 		// TODO add comments
 		// TODO comments pagination
+		// TODO comments sorting
 	}
     
     /**
@@ -105,6 +111,8 @@ class ThreadController extends BaseController
 	 */
 	public function vote(Thread $thread, string $voteValue)
 	{
+		// TODO update logic to match new userVote type (int)
+		
 		$user = $this->getUser();
 		if ($thread->getAuthor() == $user)
 			throw new BadRequestHttpException('Voting on your own threads is not allowed');
@@ -150,4 +158,6 @@ class ThreadController extends BaseController
 		// TODO recount thread votes
 		return $this->ApiResponse('success', 200);
 	}
+	
+	// TODO add threads search
 }

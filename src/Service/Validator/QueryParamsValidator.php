@@ -39,6 +39,24 @@ class QueryParamsValidator
 	}
 	
 	/**
+	 * Joins Ordering and Pagination params validation into one method.
+	 * 
+	 * @param Request $request
+	 * @param string|null $entityName Entity name, used for ordering fields validation. If null, ordering is skipped
+	 * @param array|null $propsWhitelist Whitelisted ordering properties
+	 * @param array|null $propsBlacklist Blacklisted ordering properties
+	 */
+	public function Everything(Request $request, string $entityName = null, array $propsWhitelist = null, array $propsBlacklist = null)
+	{
+		$pagination = $this->Pagination($request);
+		$ordering = [];
+		if ($entityName !== null && ($propsWhitelist !== null || $propsBlacklist !== null))
+			$ordering = $this->Ordering($request, $entityName, $propsWhitelist, $propsBlacklist);
+		
+		return ['ordering' => $ordering, 'pagination' => $pagination];
+	}
+	
+	/**
 	 * Validates query parameters 'orderby' and 'orderdir' for list ordering.
 	 * If validated successfully, returns ready-to-use array in a query, in the
 	 * form ['key' => 'ASC|DESC'], or empty array if no sorting params were found.
@@ -55,7 +73,7 @@ class QueryParamsValidator
 	 * @param array $proprsWhitelist Allow only these properties in 'orderby' 
 	 * @param array $paramsBlacklist Allow all properties on entity entityName except those in the blacklist
 	 */
-	public function Order(Request $request, string $entityName, array $propsWhitelist = null, array $propsBlacklist = null)
+	public function Ordering(Request $request, string $entityName, array $propsWhitelist = null, array $propsBlacklist = null)
 	{
 		// ORDER FIELD NAME
 		if ($propsWhitelist !== null && $propsBlacklist !== null)
@@ -96,7 +114,7 @@ class QueryParamsValidator
 	
 	/**
 	 * Returns pagination data in the form [int page, int perpage] from query
-	 * params 'page' and 'perpage'.
+	 * parameters 'page' and 'perpage'.
 	 * If either one not set, page defaults to 1, perpage is retrieved from config.
 	 * 
 	 * @param Request $request

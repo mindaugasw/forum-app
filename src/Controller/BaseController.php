@@ -25,17 +25,6 @@ abstract class BaseController extends AbstractController
 	/** @var QueryParamsValidator */
 	protected $queryValidator;
 	
-	/* var \App\Repository\UserRepository /
-	protected $usersRepo;
-	/** @var \App\Repository\ThreadRepository /
-	protected $threadsRepo;
-	/** @var \App\Repository\VoteThreadRepository /
-	protected $voteThreadRepo;
-	/** @var \App\Repository\CommentRepository /
-	protected $commentsRepo;*/
-	
-	
-	
 	public function __construct(
 		SerializerInterface $serializer,
 		EntityManagerInterface $em,
@@ -46,14 +35,15 @@ abstract class BaseController extends AbstractController
 		$this->em = $em;
 		$this->jsonValidator = $validator;
 		$this->queryValidator = $queryValidator;
-		
-		/*$this->usersRepo = $em->getRepository(User::class);
-		$this->threadsRepo = $em->getRepository(Thread::class);
-		$this->commentsRepo = $em->getRepository(Comment::class);
-		$this->voteThreadRepo = $em->getRepository(VoteThread::class);*/
-		
 	}
 	
+	/**
+	 * @param $data
+	 * @param int $status
+	 * @param array $groups Serialization groups
+	 * @param array $ignoredAttributes Entity attribute names which should not be serialized
+	 * @return JsonResponse
+	 */
 	protected function ApiResponse($data, int $status = 200, array $groups = [], array $ignoredAttributes = []): JsonResponse
 	{
 		$serializedData = $this->serializer->serialize(
@@ -66,14 +56,13 @@ abstract class BaseController extends AbstractController
 	/**
 	 * @param PaginationInterface $data
 	 * @param int $status
-	 * @param array $groups
-	 * @param array $ignoredAttributes
+	 * @param array $groups Serialization groups
+	 * @param array $ignoredAttributes Entity attribute names which should not be serialized
 	 * @return JsonResponse
 	 */
-	protected function ApiPaginatedResponse($data, int $status = 200, array $groups = [], array $ignoredAttributes = []): JsonResponse
+	protected function ApiPaginatedResponse(PaginationInterface $data, int $status = 200, array $groups = [], array $ignoredAttributes = []): JsonResponse
 	{
 		$paginatedData = ['items' => $data, 'pagination' => $data->getPaginationData()];
 		return $this->ApiResponse($paginatedData, $status, $groups, $ignoredAttributes);
 	}
-	
 }
