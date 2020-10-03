@@ -86,26 +86,24 @@ class ThreadController extends BaseController
 
     /**
      * @Route("/{id}/", methods={"PATCH"})
-	 * @IsGranted("MANAGE", $thread)
+	 * @IsGranted("MANAGE", subject="thread")
      */
     public function edit(Thread $thread, Request $request)
     {
 		$this->jsonValidator->ValidateEdit($request->getContent(), $thread, ['thread_write']);
 		$this->em->flush();
 		return $this->ApiResponse($thread, 200, ['thread_read', 'user_read'], ['threads']);
-		// TODO voter auth
 	}
 
     /**
      * @Route("/{id}/", methods={"DELETE"})
-	 * 
+	 * @IsGranted("MANAGE", subject="thread")
      */
     public function delete(Thread $thread)
     {
 		$this->em->remove($thread);
 		$this->em->flush();
-		return $this->ApiResponse(null, 204);
-		// TODO voter auth
+		return $this->ApiResponse(null, 204); // 204 No Content
 	}
 	
 	/**
@@ -114,11 +112,15 @@ class ThreadController extends BaseController
 	 */
 	public function vote(Thread $thread, int $voteValue)
 	{
-		// TODO update logic to match new userVote type (int)
-		
 		$user = $this->getUser();
-		if ($thread->getAuthor() == $user)
-			throw new BadRequestHttpException('Voting on your own threads is not allowed');
+		if ($thread->getAuthor() === $user)
+			throw new BadRequestHttpException('Voting on your own threads is not allowed.');
+		
+		//
+		
+		
+		
+		
 		
 		// exists true
 			// vote none
