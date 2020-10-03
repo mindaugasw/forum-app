@@ -53,9 +53,8 @@ class ThreadController extends BaseController
 	}
 
 	/**
-	 * Get a single thread, including its comments.
-	 * Allows comments ordering (only by createdAt) and pagination.
-	 * Defaults 1st page with 20 items, and ASC ordering by createdAt.
+	 * Get a single thread, NOT including its comments.
+	 * // TODO remove this method
 	 * 
 	 * @Route("/{id}/", methods={"GET"})
 	 */
@@ -79,7 +78,6 @@ class ThreadController extends BaseController
 		$thread = $this->jsonValidator->ValidateNew($request->getContent(), Thread::class, ['thread_write']);
     	$thread->setAuthor($this->getUser());
 		
-		// TODO fix: Thread->updatedAt automatically set also on new creation. Or set updatedAt to not nullable
 		$this->em->persist($thread);
     	$this->em->flush();
     	
@@ -88,10 +86,11 @@ class ThreadController extends BaseController
 
     /**
      * @Route("/{id}/", methods={"PATCH"})
+	 * @IsGranted("MANAGE", $thread)
      */
     public function edit(Thread $thread, Request $request)
     {
-		$this->jsonValidator->ValidateEdit($request->getContent(), $thread, ['thread_read']);
+		$this->jsonValidator->ValidateEdit($request->getContent(), $thread, ['thread_write']);
 		$this->em->flush();
 		return $this->ApiResponse($thread, 200, ['thread_read', 'user_read'], ['threads']);
 		// TODO voter auth
@@ -99,6 +98,7 @@ class ThreadController extends BaseController
 
     /**
      * @Route("/{id}/", methods={"DELETE"})
+	 * 
      */
     public function delete(Thread $thread)
     {
