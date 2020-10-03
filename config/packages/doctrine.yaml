@@ -19,4 +19,4 @@ doctrine:
 
         dql:
             string_functions:
-                MATCH_AGAINST: 'App\Service\DoctrineExtensions\MatchAgainst'
+                MATCH_AGAINST: 'App\Doctrine\Extensions\MatchAgainst'

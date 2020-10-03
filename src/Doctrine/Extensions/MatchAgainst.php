@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\DoctrineExtensions;
+namespace App\Doctrine\Extensions;
 
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
 use Doctrine\ORM\Query\Lexer;
