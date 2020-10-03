@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -88,6 +89,7 @@ class ThreadController extends BaseController
     public function edit(Thread $thread, Request $request)
     {
 		$this->jsonValidator->ValidateEdit($request->getContent(), $thread, ['thread_write']);
+		$thread->setEdited(true);
 		$this->em->flush();
 		return $this->ApiResponse($thread, 200, ['thread_read', 'user_read'], ['threads']);
 	}
@@ -113,7 +115,7 @@ class ThreadController extends BaseController
 		if ($thread->getAuthor() === $user)
 			throw new BadRequestHttpException('Voting on your own threads is not allowed.');
 		
-		$voteThreadRepo = $this->em->getRepository(VoteThread::class); 
+		$voteThreadRepo = $this->em->getRepository(VoteThread::class);
 		
 		$vote = $voteThreadRepo->findOneBy(['user' => $user, 'thread' => $thread]);
 		$threadVotesCount = $voteThreadRepo->countThreadVotes($thread);

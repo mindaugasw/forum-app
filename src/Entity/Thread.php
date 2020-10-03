@@ -66,8 +66,12 @@ class Thread
 	 * @Groups({"thread_read"})
 	 */
 	private $updatedAt;
-
-	// private bool $edited; // TODO
+	
+	/**
+	 * @ORM\Column(type="boolean")
+	 * @Groups({"thread_read"})
+	 */
+	private $edited = false;
 	
 	// private $lastComment; // TODO
 	
@@ -99,13 +103,13 @@ class Thread
 	 * @Groups({"thread_read"})
      */
     private $votesCount = 0;
-    
+
     
     
 	public function __construct()
-	{
-		$this->comments = new ArrayCollection();
-	}
+         	{
+         		$this->comments = new ArrayCollection();
+         	}
 
     public function getId(): ?int
     {
@@ -142,15 +146,9 @@ class Thread
     }
 
 	public function getUpdatedAt(): ?\DateTimeInterface
-         	{
-         		return $this->updatedAt;
-         	}
-	
-	/*public function getCreatedAtAgo() : string
 	{
-		// TODO
-		return Carbon::instance($this->getCreatedAt())->diffForHumans();
-	}*/
+		return $this->updatedAt;
+	}
 
     /**
      * @return Collection|Comment[]
@@ -196,16 +194,16 @@ class Thread
     }
 	
 	public function setUserVote(int $userVote): self
-         	{
-         		$this->userVote = $userVote;
-         		
-         		return $this;
-         	}
+                  	{
+                  		$this->userVote = $userVote;
+                  		
+                  		return $this;
+                  	}
 	
 	public function getUserVote(): int
-         	{
-         		return $this->userVote;
-         	}
+                  	{
+                  		return $this->userVote;
+                  	}
 
     public function getVotesCount(): ?int
     {
@@ -215,6 +213,18 @@ class Thread
     public function setVotesCount(int $votesCount): self
     {
         $this->votesCount = $votesCount;
+
+        return $this;
+    }
+
+    public function getEdited(): ?bool
+    {
+        return $this->edited;
+    }
+
+    public function setEdited(bool $edited): self
+    {
+        $this->edited = $edited;
 
         return $this;
     }

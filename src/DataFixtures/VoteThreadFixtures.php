@@ -23,7 +23,6 @@ class VoteThreadFixtures extends BaseFixture //implements DependentFixtureInterf
     	//$threads = $this->getAllReferences(ThreadFixtures::THREAD_REFERENCE);
     	//$threads = $this->getRandomReferences(ThreadFixtures::THREAD_REFERENCE, ThreadFixtures::COUNT);
 	
-		// TODO make sure that authors don't vote their own threads
 		foreach ($threads as $t)
 		{
 			foreach ($users as $u)
@@ -36,6 +35,14 @@ class VoteThreadFixtures extends BaseFixture //implements DependentFixtureInterf
 				}
 			}
     	}
+		$manager->flush();
+	
+		// Recount all votes
+		$voteThreadRepo = $manager->getRepository(VoteThread::class);
+		foreach ($threads as $t)
+		{
+			$t->setVotesCount($voteThreadRepo->countThreadVotes($t));
+		}
 		$manager->flush();
     }
 }
