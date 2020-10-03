@@ -93,10 +93,18 @@ class Thread
 	 * @Groups({"thread_read"})
 	 */
     private $userVote = 0;
+
+    /**
+     * @ORM\Column(type="integer")
+	 * @Groups({"thread_read"})
+     */
+    private $votesCount = 0;
+    
+    
     
 	public function __construct()
-    {
-        $this->comments = new ArrayCollection();
+	{
+		$this->comments = new ArrayCollection();
 	}
 
     public function getId(): ?int
@@ -134,9 +142,9 @@ class Thread
     }
 
 	public function getUpdatedAt(): ?\DateTimeInterface
-	{
-		return $this->updatedAt;
-	}
+         	{
+         		return $this->updatedAt;
+         	}
 	
 	/*public function getCreatedAtAgo() : string
 	{
@@ -188,14 +196,26 @@ class Thread
     }
 	
 	public function setUserVote(int $userVote): self
-	{
-		$this->userVote = $userVote;
-		
-		return $this;
-	}
+         	{
+         		$this->userVote = $userVote;
+         		
+         		return $this;
+         	}
 	
 	public function getUserVote(): int
-	{
-		return $this->userVote;
-	}
+         	{
+         		return $this->userVote;
+         	}
+
+    public function getVotesCount(): ?int
+    {
+        return $this->votesCount;
+    }
+
+    public function setVotesCount(int $votesCount): self
+    {
+        $this->votesCount = $votesCount;
+
+        return $this;
+    }
 }

@@ -62,7 +62,15 @@ class VoteThreadRepository extends ServiceEntityRepository
 		return $threads;
 	}
     
-    
+    public function countThreadVotes(Thread $thread)
+	{
+		return $this->createQueryBuilder('vt')
+			->select('SUM(vt.vote) as TOTAL_SUM')
+			->andWhere('vt.thread = :t')
+			->setParameter('t', $thread->getId())
+			->getQuery()
+			->getSingleScalarResult();
+	}
 
     // /**
     //  * @return VoteThread[] Returns an array of VoteThread objects

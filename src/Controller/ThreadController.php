@@ -62,10 +62,7 @@ class ThreadController extends BaseController
 	{
 		$voteCommentRepo->addUserVotesToManyComments($thread->getComments()->toArray());
 		
-		return $this->ApiResponse($thread, 200, ['thread_read', 'user_read', 'comment_read'], ['threads']);
-		// TODO add comments
-		// TODO comments pagination
-		// TODO comments sorting
+		return $this->ApiResponse($thread, 200, ['thread_read', 'user_read'], ['threads']);
 	}
     
     /**
@@ -116,52 +113,29 @@ class ThreadController extends BaseController
 		if ($thread->getAuthor() === $user)
 			throw new BadRequestHttpException('Voting on your own threads is not allowed.');
 		
-		//
+		$voteThreadRepo = $this->em->getRepository(VoteThread::class); 
 		
+		$vote = $voteThreadRepo->findOneBy(['user' => $user, 'thread' => $thread]);
+		$threadVotesCount = $voteThreadRepo->countThreadVotes($thread);
+		$voteValueChange = 0; // How much should be added to $threadVotesCount. Needed to prevent 2 DB flushes just for votes counting.
 		
-		
-		
-		
-		// exists true
-			// vote none
-				// do delete
-			// vote same
-				// do nothing
-			// vote different
-				// do update
-		
-		// exists false
-			// vote none
-				// do nothing
-			// vote up/down
-				// do create new vote
-		
-		$upvote = $voteValue === 'up' ? 1 : ($voteValue === 'down' ? 0 : -1);
-		$vote = $this->voteThreadRepo->findOneBy(['user' => $user, 'thread' => $thread]);
-		
-		if ($vote != null) { // vote already exists
-			if ($upvote == -1) {
-				// voted 'none', delete vote
-				$this->em->remove($vote);
-			} else if ($upvote == $vote->isUpvote()) {
-				// voted same as is currently, do nothing
-			} else {
-				// voted differently than currently, swap vote
-				$vote->setUpvote(!$vote->isUpvote());
-			}
-		} else { // vote does not exist
-			if ($upvote == -1) {
-				// voted 'none', do nothing
-			} else {
-				// voted 'up|down', create new vote
-				$vote = VoteThread::create($thread, $user, $upvote);
-				$this->em->persist($vote);
-			}
+		if ($vote === null) // Create new vote
+		{
+			$vote = VoteThread::create($thread, $user, $voteValue);
+			$this->em->persist($vote);
+			$voteValueChange = $voteValue;
+		}
+		else // Vote already exists, update it
+		{
+			$voteValueChange = $voteValue - $vote->getVote();
+			$vote->setVote($voteValue);
 		}
 		
+		$thread->setVotesCount($threadVotesCount + $voteValueChange);
+		
 		$this->em->flush();
-		// TODO recount thread votes
-		return $this->ApiResponse('success', 200);
+		
+		return $this->ApiResponse(null, 204);
 	}
 	
 	// TODO add threads search
