@@ -69,8 +69,10 @@ class CommentController extends BaseController
 		$comment = $this->jsonValidator->ValidateNew($request->getContent(), Comment::class, ['comment_write']);
 		$comment->setThread($thread);
 		$comment->setAuthor($this->getUser());
-		
 		$this->em->persist($comment);
+		
+		$thread->setCommentsCount($this->commentsRepo->countCommentsOnThread($thread) + 1);
+		
 		$this->em->flush();
 		
 		return $this->ApiResponse($comment, 201, ['comment_read', 'user_read', 'thread_read'], ['threads', 'comments']);
@@ -95,6 +97,9 @@ class CommentController extends BaseController
 	public function delete(Thread $thread, Comment $comment)
 	{
 		$this->em->remove($comment);
+		
+		$thread->setCommentsCount($this->commentsRepo->countCommentsOnThread($thread) - 1);
+		
 		$this->em->flush();
 		return $this->ApiResponse(null, 204); // 204 No Content
 	}

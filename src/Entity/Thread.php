@@ -78,11 +78,14 @@ class Thread
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="thread", orphanRemoval=true) // TODO fetch="EXTRA_LAZY" ?
 	 * @Groups({"comment_read"})
-	 * ORM\OrderBy({"createdAt"="ASC"}) // TODO
      */
     private $comments;
-
-    //private $commentsCount; // TODO
+	
+	/**
+	 * @ORM\Column(type="integer")
+	 * @Groups({"thread_read"})
+	 */
+	private $commentsCount = 0;
     
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="threads", fetch="EAGER")
@@ -104,12 +107,11 @@ class Thread
      */
     private $votesCount = 0;
 
-    
-    
+
 	public function __construct()
-	{
-		$this->comments = new ArrayCollection();
-	}
+         	{
+         		$this->comments = new ArrayCollection();
+         	}
 
     public function getId(): ?int
     {
@@ -146,9 +148,9 @@ class Thread
     }
 
 	public function getUpdatedAt(): ?\DateTimeInterface
-	{
-		return $this->updatedAt;
-	}
+         	{
+         		return $this->updatedAt;
+         	}
 
     /**
      * @return Collection|Comment[]
@@ -194,16 +196,16 @@ class Thread
     }
 	
 	public function setUserVote(int $userVote): self
-	{
-		$this->userVote = $userVote;
-		
-		return $this;
-	}
+         	{
+         		$this->userVote = $userVote;
+         		
+         		return $this;
+         	}
 	
 	public function getUserVote(): int
-	{
-		return $this->userVote;
-	}
+         	{
+         		return $this->userVote;
+         	}
 
     public function getVotesCount(): ?int
     {
@@ -225,6 +227,18 @@ class Thread
     public function setEdited(bool $edited): self
     {
         $this->edited = $edited;
+
+        return $this;
+    }
+
+    public function getCommentsCount(): ?int
+    {
+        return $this->commentsCount;
+    }
+
+    public function setCommentsCount(int $commentsCount): self
+    {
+        $this->commentsCount = $commentsCount;
 
         return $this;
     }

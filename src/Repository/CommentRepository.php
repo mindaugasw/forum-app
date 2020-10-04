@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Comment;
+use App\Entity\Thread;
 use App\Service\VotingService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -113,25 +114,41 @@ class CommentRepository extends ServiceEntityRepository
 		// TODO add userVote
 	}
 	
+	/**
+	 * Count comments on given thread.
+	 * 
+	 * @param Thread $thread
+	 * @return int|mixed|string
+	 * @throws \Doctrine\ORM\NoResultException
+	 * @throws \Doctrine\ORM\NonUniqueResultException
+	 */
+	public function countCommentsOnThread(Thread $thread)
+	{
+		return $this->createQueryBuilder('c')
+			->select('COUNT(c.id) AS TOTAL_COUNT')
+			->andWhere('c.thread = :t')
+			->setParameter('t', $thread->getId())
+			->getQuery()
+			->getSingleScalarResult();
+	}
 	
 	
-
-    // /**
-    //  * @return Comment[] Returns an array of Comment objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+	// /**
+	//  * @return Comment[] Returns an array of Comment objects
+	//  */
+	/*
+	public function findByExampleField($value)
+	{
+		return $this->createQueryBuilder('c')
+			->andWhere('c.exampleField = :val')
+			->setParameter('val', $value)
+			->orderBy('c.id', 'ASC')
+			->setMaxResults(10)
+			->getQuery()
+			->getResult()
+		;
+	}
+	*/
 
     /*
     public function findOneBySomeField($value): ?Comment

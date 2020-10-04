@@ -37,5 +37,14 @@ class CommentFixtures extends BaseFixture //implements DependentFixtureInterface
 		}
 		
 		$manager->flush();
+		
+		// Recount thread comments number
+		$allComments = $manager->getRepository(Comment::class)->findAll();
+		
+		foreach ($allComments as $c)
+		{
+			$c->getThread()->setCommentsCount($c->getThread()->getCommentsCount() + 1);
+		}
+		$manager->flush();
     }
 }
