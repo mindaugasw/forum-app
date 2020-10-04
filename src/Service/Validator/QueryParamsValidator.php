@@ -39,7 +39,8 @@ class QueryParamsValidator
 	}
 	
 	/**
-	 * Joins Ordering and Pagination params validation into one method.
+	 * Returns ordering and pagination data from query params.
+	 * (Joins Ordering and Pagination params validation into one method)
 	 * 
 	 * @param Request $request
 	 * @param string|null $entityName Entity name, used for ordering fields validation. If null, ordering is skipped

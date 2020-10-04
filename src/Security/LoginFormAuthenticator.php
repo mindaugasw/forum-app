@@ -21,6 +21,10 @@ use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticato
 use Symfony\Component\Security\Guard\PasswordAuthenticatedInterface;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
+/*
+ * NOT USED ANYMORE.
+ * Replaced by JWT auth.
+ */
 class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements PasswordAuthenticatedInterface
 {
     use TargetPathTrait;
@@ -37,6 +41,8 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 								CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder,
 								RouterInterface $router)
 	{
+		throw new \Exception('This Authenticator should not be used. Use JWT authentication instead.');
+		
 		$this->entityManager = $entityManager;
 		$this->urlGenerator = $urlGenerator;
 		$this->csrfTokenManager = $csrfTokenManager;

@@ -36,39 +36,6 @@ class CommentFixtures extends BaseFixture //implements DependentFixtureInterface
 			}
 		}
 		
-		/*foreach ($users as $user)
-		{
-			foreach ($threads as $thread)
-			{
-				if ($f->boolean(25)) { // % chance for each user to comment on each thread 
-					$comment = new Comment();
-					if ($f->boolean(65))
-						$comment->setContent($f->realText(rand(30, 300)));
-					else
-						$comment->setContent($f->text(rand(30, 300)));
-					
-					$comment->setAuthor($user);
-					$comment->setThread($thread);
-					//$this->addReference(self::COMMENT_REFERENCE.'_'.$i, $comment);
-					$manager->persist($comment);
-				}
-			}
-		}*/
-		
 		$manager->flush();
-		
-		/*$this->createMany(self::COUNT, self::COMMENT_REFERENCE, function (int $i) use ($f, $users, $threads) {
-			$comment = new Comment();
-			if ($f->boolean(65))
-				$comment->setContent($f->realText(rand(40, 1000)));
-			else
-				$comment->setContent($f->text(rand(40, 1000)));
-			
-			$comment->setAuthor($f->randomElement($users));
-			$comment->setThread($f->randomElement($threads));
-			return $comment;
-		});
-	
-		$manager->flush();*/
     }
 }

@@ -23,37 +23,15 @@ class ThreadFixtures extends BaseFixture //implements DependentFixtureInterface
 		for ($i = 0; $i < self::COUNT; $i++) {
 			$thread = new Thread();
 			$thread->setTitle($f->realText(rand(20, 150), 1));
-			//if ($f->boolean(80)) // 20% threads with empty content
-			//{
 			if ($f->boolean(65))
 				$thread->setContent($f->realText(rand(40, 300)));
 			else
 				$thread->setContent($f->text(rand(40, 300)));
-			//}
 			$thread->setAuthor($f->randomElement($users));
 			$this->addReference(self::THREAD_REFERENCE.'_'.$i, $thread);
 			$manager->persist($thread);
 		}
+		
 		$manager->flush();
-		
-    	/*$this->createMany(self::COUNT, self::THREAD_REFERENCE, function (int $i) use ($f, $users) {
-			$thread = new Thread();
-			$thread->setTitle($f->realText(rand(20, 150), 1));
-			if ($f->boolean(80)) // 20% treads with empty content
-			{
-				if ($f->boolean(65))
-					$thread->setContent($f->realText(rand(40, 1000)));
-				else
-					$thread->setContent($f->text(rand(40, 1000)));
-				
-			}
-		
-			
-			//$thread->setCreatedAt($f->dateTimeBetween('-1 months', 'now'));
-			$thread->setAuthor($f->randomElement($users));
-			return $thread;
-		});
-    	
-        $manager->flush();*/
     }
 }

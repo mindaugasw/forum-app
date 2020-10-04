@@ -85,7 +85,7 @@ class Thread
     //private $commentsCount; // TODO
     
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="threads", fetch="EAGER") // TODO check if EAGER load changes anything
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="threads", fetch="EAGER")
      * @ORM\JoinColumn(nullable=false)
 	 * @Groups({"user_read"})
      */
@@ -93,7 +93,7 @@ class Thread
 	
 	/**
 	 * Vote on this item of currently logged in user.
-	 * Not stored in DB, instead joined in repository from VoteThread results.
+	 * Not stored in DB, instead joined from VoteThread results.
 	 * @Groups({"thread_read"})
 	 */
     private $userVote = 0;

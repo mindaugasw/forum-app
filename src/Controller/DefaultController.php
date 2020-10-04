@@ -16,7 +16,6 @@ class DefaultController extends BaseController
      */
     public function index()
     {
-    	dump('x', 'xx');
         return $this->render('default/index.html.twig');
     }
 	

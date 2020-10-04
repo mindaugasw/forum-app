@@ -19,25 +19,34 @@ class VoteCommentFixtures extends BaseFixture //implements DependentFixtureInter
     {
     	$f = $this->faker;
     	$users = $manager->getRepository(User::class)->findAll();
-    	//$users = $this->getAllReferences(UserFixtures::USER_REFERENCE);
-    	//$users = $this->getRandomReferences(UserFixtures::USER_REFERENCE, UserFixtures::COUNT);
     	$comments = $manager->getRepository(Comment::class)->findAll();
-    	//$threads = $this->getAllReferences(ThreadFixtures::THREAD_REFERENCE);
-    	//$threads = $this->getRandomReferences(ThreadFixtures::THREAD_REFERENCE, ThreadFixtures::COUNT);
 	
-		// TODO make sure that authors don't vote their own threads
 		foreach ($comments as $c)
 		{
 			foreach ($users as $u)
 			{
-				if ($f->boolean(70)) // % chance for each user to vote on each thread
+				if ($c->getAuthor() === $u)
+					continue; // Prevent authors voting on their own comments
+				
+				if ($f->boolean(70)) // % chance for each user to vote on each comment
 				{
-					$newVote = VoteComment::create($c, $u, $f->boolean(50) ? 1 : -1);
+					$newVote = VoteComment::create($c, $u, $f->boolean(70) ? 1 : -1);
 					//$this->addReference(self::VOTE_THREAD_REFERENCE.'_'.$i, $newVote);
 					$manager->persist($newVote);
 				}
 			}
     	}
+		$manager->flush();
+		
+		// Recount all votes
+		$allVotes = $manager->getRepository(VoteComment::class)->findAll();
+	
+		foreach ($allVotes as $v)
+		{
+			$v->getComment()->setVotesCount($v->getComment()->getVotesCount() + $v->getVote());
+		
+			//$t->setVotesCount($voteThreadRepo->countThreadVotes($t));
+		}
 		$manager->flush();
     }
 }

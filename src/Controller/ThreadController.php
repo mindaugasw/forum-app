@@ -3,19 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Thread;
-use App\Entity\VoteThread;
 use App\Repository\ThreadRepository;
-use App\Repository\VoteCommentRepository;
 use App\Service\Validator\JsonValidator;
 use App\Service\Validator\QueryParamsValidator;
 use App\Service\VotingService;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -45,7 +39,7 @@ class ThreadController extends BaseController
      */
     public function getList(Request $request)
     {
-		$params = $this->queryValidator->Everything($request, Thread::class, null, ['comments', 'author', 'userVote']);
+		$params = $this->queryValidator->Everything($request, Thread::class, null, ['edited', 'comments', 'author', 'userVote']);
 		
 		$data = $this->threadsRepo->findByPaginated([], $params['ordering'], $params['pagination']);
 		
@@ -56,14 +50,11 @@ class ThreadController extends BaseController
 
 	/**
 	 * Get a single thread, NOT including its comments.
-	 * // TODO remove this method
 	 * 
 	 * @Route("/{id}/", methods={"GET"})
 	 */
-	public function getOne(Thread $thread, VoteCommentRepository $voteCommentRepo)
+	public function getOne(Thread $thread)
 	{
-		$voteCommentRepo->addUserVotesToManyComments($thread->getComments()->toArray());
-		
 		return $this->ApiResponse($thread, 200, ['thread_read', 'user_read'], ['threads']);
 	}
     

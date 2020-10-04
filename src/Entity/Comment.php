@@ -66,7 +66,7 @@ class Comment
     private $thread;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="comments", fetch="EAGER") // TODO check if EAGER load changes anything
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="comments", fetch="EAGER")
      * @ORM\JoinColumn(nullable=false)
 	 * @Groups({"user_read"})
      */
@@ -74,13 +74,14 @@ class Comment
 	
 	/**
 	 * Vote on this item of currently logged in user.
-	 * Not stored in DB, instead joined in repository from VoteComment results.
+	 * Not stored in DB, instead joined from VoteComment results.
 	 * @Groups({"comment_read"})
 	 */
 	private $userVote = 0;
 
     /**
      * @ORM\Column(type="integer")
+	 * @Groups({"comment_read"})
      */
     private $votesCount = 0;
     

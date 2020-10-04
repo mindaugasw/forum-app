@@ -2,13 +2,13 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Thread;
+use App\Entity\Comment;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class ThreadVoter extends Voter
+class CommentVoter extends Voter
 {
 	private Security $security;
 	
@@ -17,18 +17,18 @@ class ThreadVoter extends Voter
 		$this->security = $security;
 	}
 	
-	protected function supports($attribute, $subject)
+    protected function supports($attribute, $subject)
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
         return in_array($attribute, ['MANAGE'])
-            && $subject instanceof Thread;
+            && $subject instanceof Comment;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-    	/** @var Thread $subject */
-		
+    	/** @var Comment $subject */
+    	
         $user = $token->getUser();
         // if the user is anonymous, do not grant access
         if (!$user instanceof UserInterface) {
@@ -40,11 +40,11 @@ class ThreadVoter extends Voter
             case 'MANAGE':
                 if ($subject->getAuthor() === $user)
                 	return true;
-	
-				if ($this->security->isGranted('ROLE_ADMIN'))
-					return true;
-				
-				return false;
+                
+                if ($this->security->isGranted('ROLE_ADMIN'))
+                	return true;
+                
+                return false;
         }
 
         return false;
