@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Comment;
 use App\Entity\Thread;
+use App\Entity\User;
 use App\Repository\CommentRepository;
 use App\Service\Validator\JsonValidator;
 use App\Service\Validator\QueryParamsValidator;
@@ -61,7 +62,7 @@ class CommentController extends BaseController
 	
 	/**
 	 * @Route("/{thread}/comments/", methods={"POST"})
-	 * @IsGranted("ROLE_USER")
+	 * @IsGranted(User::ROLE_USER)
 	 */
 	public function createNew(Thread $thread, Request $request)
 	{
@@ -106,7 +107,7 @@ class CommentController extends BaseController
 	
 	/**
 	 * @Route("/{thread}/comments/{comment}/vote/{voteValue}/", methods={"POST"}, requirements={"voteValue"="1|0|-1"})
-	 * @IsGranted("ROLE_USER")
+	 * @IsGranted(User::ROLE_USER)
 	 * 
 	 * @param int $thread Used to keep consistent routes structure but prevent useless DB query for $thread. 
 	 */

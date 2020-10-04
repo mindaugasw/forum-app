@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Entity\Comment;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
@@ -41,7 +42,7 @@ class CommentVoter extends Voter
                 if ($subject->getAuthor() === $user)
                 	return true;
                 
-                if ($this->security->isGranted('ROLE_ADMIN'))
+                if ($this->security->isGranted(User::ROLE_ADMIN))
                 	return true;
                 
                 return false;

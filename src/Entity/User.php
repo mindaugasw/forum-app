@@ -10,12 +10,16 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
 class User implements UserInterface
 {
+	const ROLE_USER = 'ROLE_USER';
+	const ROLE_ADMIN = 'ROLE_ADMIN';
+	
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -26,20 +30,22 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-	 * @Groups({"user_read"})
+	 * @Groups({"user_read", "user_write"})
      */
     private $username;
 
     /**
      * @ORM\Column(type="json")
-	 * @Groups({"user_read"})
+	 * @Groups({"user_read", "user_write"})
      */
     private $roles = [];
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
-	 * Groups({"user_write"})
+	 * @Groups({"user_write"})
+	 * 
+	 * Password is validated in the method isPasswordSafe()
      */
     private $password;
 
@@ -51,7 +57,7 @@ class User implements UserInterface
 
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="author")
-	 * Groups({"user_read"})
+	 * @Groups({"user_read"})
      */
     private $comments;
 
@@ -90,7 +96,7 @@ class User implements UserInterface
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        $roles[] = self::ROLE_USER;
 
         return array_unique($roles);
     }
@@ -101,6 +107,14 @@ class User implements UserInterface
 
         return $this;
     }
+	
+	/**
+	 * Returns array of all possible user roles
+	 */
+    public function getAllPossibleRoles()
+	{
+		return [self::ROLE_USER, self::ROLE_ADMIN];
+	}
 
     /**
      * @see UserInterface
@@ -116,6 +130,22 @@ class User implements UserInterface
 
         return $this;
     }
+	
+	/**
+	 * Automatically validates password on user creation/edit
+	 * 
+	 * @Assert\IsTrue()
+	 */
+    public function isPasswordSafe(): bool
+	{
+		// psw length 8-200
+		// at least 1 number and 1 special char, 1 letter
+		// does not contain username
+		
+		// https://github.com/bjeavons/zxcvbn-php
+		
+		// TODO move to UserCRUD service 
+	}
 
     /**
      * @see UserInterface

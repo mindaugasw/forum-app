@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Thread;
+use App\Entity\User;
 use App\Repository\ThreadRepository;
 use App\Service\Validator\JsonValidator;
 use App\Service\Validator\QueryParamsValidator;
@@ -60,7 +61,7 @@ class ThreadController extends BaseController
     
     /**
      * @Route("/", methods={"POST"})
-	 * @IsGranted("ROLE_USER")
+	 * @IsGranted(User::ROLE_USER)
      */
     public function createNew(Request $request)
     {
@@ -99,7 +100,7 @@ class ThreadController extends BaseController
 	
 	/**
 	 * @Route("/{id}/vote/{voteValue}/", methods={"POST"}, requirements={"voteValue"="1|0|-1"})
-	 * @IsGranted("ROLE_USER")
+	 * @IsGranted(User::ROLE_USER)
 	 */
 	public function vote(Thread $thread, int $voteValue, VotingService $votingService)
 	{

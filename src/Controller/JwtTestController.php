@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\User;
 
 /**
  * @Route("/api/jwt")
@@ -24,7 +25,7 @@ class JwtTestController extends BaseController
 	
 	/**
 	 * @Route("/user", methods={"POST"})
-	 * @IsGranted("ROLE_USER")
+	 * @IsGranted(User::ROLE_USER)
 	 */
 	public function testUser()
 	{
@@ -33,7 +34,7 @@ class JwtTestController extends BaseController
 	
 	/**
 	 * @Route("/admin", methods={"POST"})
-	 * @IsGranted("ROLE_ADMIN")
+	 * @IsGranted(User::ROLE_ADMIN)
 	 */
 	public function testAdmin()
 	{
