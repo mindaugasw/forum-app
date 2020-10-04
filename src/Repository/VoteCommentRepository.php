@@ -26,40 +26,21 @@ class VoteCommentRepository extends ServiceEntityRepository
 	}
 	
 	/**
-	 * Adds userVote property to given thread.
+	 * Count total votes sum on given comment.
 	 *
 	 * @param Comment $comment
-	 * @return Comment
+	 * @return int|mixed|string
+	 * @throws \Doctrine\ORM\NoResultException
+	 * @throws \Doctrine\ORM\NonUniqueResultException
 	 */
-	public function addUserVoteToSingleComment(Comment $comment)
+	public function countCommentVotes(Comment $comment)
 	{
-		$user = $this->security->getUser();
-		if ($user !== null) {
-			$userVote = $this->findOneBy(['comment' => $comment, 'user' => $user]);
-			if ($userVote !== null)
-				$userVote->setUserVoteOnComment();
-		}
-		
-		return $comment;
-	}
-	
-	/**
-	 * Adds userVote property to all given comments.
-	 *
-	 * @param array $comments
-	 * @return array
-	 */
-	public function addUserVotesToManyComments(array $comments)
-	{
-		$user = $this->security->getUser();
-		if ($user !== null) {
-			$userVotes = $this->findBy(['user' => $user, 'comment' => $comments]);
-			
-			for ($i = 0; $i < count($userVotes); $i++) {
-				$userVotes[$i]->setUserVoteOnComment();
-			}
-		}
-		return $comments;
+		return $this->createQueryBuilder('vc')
+			->select('SUM(vc.vote) as TOTAL_SUM')
+			->andWhere('vc.comment = :c')
+			->setParameter('c', $comment->getId())
+			->getQuery()
+			->getSingleScalarResult();
 	}
     
 

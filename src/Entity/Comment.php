@@ -51,15 +51,22 @@ class Comment
 	 * @Groups({"comment_read"})
 	 */
 	private $updatedAt;
-
+	
+	/**
+	 * @ORM\Column(type="boolean")
+	 * @Groups({"comment_read"})
+	 */
+	private $edited = false;
+	
     /**
      * @ORM\ManyToOne(targetEntity=Thread::class, inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
+	 * @Groups({"thread_read"})
      */
     private $thread;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="comments") // TODO fetch="EAGER"
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="comments", fetch="EAGER") // TODO check if EAGER load changes anything
      * @ORM\JoinColumn(nullable=false)
 	 * @Groups({"user_read"})
      */
@@ -67,15 +74,19 @@ class Comment
 	
 	/**
 	 * Vote on this item of currently logged in user.
-	 * Not stored in DB, instead joined in repository from VoteThread results.
+	 * Not stored in DB, instead joined in repository from VoteComment results.
 	 * @Groups({"comment_read"})
 	 */
 	private $userVote = 0;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $votesCount = 0;
     
 
     public function __construct()
 	{
-		$this->createdAt = new \DateTimeImmutable();
 	}
 	
 	public function getId(): ?int
@@ -90,7 +101,7 @@ class Comment
 
     public function setContent(string $content): self
     {
-        $this->content = $content;
+        $this->content = trim($content);
 
         return $this;
     }
@@ -104,24 +115,6 @@ class Comment
 	{
 		return $this->updatedAt;
 	}
-	
-	/*public function getCreatedAtAgo() : string
-	{
-		// TODO
-		return Carbon::instance($this->getCreatedAt())->diffForHumans();
-	}*/
-
-    /*public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }*/
-	
-	/*public function getCreatedAtAgo() : string
-	{
-		return Carbon::instance($this->getCreatedAt())->diffForHumans();
-	}*/
 
     public function getThread(): ?Thread
     {
@@ -158,4 +151,28 @@ class Comment
 	{
 		return $this->userVote;
 	}
+
+    public function getEdited(): ?bool
+    {
+        return $this->edited;
+    }
+
+    public function setEdited(bool $edited): self
+    {
+        $this->edited = $edited;
+
+        return $this;
+    }
+
+    public function getVotesCount(): ?int
+    {
+        return $this->votesCount;
+    }
+
+    public function setVotesCount(int $votesCount): self
+    {
+        $this->votesCount = $votesCount;
+
+        return $this;
+    }
 }

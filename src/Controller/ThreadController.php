@@ -8,6 +8,7 @@ use App\Repository\ThreadRepository;
 use App\Repository\VoteCommentRepository;
 use App\Service\Validator\JsonValidator;
 use App\Service\Validator\QueryParamsValidator;
+use App\Service\VotingService;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -109,33 +110,9 @@ class ThreadController extends BaseController
 	 * @Route("/{id}/vote/{voteValue}/", methods={"POST"}, requirements={"voteValue"="1|0|-1"})
 	 * @IsGranted("ROLE_USER")
 	 */
-	public function vote(Thread $thread, int $voteValue)
+	public function vote(Thread $thread, int $voteValue, VotingService $votingService)
 	{
-		$user = $this->getUser();
-		if ($thread->getAuthor() === $user)
-			throw new BadRequestHttpException('Voting on your own threads is not allowed.');
-		
-		$voteThreadRepo = $this->em->getRepository(VoteThread::class);
-		
-		$vote = $voteThreadRepo->findOneBy(['user' => $user, 'thread' => $thread]);
-		$threadVotesCount = $voteThreadRepo->countThreadVotes($thread);
-		$voteValueChange = 0; // How much should be added to $threadVotesCount. Needed to prevent 2 DB flushes just for votes counting.
-		
-		if ($vote === null) // Create new vote
-		{
-			$vote = VoteThread::create($thread, $user, $voteValue);
-			$this->em->persist($vote);
-			$voteValueChange = $voteValue;
-		}
-		else // Vote already exists, update it
-		{
-			$voteValueChange = $voteValue - $vote->getVote();
-			$vote->setVote($voteValue);
-		}
-		
-		$thread->setVotesCount($threadVotesCount + $voteValueChange);
-		
-		$this->em->flush();
+		$votingService->submitThreadVote($thread, $voteValue);
 		
 		return $this->ApiResponse(null, 204);
 	}

@@ -42,7 +42,7 @@ class Thread
     private $title;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="text")
 	 * @Assert\NotBlank()
 	 * @Assert\Length(
 	 *     min=1,
@@ -76,16 +76,16 @@ class Thread
 	// private $lastComment; // TODO
 	
     /**
-     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="thread", orphanRemoval=true) // TODO EXTRA_LAZY ?
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="thread", orphanRemoval=true) // TODO fetch="EXTRA_LAZY" ?
 	 * @Groups({"comment_read"})
 	 * ORM\OrderBy({"createdAt"="ASC"}) // TODO
      */
     private $comments;
 
-    //private $commentCount; // TODO
+    //private $commentsCount; // TODO
     
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="threads") // TODO EAGER load
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="threads", fetch="EAGER") // TODO check if EAGER load changes anything
      * @ORM\JoinColumn(nullable=false)
 	 * @Groups({"user_read"})
      */
@@ -107,9 +107,9 @@ class Thread
     
     
 	public function __construct()
-         	{
-         		$this->comments = new ArrayCollection();
-         	}
+	{
+		$this->comments = new ArrayCollection();
+	}
 
     public function getId(): ?int
     {
@@ -194,16 +194,16 @@ class Thread
     }
 	
 	public function setUserVote(int $userVote): self
-                  	{
-                  		$this->userVote = $userVote;
-                  		
-                  		return $this;
-                  	}
+	{
+		$this->userVote = $userVote;
+		
+		return $this;
+	}
 	
 	public function getUserVote(): int
-                  	{
-                  		return $this->userVote;
-                  	}
+	{
+		return $this->userVote;
+	}
 
     public function getVotesCount(): ?int
     {

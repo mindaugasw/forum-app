@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Comment;
+use App\Service\VotingService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\Event\Subscriber\Paginate\Callback\CallbackPagination;
@@ -18,17 +19,14 @@ class CommentRepository extends ServiceEntityRepository
 	
 	/** @var PaginatorInterface */
 	private $paginator;
-	/** @var VoteCommentRepository */
-	private $voteCommentRepo;
-	/** @var Security */
-	private $security;
+	/** @var VotingService */
+	private $votingService;
 	
-	public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator, VoteCommentRepository $voteCommentRepo, Security $security)
+	public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator, VotingService $votingService)
     {
         parent::__construct($registry, Comment::class);
 		$this->paginator = $paginator;
-		$this->voteCommentRepo = $voteCommentRepo;
-		$this->security = $security;
+		$this->votingService = $votingService;
 	}
 	
 	/**
@@ -39,7 +37,7 @@ class CommentRepository extends ServiceEntityRepository
 		$comment = parent::find($id, $lockMode, $lockVersion);
 		
 		if ($comment !== null)
-			$this->voteCommentRepo->addUserVoteToSingleComment($comment);
+			$this->votingService->addUserVoteToSingleComment($comment);
 		return $comment;
 	}
 	
@@ -59,7 +57,7 @@ class CommentRepository extends ServiceEntityRepository
 		$comments = parent::findBy($criteria, $orderBy, $limit, $offset);
 		
 		if (count($comments) !== 0)
-			$this->voteCommentRepo->addUserVotesToManyComments($comments);
+			$this->votingService->addUserVotesToManyComments($comments);
 		return $comments;
 	}
 	
@@ -91,7 +89,7 @@ class CommentRepository extends ServiceEntityRepository
 		$comment = parent::findOneBy($criteria, $orderBy);
 		
 		if ($comment !== null)
-			$this->voteCommentRepo->addUserVoteToSingleComment($comment);
+			$this->votingService->addUserVoteToSingleComment($comment);
 		return $comment;
 	}
 	
@@ -106,7 +104,7 @@ class CommentRepository extends ServiceEntityRepository
 	public function fullTextSearch($searchTerm)
 	{
 		return $this->createQueryBuilder('c')
-			->andWhere('MATCH_AGAINST(t.content) AGAINST(:searchterm boolean)>0')
+			->andWhere('MATCH_AGAINST(c.content) AGAINST(:searchterm boolean)>0')
 			->setParameter('searchterm', $searchTerm)
 			->getQuery()
 			->getResult()

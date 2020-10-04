@@ -16,52 +16,19 @@ use Symfony\Component\Security\Core\Security;
  */
 class VoteThreadRepository extends ServiceEntityRepository
 {
-	/** @var Security */
-	private $security;
-	
-	public function __construct(ManagerRegistry $registry, Security $security)
+	public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, VoteThread::class);
-		$this->security = $security;
 	}
 	
 	/**
-	 * Adds userVote property to given thread.
-	 *
+	 * Count total votes sum on given thread.
+	 * 
 	 * @param Thread $thread
-	 * @return Thread
+	 * @return int|mixed|string
+	 * @throws \Doctrine\ORM\NoResultException
+	 * @throws \Doctrine\ORM\NonUniqueResultException
 	 */
-	public function addUserVoteToSingleThread(Thread $thread)
-	{
-		$user = $this->security->getUser();
-		if ($user !== null) {
-			$userVote = $this->findOneBy(['thread' => $thread, 'user' => $user]);
-			if ($userVote !== null)
-				$userVote->setUserVoteOnThread();
-		}
-		
-		return $thread;
-	}
-	
-	/**
-	 * Adds userVote property to all given threads.
-	 *
-	 * @param array $threads
-	 * @return array
-	 */
-	public function addUserVotesToManyThreads(array $threads)
-	{
-		$user = $this->security->getUser();
-		if ($user !== null) {
-			$userVotes = $this->findBy(['user' => $user, 'thread' => $threads]);
-			
-			for ($i = 0; $i < count($userVotes); $i++) {
-				$userVotes[$i]->setUserVoteOnThread();
-			}
-		}
-		return $threads;
-	}
-    
     public function countThreadVotes(Thread $thread)
 	{
 		return $this->createQueryBuilder('vt')

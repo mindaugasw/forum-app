@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Thread;
+use App\Service\VotingService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
@@ -19,19 +20,16 @@ class ThreadRepository extends ServiceEntityRepository
 	 * fill userVote property on Thread.
 	 */
 	
-	/** @var VoteThreadRepository */
-	private $voteThreadRepo;
-	/** @var Security */
-	private $security;
 	/** @var PaginatorInterface */
 	private $paginator;
+	/** @var VotingService */
+	private $votingService;
 	
-	public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator, VoteThreadRepository $voteThreadRepo, Security $security)
+	public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator, VotingService $votingService)
     {
         parent::__construct($registry, Thread::class);
-		$this->voteThreadRepo = $voteThreadRepo;
-		$this->security = $security;
 		$this->paginator = $paginator;
+		$this->votingService = $votingService;
 	}
 	
 	/**
@@ -42,7 +40,7 @@ class ThreadRepository extends ServiceEntityRepository
 		$thread = parent::find($id, $lockMode, $lockVersion);
 		
 		if ($thread !== null)
-			$this->voteThreadRepo->addUserVoteToSingleThread($thread);
+			$this->votingService->addUserVoteToSingleThread($thread);
 		return $thread;
 	}
 	
@@ -62,7 +60,7 @@ class ThreadRepository extends ServiceEntityRepository
 		$threads = parent::findBy($criteria, $orderBy, $limit, $offset);
 		
 		if (count($threads) !== 0)
-			$this->voteThreadRepo->addUserVotesToManyThreads($threads);
+			$this->votingService->addUserVotesToManyThreads($threads);
 		return $threads;
 	}
 	
@@ -94,7 +92,7 @@ class ThreadRepository extends ServiceEntityRepository
 		$thread = parent::findOneBy($criteria, $orderBy);
 		
 		if ($thread !== null)
-			$this->voteThreadRepo->addUserVoteToSingleThread($thread);
+			$this->votingService->addUserVoteToSingleThread($thread);
 		return $thread;
 	}
 	
