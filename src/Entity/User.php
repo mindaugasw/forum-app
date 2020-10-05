@@ -11,6 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
+use ZxcvbnPhp\Zxcvbn;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -57,7 +58,7 @@ class User implements UserInterface
 
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="author")
-	 * @Groups({"user_read"})
+	 * @Groups({"comment_read"})
      */
     private $comments;
 
@@ -103,6 +104,8 @@ class User implements UserInterface
 
     public function setRoles(array $roles): self
     {
+    	// TODO remove ROLE_USER from array and do not save it in DB
+    	
         $this->roles = $roles;
 
         return $this;
@@ -138,11 +141,12 @@ class User implements UserInterface
 	 */
     public function isPasswordSafe(): bool
 	{
-		// psw length 8-200
-		// at least 1 number and 1 special char, 1 letter
-		// does not contain username
+		$zxcvbn = new Zxcvbn();
+		$passwordData = $zxcvbn->passwordStrength($this->getPassword());
 		
-		// https://github.com/bjeavons/zxcvbn-php
+		if ($passwordData['score'] < 2)
+			return false;
+		return true;
 		
 		// TODO move to UserCRUD service 
 	}

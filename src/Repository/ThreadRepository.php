@@ -20,10 +20,8 @@ class ThreadRepository extends ServiceEntityRepository
 	 * fill userVote property on Thread.
 	 */
 	
-	/** @var PaginatorInterface */
-	private $paginator;
-	/** @var VotingService */
-	private $votingService;
+	private PaginatorInterface $paginator;
+	private VotingService $votingService;
 	
 	public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator, VotingService $votingService)
     {
