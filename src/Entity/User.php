@@ -6,12 +6,8 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
-use ZxcvbnPhp\Zxcvbn;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -37,27 +33,25 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="json")
-	 * @Groups({"user_read", "user_write"})
+	 * @Groups({"user_read", "user_write", "user_write_admin"})
      */
     private $roles = [];
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
-	 * @Groups({"user_write"})
-	 * 
-	 * Password is validated in the method isPasswordSafe()
+	 * @Groups({"user_write", "user_write_himself"})
      */
     private $password;
 
     /**
-     * @ORM\OneToMany(targetEntity=Thread::class, mappedBy="author")
+     * @ORM\OneToMany(targetEntity=Thread::class, mappedBy="author", cascade={"remove"})
 	 * @Groups({"thread_read"})
      */
     private $threads;
 
     /**
-     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="author")
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="author", cascade={"remove"})
 	 * @Groups({"comment_read"})
      */
     private $comments;
@@ -104,8 +98,10 @@ class User implements UserInterface
 
     public function setRoles(array $roles): self
     {
-    	// TODO remove ROLE_USER from array and do not save it in DB
-    	
+    	$pos = array_search(self::ROLE_USER, $roles);
+    	if ($pos !== false)
+    		unset($roles[$pos]); // Do not store the default role in DB
+		
         $this->roles = $roles;
 
         return $this;
@@ -114,7 +110,7 @@ class User implements UserInterface
 	/**
 	 * Returns array of all possible user roles
 	 */
-    public function getAllPossibleRoles()
+    public static function getAllPossibleRoles()
 	{
 		return [self::ROLE_USER, self::ROLE_ADMIN];
 	}
@@ -134,23 +130,6 @@ class User implements UserInterface
         return $this;
     }
 	
-	/**
-	 * Automatically validates password on user creation/edit
-	 * 
-	 * @Assert\IsTrue()
-	 */
-    public function isPasswordSafe(): bool
-	{
-		$zxcvbn = new Zxcvbn();
-		$passwordData = $zxcvbn->passwordStrength($this->getPassword());
-		
-		if ($passwordData['score'] < 2)
-			return false;
-		return true;
-		
-		// TODO move to UserCRUD service 
-	}
-
     /**
      * @see UserInterface
      */

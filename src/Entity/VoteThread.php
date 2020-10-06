@@ -13,12 +13,14 @@ class VoteThread
     /**
 	 * @ORM\Id
      * @ORM\ManyToOne(targetEntity=Thread::class)
+	 * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $thread;
 
     /**
 	 * @ORM\Id
      * @ORM\ManyToOne(targetEntity=User::class)
+	 * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $user;
 
