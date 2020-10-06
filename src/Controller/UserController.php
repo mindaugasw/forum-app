@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Api\ApiResponse;
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Service\ApiResponseFactory;
 use App\Service\UserCRUD;
 use App\Service\Validator\JsonValidator;
 use App\Service\Validator\QueryParamsValidator;
@@ -27,9 +29,9 @@ class UserController extends BaseController
 {
 	private UserCRUD $userCRUD;
 	
-	public function __construct(SerializerInterface $serializer, EntityManagerInterface $em, JsonValidator $validator, QueryParamsValidator $queryValidator, UserCRUD $userCRUD)
+	public function __construct(ApiResponseFactory $responses, EntityManagerInterface $em, JsonValidator $validator, QueryParamsValidator $queryValidator, UserCRUD $userCRUD)
 	{
-		parent::__construct($serializer, $em, $validator, $queryValidator);
+		parent::__construct($responses, $em, $validator, $queryValidator);
 		
 		$this->userCRUD = $userCRUD;
 	}
@@ -129,9 +131,8 @@ class UserController extends BaseController
      */
     public function logout()
     {
-    	$response = new Response(null, 200);
+    	$response = $this->responses->ApiResponse(null, 200);
     	$response->headers->clearCookie('refresh_token');
     	return $response;
-    	// TODO allow to create ApiResponse without immediately sending it, allow setting headers
     }
 }

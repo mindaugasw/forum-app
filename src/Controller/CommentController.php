@@ -6,6 +6,7 @@ use App\Entity\Comment;
 use App\Entity\Thread;
 use App\Entity\User;
 use App\Repository\CommentRepository;
+use App\Service\ApiResponseFactory;
 use App\Service\Validator\JsonValidator;
 use App\Service\Validator\QueryParamsValidator;
 use App\Service\VotingService;
@@ -20,12 +21,11 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class CommentController extends BaseController
 {
-	/** @var CommentRepository */
-	private $commentsRepo;
+	private CommentRepository $commentsRepo;
 	
-	public function __construct(SerializerInterface $serializer, EntityManagerInterface $em, JsonValidator $validator, QueryParamsValidator $queryValidator)
+	public function __construct(ApiResponseFactory $responses, EntityManagerInterface $em, JsonValidator $validator, QueryParamsValidator $queryValidator)
 	{
-		parent::__construct($serializer, $em, $validator, $queryValidator);
+		parent::__construct($responses, $em, $validator, $queryValidator);
 		
 		$this->commentsRepo = $em->getRepository(Comment::class);
 	}

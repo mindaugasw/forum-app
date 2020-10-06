@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Thread;
 use App\Entity\User;
 use App\Repository\ThreadRepository;
+use App\Service\ApiResponseFactory;
 use App\Service\Validator\JsonValidator;
 use App\Service\Validator\QueryParamsValidator;
 use App\Service\VotingService;
@@ -19,12 +20,11 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class ThreadController extends BaseController
 {
-	/** @var ThreadRepository */
-	private $threadsRepo;
+	private ThreadRepository $threadsRepo;
 	
-	public function __construct(SerializerInterface $serializer, EntityManagerInterface $em, JsonValidator $validator, QueryParamsValidator $queryValidator)
+	public function __construct(ApiResponseFactory $responses, EntityManagerInterface $em, JsonValidator $validator, QueryParamsValidator $queryValidator)
 	{
-		parent::__construct($serializer, $em, $validator, $queryValidator);
+		parent::__construct($responses, $em, $validator, $queryValidator);
 		
 		$this->threadsRepo = $em->getRepository(Thread::class);
 	}

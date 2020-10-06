@@ -6,6 +6,7 @@ use App\Entity\Comment;
 use App\Entity\Thread;
 use App\Entity\User;
 use App\Entity\VoteThread;
+use App\Service\ApiResponseFactory;
 use App\Service\Validator\JsonValidator;
 use App\Service\Validator\QueryParamsValidator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,22 +17,19 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 abstract class BaseController extends AbstractController
 {
-	/** @var SerializerInterface */
-	protected $serializer;
-	/** @var EntityManagerInterface */
-	protected $em;
-	/** @var JsonValidator */
-	protected $jsonValidator;
-	/** @var QueryParamsValidator */
-	protected $queryValidator;
+	protected ApiResponseFactory $responses;
+	protected SerializerInterface $serializer;
+	protected EntityManagerInterface $em;
+	protected JsonValidator $jsonValidator;
+	protected QueryParamsValidator $queryValidator;
 	
 	public function __construct(
-		SerializerInterface $serializer,
+		ApiResponseFactory $responses,
 		EntityManagerInterface $em,
 		JsonValidator $validator,
 		QueryParamsValidator $queryValidator)
 	{
-		$this->serializer = $serializer;
+		$this->responses = $responses;
 		$this->em = $em;
 		$this->jsonValidator = $validator;
 		$this->queryValidator = $queryValidator;
@@ -46,11 +44,13 @@ abstract class BaseController extends AbstractController
 	 */
 	protected function ApiResponse($data, int $status = 200, array $groups = [], array $ignoredAttributes = []): JsonResponse
 	{
-		$serializedData = $this->serializer->serialize(
+		return $this->responses->ApiResponse($data, $status, $groups, $ignoredAttributes);
+		
+		/*$serializedData = $this->serializer->serialize(
 			$data,
 			'json',
 			['groups' => $groups, 'ignored_attributes' => $ignoredAttributes]);
-		return new JsonResponse($serializedData, $status, [], true);
+		return new JsonResponse($serializedData, $status, [], true);*/
 	}
 	
 	/**
@@ -62,7 +62,9 @@ abstract class BaseController extends AbstractController
 	 */
 	protected function ApiPaginatedResponse(PaginationInterface $data, int $status = 200, array $groups = [], array $ignoredAttributes = []): JsonResponse
 	{
-		$paginatedData = ['items' => $data, 'pagination' => $data->getPaginationData()];
-		return $this->ApiResponse($paginatedData, $status, $groups, $ignoredAttributes);
+		return $this->responses->ApiPaginatedResponse($data, $status, $groups, $ignoredAttributes);
+		
+		/*$paginatedData = ['items' => $data, 'pagination' => $data->getPaginationData()];
+		return $this->ApiResponse($paginatedData, $status, $groups, $ignoredAttributes);*/
 	}
 }
