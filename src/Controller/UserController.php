@@ -125,11 +125,13 @@ class UserController extends BaseController
     }*/
 
     /**
-     * @Route("/logout")
+     * @Route("/logout", methods={"POST"})
      */
     public function logout()
     {
-    	// TODO: implement. Remove refresh token cookie
-        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    	$response = new Response(null, 200);
+    	$response->headers->clearCookie('refresh_token');
+    	return $response;
+    	// TODO allow to create ApiResponse without immediately sending it, allow setting headers
     }
 }
