@@ -13,6 +13,9 @@ use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenInterface;
 
 class RefreshTokenManager extends BaseRefreshTokenManager
 {
+	// TODO remove this when issue is fixed
+	// https://github.com/markitosgv/JWTRefreshTokenBundle/issues/200#issuecomment-681620256
+	
 	/**
 	 * @var EntityManagerInterface
 	 */

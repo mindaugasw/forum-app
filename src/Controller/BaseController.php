@@ -23,7 +23,7 @@ abstract class BaseController extends AbstractController
 	protected JsonValidator $jsonValidator;
 	protected QueryParamsValidator $queryValidator;
 	
-	public function __construct(
+	public function __construct( // TODO use different kind DI? To prevent constant overriding in subclasses
 		ApiResponseFactory $responses,
 		EntityManagerInterface $em,
 		JsonValidator $validator,
@@ -45,12 +45,6 @@ abstract class BaseController extends AbstractController
 	protected function ApiResponse($data, int $status = 200, array $groups = [], array $ignoredAttributes = []): JsonResponse
 	{
 		return $this->responses->ApiResponse($data, $status, $groups, $ignoredAttributes);
-		
-		/*$serializedData = $this->serializer->serialize(
-			$data,
-			'json',
-			['groups' => $groups, 'ignored_attributes' => $ignoredAttributes]);
-		return new JsonResponse($serializedData, $status, [], true);*/
 	}
 	
 	/**
@@ -63,8 +57,5 @@ abstract class BaseController extends AbstractController
 	protected function ApiPaginatedResponse(PaginationInterface $data, int $status = 200, array $groups = [], array $ignoredAttributes = []): JsonResponse
 	{
 		return $this->responses->ApiPaginatedResponse($data, $status, $groups, $ignoredAttributes);
-		
-		/*$paginatedData = ['items' => $data, 'pagination' => $data->getPaginationData()];
-		return $this->ApiResponse($paginatedData, $status, $groups, $ignoredAttributes);*/
 	}
 }

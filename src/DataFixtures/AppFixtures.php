@@ -13,5 +13,7 @@ class AppFixtures extends Fixture
         // $manager->persist($product);
 
         $manager->flush();
+        
+        // TODO join all fixtures into AppFixtures
     }
 }

@@ -107,7 +107,7 @@ class UserController extends BaseController
 	
 	
     /*
-     * Login is not handled by JWT auth, at path /api/login_check
+     * Login is handled by JWT auth, at path /api/login_check
      * 
      * Route("/login", name="app_login")
      *

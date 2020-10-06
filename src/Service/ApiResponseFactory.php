@@ -19,6 +19,7 @@ class ApiResponseFactory
 	
 	/**
 	 * Serializes provided data and returns JsonResponse
+	 * 
 	 * @param $data
 	 * @param int $status
 	 * @param array $groups Serialization groups
@@ -48,9 +49,27 @@ class ApiResponseFactory
 		$paginatedData = ['items' => $data, 'pagination' => $data->getPaginationData()];
 		return $this->ApiResponse($paginatedData, $status, $groups, $ignoredAttributes);
 	}
-
-	/*public function ErrorResponse()
+	
+	/**
+	 * @param string $type Error identifier
+	 * @param string $message Brief human-readable message
+	 * @param int $status HTTP response code
+	 * @param null $detail Human-readable explanation (more detailed, an addition to $message)
+	 * @return JsonResponse
+	 */
+	public function ErrorResponse(string $type, string $message, int $status = 500, $detail = null)
 	{
-		// TODO
-	}*/
+		$data = [
+			'error' => [
+				'type' => $type,
+				'message' => $message,
+				'status' => $status
+			]
+		];
+		
+		if ($detail !== null)
+			$data['detail'] = $detail;
+		
+		return new JsonResponse($data, $status, [], false);
+	}
 }
