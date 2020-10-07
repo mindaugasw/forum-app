@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "43c4873a27bb6148ab87eba7b7b29ede",
+    "content-hash": "c03437abcbb5762ef3704aaf38f647e9",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -1571,7 +1571,7 @@
             "version": "dev-feature-cookie-support",
             "source": {
                 "type": "git",
-                "url": "git@github.com:mindaugasw/JWTRefreshTokenBundle.git",
+                "url": "https://github.com/mindaugasw/JWTRefreshTokenBundle.git",
                 "reference": "b3c4b1f1cbf651a6c372a2ec27447e40e307f87b"
             },
             "require": {
