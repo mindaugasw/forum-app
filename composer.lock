@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c03437abcbb5762ef3704aaf38f647e9",
+    "content-hash": "8249427eb111fb27ab99c12ef568702e",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -1571,8 +1571,14 @@
             "version": "dev-feature-cookie-support",
             "source": {
                 "type": "git",
-                "url": "https://github.com/mindaugasw/JWTRefreshTokenBundle.git",
+                "url": "https://bitbucket.org/mindaugas932/jwtrefreshtokenbundle.git",
                 "reference": "b3c4b1f1cbf651a6c372a2ec27447e40e307f87b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://bitbucket.org/mindaugas932/jwtrefreshtokenbundle/get/b3c4b1f1cbf651a6c372a2ec27447e40e307f87b.zip",
+                "reference": "b3c4b1f1cbf651a6c372a2ec27447e40e307f87b",
+                "shasum": ""
             },
             "require": {
                 "lexik/jwt-authentication-bundle": "^1.1|^2.0@dev",
@@ -1612,9 +1618,13 @@
                 }
             ],
             "description": "Implements a refresh token system over Json Web Tokens in Symfony",
+            "homepage": "https://bitbucket.org/mindaugas932/jwtrefreshtokenbundle",
             "keywords": [
                 "jwt refresh token bundle symfony json web"
             ],
+            "support": {
+                "source": "https://bitbucket.org/mindaugas932/jwtrefreshtokenbundle/src/b3c4b1f1cbf651a6c372a2ec27447e40e307f87b/?at=feature-cookie-support"
+            },
             "time": "2020-08-10T18:19:00+00:00"
         },
         {
@@ -3886,16 +3896,16 @@
         },
         {
             "name": "symfony/flex",
-            "version": "v1.9.4",
+            "version": "v1.9.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/flex.git",
-                "reference": "115e67f76ba95d70946a6e0b15d4578bf04927c3"
+                "reference": "585dd28d43a781dd0081f90f308d3e83b6885a31"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/flex/zipball/115e67f76ba95d70946a6e0b15d4578bf04927c3",
-                "reference": "115e67f76ba95d70946a6e0b15d4578bf04927c3",
+                "url": "https://api.github.com/repos/symfony/flex/zipball/585dd28d43a781dd0081f90f308d3e83b6885a31",
+                "reference": "585dd28d43a781dd0081f90f308d3e83b6885a31",
                 "shasum": ""
             },
             "require": {
@@ -3945,7 +3955,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-09-14T14:58:36+00:00"
+            "time": "2020-10-07T09:41:05+00:00"
         },
         {
             "name": "symfony/form",
