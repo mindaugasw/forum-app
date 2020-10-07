@@ -40,7 +40,7 @@
     },
     "repositories": [
         {
-            "url": "git@github.com:lukacovicadam/JWTRefreshTokenBundle.git",
+            "url": "git@github.com:mindaugasw/JWTRefreshTokenBundle.git",
             "type": "git",
             "reference": "feature-cookie-support"
         }
