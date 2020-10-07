@@ -40,7 +40,7 @@
     },
     "repositories": [
         {
-            "url": "git@github.com:mindaugasw/JWTRefreshTokenBundle.git",
+            "url": "https://github.com/mindaugasw/saitynas-forum.git",
             "type": "git",
             "reference": "feature-cookie-support"
         }
