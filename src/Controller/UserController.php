@@ -83,8 +83,6 @@ class UserController extends BaseController
 	 */
 	public function edit(User $user, Request $request)
 	{
-		// TODO test role change
-		
 		$this->userCRUD->edit($user, $request);
 		
 		$this->em->flush();
@@ -131,6 +129,8 @@ class UserController extends BaseController
      */
     public function logout()
     {
+    	// TODO remove refresh token
+    	
     	$response = $this->responses->ApiResponse(null, 200);
     	$response->headers->clearCookie('refresh_token');
     	return $response;
