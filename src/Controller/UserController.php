@@ -10,6 +10,7 @@ use App\Service\UserCRUD;
 use App\Service\Validator\JsonValidator;
 use App\Service\Validator\QueryParamsValidator;
 use Doctrine\ORM\EntityManagerInterface;
+use Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -127,10 +128,20 @@ class UserController extends BaseController
     /**
      * @Route("/logout", methods={"POST"})
      */
-    public function logout()
+    public function logout(Request $request)
     {
-    	// TODO remove refresh token
-    	
+		if ($request->cookies->has('refresh_token') === true)
+		{
+			$refreshToken = $this->em->getRepository(RefreshToken::class)->findOneBy(
+				['refreshToken' => $request->cookies->get('refresh_token')]);
+			
+			if ($refreshToken !== null)
+			{
+				$this->em->remove($refreshToken);
+				$this->em->flush();
+			}
+		}
+		
     	$response = $this->responses->ApiResponse(null, 200);
     	$response->headers->clearCookie('refresh_token');
     	return $response;
