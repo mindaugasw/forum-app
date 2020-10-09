@@ -4,11 +4,11 @@
 namespace App\Service\EntitiesCRUD;
 
 use App\Entity\User;
+use App\Exception\ApiBadRequestException;
 use App\Repository\UserRepository;
 use App\Service\Validator\JsonValidator;
 use App\Service\Validator\QueryParamsValidator;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -63,8 +63,7 @@ class UserCRUD
 		$newUser = $this->jsonValidator->ValidateNew($request->getContent(), User::class, ['user_write']);
 		
 		if ($this->userRepo->findOneBy(['username' => $newUser->getUsername()]) !== null)
-			throw new BadRequestException("This username is already in use: ".$newUser->getUsername());
-			// TODO BadRequestException already returns json exception. Check if it works properly with custom exceptions json-ification
+			throw new ApiBadRequestException("This username is already in use: ".$newUser->getUsername());
 		
 		$newUser->setRoles([User::ROLE_USER]);
 		
@@ -139,7 +138,7 @@ class UserCRUD
 		if ($passwordData['score'] < 2 && $this->app_env !== 'dev')
 		{
 			$errorText = "Password is too weak. {$passwordData['feedback']['warning']}.";
-			throw new BadRequestException($errorText);
+			throw new ApiBadRequestException($errorText);
 		}
 		
 		return true;
@@ -156,7 +155,7 @@ class UserCRUD
 		foreach ($roles as $role)
 		{
 			if (!in_array($role, $validRoles))
-				throw new BadRequestException('Unknown user role: '.$role);
+				throw new ApiBadRequestException('Unknown user role: '.$role);
 		}
 		
 		return true;

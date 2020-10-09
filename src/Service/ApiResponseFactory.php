@@ -53,23 +53,24 @@ class ApiResponseFactory
 	
 	/**
 	 * @param string $type Error identifier
-	 * @param string $message Brief human-readable message
+	 * @param string|null $message Brief human-readable message
 	 * @param int $status HTTP response code
 	 * @param null $detail Human-readable explanation (more detailed, an addition to $message)
 	 * @return JsonResponse
 	 */
-	public function ErrorResponse(string $type, string $message, int $status = 500, $detail = null)
+	public function ErrorResponse(string $type, int $status = 500, string $message = null, $detail = null)
 	{
 		$data = [
 			'error' => [
-				'type' => $type,
-				'message' => $message,
-				'status' => $status
+				'status' => $status,
+				'type' => $type			
 			]
 		];
 		
+		if ($message !== null)
+			$data['error']['message'] = $message;
 		if ($detail !== null)
-			$data['detail'] = $detail;
+			$data['error']['detail'] = $detail;
 		
 		return new JsonResponse($data, $status, [], false);
 	}

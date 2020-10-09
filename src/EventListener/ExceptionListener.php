@@ -1,9 +1,8 @@
 <?php
 
-
 namespace App\EventListener;
 
-
+use App\Exception\ClientFriendlyExceptionInterface;
 use App\Service\ApiResponseFactory;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
@@ -15,10 +14,12 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
  */
 class ExceptionListener
 {
+	private string $app_env;
 	private ApiResponseFactory $responses;
 	
-	public function __construct(ApiResponseFactory $responses)
+	public function __construct($app_env, ApiResponseFactory $responses)
 	{
+		$this->app_env = $app_env;
 		$this->responses = $responses;
 	}
 	
@@ -27,20 +28,26 @@ class ExceptionListener
 	 */
 	public function onKernelException(ExceptionEvent $event)
 	{
-		$exception = $event->getThrowable();
-		$request   = $event->getRequest();
-		
-		if ($exception instanceof HttpExceptionInterface)
-			$statusCode = $exception->getStatusCode();
-		else
-			$statusCode = 500;
+		$request = $event->getRequest();
 		
 		if (in_array('application/json', $request->getAcceptableContentTypes())) {
-			//$response = $this->createApiResponse($exception);
-			//$event->setResponse($response);
-			
-			$response = $this->responses->ErrorResponse($exception->getCode()/*TODO*/, $exception->getMessage(), $statusCode);
-			$event->setResponse($response);
+			$this->handleException($event);
 		}
+	}
+	
+	public function handleException(ExceptionEvent $event)
+	{
+		$exception = $event->getThrowable();
+		
+		$statusCode = $exception instanceof HttpExceptionInterface ? $exception->getStatusCode() : 500;
+		
+		if ($exception instanceof ClientFriendlyExceptionInterface || $this->app_env === 'dev')
+			$message = $exception->getMessage();
+		else
+			$message = '';
+		$type = get_class($exception);
+		
+		$response = $this->responses->ErrorResponse($type, $statusCode, $message);
+		$event->setResponse($response);
 	}
 }

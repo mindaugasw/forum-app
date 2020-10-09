@@ -2,6 +2,7 @@
 
 namespace App\Service\Validator;
 
+use App\Exception\ApiBadRequestException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -40,7 +41,7 @@ class JsonValidator
 	public function ValidateNew(string $json, string $model, array $groups = [])
 	{
 		if (!$json) {
-			throw new BadRequestHttpException('Empty body.');
+			throw new ApiBadRequestException('Empty body.');
 		}
 		
 		//$this->CheckAllowedFields($json, $allowedFields);
@@ -48,13 +49,13 @@ class JsonValidator
 		try {
 			$object = $this->serializer->deserialize($json, $model, 'json', ['groups' => $groups]);
 		} catch (\Throwable $e) {
-			throw new BadRequestHttpException('Invalid body.');
+			throw new ApiBadRequestException('Invalid body.');
 		}
 		
 		$errors = $this->validator->validate($object);
 		
 		if ($errors->count()) {
-			throw new BadRequestHttpException(json_encode($this->violator->build($errors)));
+			throw new ApiBadRequestException(json_encode($this->violator->build($errors)));
 		}
 		
 		return $object;
@@ -72,7 +73,7 @@ class JsonValidator
 	public function ValidateEdit(string $json, object $obj, array $groups = [])
 	{
 		if (!$json) {
-			throw new BadRequestHttpException('Empty body.');
+			throw new ApiBadRequestException('Empty body.');
 		}
 		
 		//$this->CheckAllowedFields($json, $allowedFields);
@@ -81,13 +82,13 @@ class JsonValidator
 		try {
 			$object = $this->serializer->deserialize($json, $model, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $obj, 'groups' => $groups]);
 		} catch (\Throwable $e) {
-			throw new BadRequestHttpException('Invalid body.');
+			throw new ApiBadRequestException('Invalid body.');
 		}
 		
 		$errors = $this->validator->validate($object);
 		
 		if ($errors->count()) {
-			throw new BadRequestHttpException(json_encode($this->violator->build($errors)));
+			throw new ApiBadRequestException(json_encode($this->violator->build($errors)));
 		}
 		
 		return $object;
