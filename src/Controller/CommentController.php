@@ -6,15 +6,10 @@ use App\Entity\Comment;
 use App\Entity\Thread;
 use App\Entity\User;
 use App\Repository\CommentRepository;
-use App\Service\ApiResponseFactory;
-use App\Service\Validator\JsonValidator;
-use App\Service\Validator\QueryParamsValidator;
 use App\Service\VotingService;
-use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @Route("/api/threads")
@@ -23,11 +18,10 @@ class CommentController extends BaseController
 {
 	private CommentRepository $commentsRepo;
 	
-	public function __construct(ApiResponseFactory $responses, EntityManagerInterface $em, JsonValidator $validator, QueryParamsValidator $queryValidator)
+	protected function postDependencyInjection()
 	{
-		parent::__construct($responses, $em, $validator, $queryValidator);
-		
-		$this->commentsRepo = $em->getRepository(Comment::class);
+		parent::postDependencyInjection();
+		$this->commentsRepo = $this->em->getRepository(Comment::class);
 	}
 	
 	/**

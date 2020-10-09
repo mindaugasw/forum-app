@@ -8,6 +8,7 @@ use Knp\Component\Pager\Pagination\PaginationInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 
+
 class ApiResponseFactory
 {
 	private SerializerInterface $serializer;

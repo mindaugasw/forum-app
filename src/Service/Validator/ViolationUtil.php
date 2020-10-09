@@ -12,7 +12,7 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class ViolationUtil
 {
-	private $textUtil;
+	private TextUtil $textUtil;
 	
 	public function __construct(TextUtil $textUtil)
 	{

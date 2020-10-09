@@ -2,10 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Comment;
-use App\Entity\Thread;
-use App\Entity\User;
-use App\Entity\VoteThread;
 use App\Service\ApiResponseFactory;
 use App\Service\Validator\JsonValidator;
 use App\Service\Validator\QueryParamsValidator;
@@ -13,27 +9,45 @@ use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\SerializerInterface;
 
 abstract class BaseController extends AbstractController
 {
-	protected ApiResponseFactory $responses;
-	protected SerializerInterface $serializer;
 	protected EntityManagerInterface $em;
+	protected ApiResponseFactory $responses;
 	protected JsonValidator $jsonValidator;
 	protected QueryParamsValidator $queryValidator;
 	
-	public function __construct( // TODO use different kind DI? To prevent constant overriding in subclasses
-		ApiResponseFactory $responses,
+	/**
+	 * Used to prevent full constructor overriding in all subclasses.
+	 * Constructor will be called first, so any initialization for these dependencies
+	 * should be implemented in overridden postDependencyInjection() method.
+	 *
+	 * Additional dependencies in subclasses can be injected in a constructor.
+	 * 
+	 * @required
+	 * 
+	 * @param EntityManagerInterface $em
+	 * @param ApiResponseFactory $responses
+	 * @param JsonValidator $validator
+	 * @param QueryParamsValidator $queryValidator
+	 */
+	public function injectDependencies(
 		EntityManagerInterface $em,
+		ApiResponseFactory $responses,
 		JsonValidator $validator,
 		QueryParamsValidator $queryValidator)
 	{
-		$this->responses = $responses;
 		$this->em = $em;
+		$this->responses = $responses;
 		$this->jsonValidator = $validator;
 		$this->queryValidator = $queryValidator;
+		$this->postDependencyInjection();
 	}
+	
+	/**
+	 * Initialize here services injected in superclass
+	 */
+	protected function postDependencyInjection() { }
 	
 	/**
 	 * @param $data
@@ -56,6 +70,7 @@ abstract class BaseController extends AbstractController
 	 */
 	protected function ApiPaginatedResponse(PaginationInterface $data, int $status = 200, array $groups = [], array $ignoredAttributes = []): JsonResponse
 	{
+		//dd($this->serializer->serialize(['wtf' => 'asdasdasdasd'], 'json'));
 		return $this->responses->ApiPaginatedResponse($data, $status, $groups, $ignoredAttributes);
 	}
 }

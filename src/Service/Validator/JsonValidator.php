@@ -14,18 +14,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class JsonValidator
 {
-	/**
-	 * @var SerializerInterface
-	 */
-	private $serializer;
-	/**
-	 * @var ValidatorInterface
-	 */
-	private $validator;
-	/**
-	 * @var ViolationUtil
-	 */
-	private $violator;
+	private SerializerInterface $serializer;
+	private ValidatorInterface $validator;
+	private ViolationUtil $violator;
 	
 	public function __construct(
 		SerializerInterface $serializer,

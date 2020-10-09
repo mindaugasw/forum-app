@@ -15,10 +15,8 @@ use Symfony\Component\Security\Core\Security;
 
 class VotingService
 {
-	/** @var EntityManagerInterface */
-	private $em;
-	/** @var User */
-	private $user;
+	private EntityManagerInterface $em;
+	private User $user;
 	
 	public function __construct(EntityManagerInterface $em, Security $security)
 	{

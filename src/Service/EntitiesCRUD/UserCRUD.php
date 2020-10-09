@@ -1,15 +1,13 @@
 <?php
 
 
-namespace App\Service;
+namespace App\Service\EntitiesCRUD;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\Validator\JsonValidator;
 use App\Service\Validator\QueryParamsValidator;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -26,7 +24,6 @@ class UserCRUD
 	private UserPasswordEncoderInterface $passwordEncoder;
 	private Security $security;
 	
-	private ContainerBagInterface $container;
 	private UserRepository $userRepo;
 	
 	public function __construct(
@@ -35,8 +32,7 @@ class UserCRUD
 		QueryParamsValidator $queryValidator,
 		JsonValidator $jsonValidator,
 		UserPasswordEncoderInterface $passwordEncoder,
-		Security $security,
-		ContainerBagInterface $container)
+		Security $security)
 	{
 		$this->app_env = $app_env;
 		$this->em = $em;
@@ -44,7 +40,6 @@ class UserCRUD
 		$this->jsonValidator = $jsonValidator;
 		$this->passwordEncoder = $passwordEncoder;
 		$this->security = $security;
-		$this->container = $container;
 		
 		$this->userRepo = $em->getRepository(User::class);
 	}
