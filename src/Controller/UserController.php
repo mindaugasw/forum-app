@@ -2,25 +2,12 @@
 
 namespace App\Controller;
 
-use App\Api\ApiResponse;
 use App\Entity\User;
-use App\Repository\UserRepository;
-use App\Service\ApiResponseFactory;
-use App\Service\UserCRUD;
-use App\Service\Validator\JsonValidator;
-use App\Service\Validator\QueryParamsValidator;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\EntitiesCRUD\UserCRUD;
 use Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\Serializer\SerializerInterface;
 
 
 /**
@@ -30,9 +17,9 @@ class UserController extends BaseController
 {
 	private UserCRUD $userCRUD;
 	
-	public function __construct(ApiResponseFactory $responses, EntityManagerInterface $em, JsonValidator $validator, QueryParamsValidator $queryValidator, UserCRUD $userCRUD)
+	public function __construct(UserCRUD $userCRUD)
 	{
-		parent::__construct($responses, $em, $validator, $queryValidator);
+		parent::__construct();
 		
 		$this->userCRUD = $userCRUD;
 	}

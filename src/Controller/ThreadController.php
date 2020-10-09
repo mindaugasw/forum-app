@@ -5,15 +5,10 @@ namespace App\Controller;
 use App\Entity\Thread;
 use App\Entity\User;
 use App\Repository\ThreadRepository;
-use App\Service\ApiResponseFactory;
-use App\Service\Validator\JsonValidator;
-use App\Service\Validator\QueryParamsValidator;
 use App\Service\VotingService;
-use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @Route("/api/threads")
@@ -22,12 +17,12 @@ class ThreadController extends BaseController
 {
 	private ThreadRepository $threadsRepo;
 	
-	public function __construct(ApiResponseFactory $responses, EntityManagerInterface $em, JsonValidator $validator, QueryParamsValidator $queryValidator)
+	protected function postDependencyInjection()
 	{
-		parent::__construct($responses, $em, $validator, $queryValidator);
-		
-		$this->threadsRepo = $em->getRepository(Thread::class);
+		parent::postDependencyInjection();
+		$this->threadsRepo = $this->em->getRepository(Thread::class);
 	}
+	
 	
 	/**
 	 * Get a list of threads.

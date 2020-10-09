@@ -4,17 +4,11 @@
 namespace App\Service\Validator;
 
 
-use App\Entity\Thread;
-use Knp\Component\Pager\Pagination\PaginationInterface;
 use ReflectionClass;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class QueryParamsValidator
 {
@@ -24,18 +18,18 @@ class QueryParamsValidator
 	public const PAGE_NUM = 'page';
 	public const PER_PAGE = 'perpage';
 	
-	/*
-	 * // TODO use violator like in JsonValidator
-	 * @var ViolationUtil
-	 */
-	//private $violator;
+	// TODO use violator like in JsonValidator
+	//private ViolationUtil $violator;
 	
-	/** @var ContainerBagInterface */
-	private $params;
+	// Default number of items per page, from config in knp_paginator.yaml
+	private int $perPageConfig;
+	
+	//private ContainerBagInterface $params;
 	
 	public function __construct(ParameterBagInterface $params)
 	{
-		$this->params = $params;
+		//$this->params = $params;
+		$this->perPageConfig = $params->get('per_page_default');
 	}
 	
 	/**
@@ -61,18 +55,18 @@ class QueryParamsValidator
 	 * Validates query parameters 'orderby' and 'orderdir' for list ordering.
 	 * If validated successfully, returns ready-to-use array in a query, in the
 	 * form ['key' => 'ASC|DESC'], or empty array if no sorting params were found.
-	 * 
+	 *
 	 * Allowed values for 'orderby' are any in the propsWhitelist OR any properties
 	 * on the entity entityName and not in the propsBlackList. Case sensitive. Only
 	 * whitelist OR blacklist can be set, other must be null.
-	 * 
+	 *
 	 * Allowed values for 'orderdir' are ASC, DESC, or blank. Case-insensitive.
 	 * In case of blank defaults to ASC.
-	 * 
+	 *
 	 * @param Request $request
 	 * @param string $entityName Class name of the Entity against which to check params blacklist
-	 * @param array $proprsWhitelist Allow only these properties in 'orderby' 
-	 * @param array $paramsBlacklist Allow all properties on entity entityName except those in the blacklist
+	 * @param array|null $propsWhitelist Allow only these properties in 'orderby'
+	 * @param array|null $propsBlacklist Allow all properties on entity entityName except those in the blacklist
 	 */
 	public function Ordering(Request $request, string $entityName, array $propsWhitelist = null, array $propsBlacklist = null)
 	{
@@ -127,7 +121,7 @@ class QueryParamsValidator
 		if ($page < 1)
 			throw new RuntimeException('Illegal page number: '.$page);
 		
-		$perpage = $request->query->getInt(self::PER_PAGE, $this->params->get('per_page_default'));
+		$perpage = $request->query->getInt(self::PER_PAGE, $this->perPageConfig);
 		if ($perpage < 1 || $perpage > 200)
 			throw new RuntimeException('Illegal per page number: '.$perpage);
 		
