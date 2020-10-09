@@ -9,6 +9,7 @@ use App\Entity\Thread;
 use App\Entity\User;
 use App\Entity\VoteComment;
 use App\Entity\VoteThread;
+use App\Exception\ApiBadRequestException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Security;
@@ -33,10 +34,10 @@ class VotingService
 	public function submitThreadVote(Thread $thread, int $voteValue, bool $flushDb = true)
 	{
 		if ($voteValue !== 1 && $voteValue !== 0 && $voteValue !== -1)
-			throw new \Exception('Not allowed vote value: '.$voteValue);
+			throw new ApiBadRequestException('Not allowed vote value: '.$voteValue);
 		
 		if ($thread->getAuthor() === $this->user)
-			throw new BadRequestHttpException('Voting on your own threads is not allowed.');
+			throw new ApiBadRequestException('Voting on your own threads is not allowed.');
 		
 		$voteThreadRepo = $this->em->getRepository(VoteThread::class);
 		$vote = $voteThreadRepo->findOneBy(['thread' => $thread, 'user' => $this->user]);
@@ -72,10 +73,10 @@ class VotingService
 	public function submitCommentVote(Comment $comment, int $voteValue, bool $flushDb = true)
 	{
 		if ($voteValue !== 1 && $voteValue !== 0 && $voteValue !== -1)
-			throw new \Exception('Not allowed vote value: '.$voteValue);
+			throw new ApiBadRequestException('Not allowed vote value: '.$voteValue);
 		
 		if ($comment->getAuthor() === $this->user)
-			throw new BadRequestHttpException('Voting on your own threads is not allowed.');
+			throw new ApiBadRequestException('Voting on your own comments is not allowed.');
 		
 		$voteCommentRepo = $this->em->getRepository(VoteComment::class);
 		$vote = $voteCommentRepo->findOneBy(['comment' => $comment, 'user' => $this->user]);

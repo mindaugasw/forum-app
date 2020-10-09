@@ -62,7 +62,7 @@ class CommentRepository extends ServiceEntityRepository
 		return $comments;
 	}
 	
-	public function findByPaginated(array $criteria = null, array $orderBy = null, array $pagination = []/*, bool $doCount = true*/)
+	/*public function findByPaginated(array $criteria = null, array $orderBy = null, array $pagination = []/*, bool $doCount = true/)
 	{
 		$repo = $this;
 		
@@ -80,7 +80,7 @@ class CommentRepository extends ServiceEntityRepository
 		
 		$target = new CallbackPagination($countFunc, $itemsFunc);
 		return $this->paginator->paginate($target, $pagination['page'], $pagination['perpage']);
-	}
+	}*/
 	
 	/**
 	 * {@InheritDoc}

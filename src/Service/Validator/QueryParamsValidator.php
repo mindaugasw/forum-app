@@ -4,11 +4,12 @@
 namespace App\Service\Validator;
 
 
+use App\Exception\ApiBadRequestException;
 use ReflectionClass;
 use RuntimeException;
-use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class QueryParamsValidator
 {
@@ -72,7 +73,7 @@ class QueryParamsValidator
 	{
 		// ORDER FIELD NAME
 		if ($propsWhitelist !== null && $propsBlacklist !== null)
-			throw new RuntimeException('Whitelist and blacklist cannot both be set.'); // TODO change all exceptions to some other 400 exception
+			throw new RuntimeException('Whitelist and blacklist cannot both be set.');
 		
 		if (!$request->query->has(self::ORDER_BY))
 			return [];
@@ -81,18 +82,18 @@ class QueryParamsValidator
 		if ($propsWhitelist !== null)
 		{
 			if (!in_array($orderBy, $propsWhitelist))
-				throw new RuntimeException("Ordering by '{$orderBy}' is not allowed.");
+				throw new ApiBadRequestException("Ordering by '{$orderBy}' is not allowed.");
 		}
 		
 		if ($propsBlacklist !== null)
 		{
 			if (in_array($orderBy, $propsBlacklist))
-				throw new RuntimeException("Ordering by '{$orderBy}' is not allowed.");
+				throw new ApiBadRequestException("Ordering by '{$orderBy}' is not allowed.");
 			
 			$classProperties = array_keys((new ReflectionClass($entityName))->getDefaultProperties());
 			
 			if (!in_array($orderBy, $classProperties))
-				throw new RuntimeException("Ordering by '{$orderBy}' is not allowed.");
+				throw new ApiBadRequestException("Ordering by '{$orderBy}' is not allowed.");
 		}
 		
 		// ORDER DIRECTION
@@ -101,7 +102,7 @@ class QueryParamsValidator
 		{
 			$direction = mb_strtoupper($request->query->get(self::ORDER_DIR));
 			if ($direction !== 'ASC' && $direction !== 'DESC')
-				throw new RuntimeException('Unknown sorting direction.');
+				throw new ApiBadRequestException('Unknown sorting direction.');
 		}
 		
 		return [$orderBy => $direction];
@@ -119,11 +120,11 @@ class QueryParamsValidator
 		$page = $request->query->getInt(self::PAGE_NUM, 1);
 		
 		if ($page < 1)
-			throw new RuntimeException('Illegal page number: '.$page);
+			throw new ApiBadRequestException('Illegal page number: '.$page);
 		
 		$perpage = $request->query->getInt(self::PER_PAGE, $this->perPageConfig);
 		if ($perpage < 1 || $perpage > 200)
-			throw new RuntimeException('Illegal per page number: '.$perpage);
+			throw new ApiBadRequestException('Illegal per page number: '.$perpage);
 		
 		return ['page' => $page, 'perpage' => $perpage];
 	}
