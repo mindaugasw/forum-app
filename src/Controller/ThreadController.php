@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Thread;
 use App\Entity\User;
-use App\Repository\ThreadRepository;
+use App\Service\EntitiesCRUD\ThreadCRUD;
 use App\Service\VotingService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,12 +15,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ThreadController extends BaseController
 {
-	private ThreadRepository $threadsRepo;
+	private ThreadCRUD $threadCRUD;
 	
-	protected function postDependencyInjection()
+	public function __construct(ThreadCRUD $threadCRUD)
 	{
-		parent::postDependencyInjection();
-		$this->threadsRepo = $this->em->getRepository(Thread::class);
+		parent::__construct();
+		$this->threadCRUD = $threadCRUD;
 	}
 	
 	
@@ -35,9 +35,7 @@ class ThreadController extends BaseController
      */
     public function getList(Request $request)
     {
-		$params = $this->queryValidator->Everything($request, Thread::class, null, ['edited', 'comments', 'author', 'userVote']);
-		
-		$data = $this->threadsRepo->findByPaginated([], $params['ordering'], $params['pagination']);
+    	$data = $this->threadCRUD->getList($request);
 		
 		return $this->ApiPaginatedResponse(
     		$data, 200, ['thread_read', 'user_read'], ['threads']
@@ -60,10 +58,7 @@ class ThreadController extends BaseController
      */
     public function createNew(Request $request)
     {
-    	/** @var Thread $thread */
-		$thread = $this->jsonValidator->ValidateNew($request->getContent(), Thread::class, ['thread_write']);
-    	$thread->setAuthor($this->getUser());
-		
+		$thread = $this->threadCRUD->createNew($request);
 		$this->em->persist($thread);
     	$this->em->flush();
     	
@@ -76,8 +71,7 @@ class ThreadController extends BaseController
      */
     public function edit(Thread $thread, Request $request)
     {
-		$this->jsonValidator->ValidateEdit($request->getContent(), $thread, ['thread_write']);
-		$thread->setEdited(true);
+    	$thread = $this->threadCRUD->edit($thread, $request);
 		$this->em->flush();
 		return $this->ApiResponse($thread, 200, ['thread_read', 'user_read'], ['threads']);
 	}

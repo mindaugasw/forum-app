@@ -6,6 +6,7 @@ use App\Entity\Comment;
 use App\Entity\Thread;
 use App\Entity\User;
 use App\Repository\CommentRepository;
+use App\Service\EntitiesCRUD\CommentCRUD;
 use App\Service\VotingService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,12 +17,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class CommentController extends BaseController
 {
-	private CommentRepository $commentsRepo;
+	private CommentCRUD $commentCRUD;
 	
-	protected function postDependencyInjection()
+	public function __construct(CommentCRUD $commentCRUD)
 	{
-		parent::postDependencyInjection();
-		$this->commentsRepo = $this->em->getRepository(Comment::class);
+		parent::__construct();
+		$this->commentCRUD = $commentCRUD;
 	}
 	
 	/**
@@ -35,10 +36,7 @@ class CommentController extends BaseController
 	 */
 	public function getList(Thread $thread, Request $request)
 	{
-		$params = $this->queryValidator->Everything($request, Comment::class, null, ['edited', 'thread', 'author', 'userVote']);
-		
-		$data = $this->commentsRepo->findByPaginated(['thread' => $thread], $params['ordering'], $params['pagination']);
-		
+		$data = $this->commentCRUD->getList($request);
 		return $this->ApiPaginatedResponse(
 			$data, 200, ['comment_read', 'user_read'], ['threads', 'comments']
 		);
@@ -60,16 +58,9 @@ class CommentController extends BaseController
 	 */
 	public function createNew(Thread $thread, Request $request)
 	{
-		/** @var Comment $comment */
-		$comment = $this->jsonValidator->ValidateNew($request->getContent(), Comment::class, ['comment_write']);
-		$comment->setThread($thread);
-		$comment->setAuthor($this->getUser());
+		$comment = $this->commentCRUD->createNew($thread, $request);
 		$this->em->persist($comment);
-		
-		$thread->setCommentsCount($this->commentsRepo->countCommentsOnThread($thread) + 1);
-		
 		$this->em->flush();
-		
 		return $this->ApiResponse($comment, 201, ['comment_read', 'user_read', 'thread_read'], ['threads', 'comments']);
 	}
 	
@@ -79,8 +70,7 @@ class CommentController extends BaseController
 	 */
 	public function edit(Thread $thread, Comment $comment, Request $request)
 	{
-		$this->jsonValidator->ValidateEdit($request->getContent(), $comment, ['comment_write']);
-		$comment->setEdited(true);
+		$comment = $this->commentCRUD->edit($comment, $request);
 		$this->em->flush();
 		return $this->ApiResponse($comment, 200, ['comment_read', 'thread_read', 'user_read'], ['threads', 'comments']);
 	}
@@ -91,12 +81,10 @@ class CommentController extends BaseController
 	 */
 	public function delete(Thread $thread, Comment $comment)
 	{
+		$this->commentCRUD->delete($thread);
 		$this->em->remove($comment);
-		
-		$thread->setCommentsCount($this->commentsRepo->countCommentsOnThread($thread) - 1);
-		
 		$this->em->flush();
-		return $this->ApiResponse(null, 204); // 204 No Content
+		return $this->ApiResponse(null, 204);
 	}
 	
 	/**

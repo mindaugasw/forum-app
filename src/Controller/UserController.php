@@ -20,7 +20,6 @@ class UserController extends BaseController
 	public function __construct(UserCRUD $userCRUD)
 	{
 		parent::__construct();
-		
 		$this->userCRUD = $userCRUD;
 	}
 	

@@ -17,6 +17,8 @@ abstract class BaseController extends AbstractController
 	protected JsonValidator $jsonValidator;
 	protected QueryParamsValidator $queryValidator;
 	
+	public function __construct() { }
+	
 	/**
 	 * Used to prevent full constructor overriding in all subclasses.
 	 * Constructor will be called first, so any initialization for these dependencies
