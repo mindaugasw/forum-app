@@ -9,13 +9,11 @@
 import './styles/app.css';
 
 import React from 'react';
-
-import testFunc from './js/test'; 
+import {render} from "react-dom";
+import ReactApp from "./js/components/ReactApp";
 
 // Need jQuery? Install it with "yarn add jquery", then uncomment to import it.
-import $ from 'jquery';
+// import $ from 'jquery';
 
-console.log('Webpack Encore working! @ assets/app.js');
-testFunc();
-
-
+console.log('Webpack Encore @ assets/app.js');
+render(<ReactApp />, document.getElementById('sample-div'));
