@@ -13,7 +13,7 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Intl\Exception\NotImplementedException;
 use Symfony\Component\Security\Core\Security;
 
-class ThreadRepository extends ServiceEntityRepository
+class ThreadRepository extends PaginatedBaseRepository
 {
 	/*
 	 * All overridden methods (find, findBy, findOneBy, findAll) additionally
@@ -25,7 +25,7 @@ class ThreadRepository extends ServiceEntityRepository
 	
 	public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator, VotingService $votingService)
     {
-        parent::__construct($registry, Thread::class);
+        parent::__construct($registry, Thread::class, $paginator);
 		$this->paginator = $paginator;
 		$this->votingService = $votingService;
 	}
@@ -61,26 +61,6 @@ class ThreadRepository extends ServiceEntityRepository
 			$this->votingService->addUserVotesToManyThreads($threads);
 		return $threads;
 	}
-	
-	/*public function findByPaginated(array $criteria = null, array $orderBy = null, array $pagination = []/*, bool $doCount = true*)
-	{
-		$repo = $this;
-		
-		// from https://github.com/KnpLabs/knp-components/blob/master/docs/pager/intro.md#custom-data-repository-pagination
-		$countFunc = function () use ($repo, $criteria) {
-			return $repo->count($criteria);
-			// TODO implement checking if doCount is true
-			// Results should not be counted on expensive queries (full text search)
-			
-			// TODO create a custom paginator to use with unknown total items count
-		};
-		$itemsFunc = function ($offset, $limit) use ($repo, $criteria, $orderBy) {
-			return $repo->findBy($criteria, $orderBy, $limit, $offset);
-		};
-		
-		$target = new CallbackPagination($countFunc, $itemsFunc);
-		return $this->paginator->paginate($target, $pagination['page'], $pagination['perpage']);
-	}*/
 	
 	/**
 	 * {@InheritDoc}

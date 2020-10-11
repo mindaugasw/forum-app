@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\Entity\VoteComment;
 use App\Entity\VoteThread;
 use App\Exception\ApiBadRequestException;
+use App\Exception\ApiServerException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Security;
@@ -17,7 +18,7 @@ use Symfony\Component\Security\Core\Security;
 class VotingService
 {
 	private EntityManagerInterface $em;
-	private User $user;
+	private ?User $user;
 	
 	public function __construct(EntityManagerInterface $em, Security $security)
 	{
@@ -35,6 +36,9 @@ class VotingService
 	{
 		if ($voteValue !== 1 && $voteValue !== 0 && $voteValue !== -1)
 			throw new ApiBadRequestException('Not allowed vote value: '.$voteValue);
+		
+		if ($this->user === null)
+			throw new ApiServerException('Tried to vote while unauthorized.');
 		
 		if ($thread->getAuthor() === $this->user)
 			throw new ApiBadRequestException('Voting on your own threads is not allowed.');
@@ -74,6 +78,9 @@ class VotingService
 	{
 		if ($voteValue !== 1 && $voteValue !== 0 && $voteValue !== -1)
 			throw new ApiBadRequestException('Not allowed vote value: '.$voteValue);
+		
+		if ($this->user === null)
+			throw new ApiServerException('Tried to vote while unauthorized.');
 		
 		if ($comment->getAuthor() === $this->user)
 			throw new ApiBadRequestException('Voting on your own comments is not allowed.');

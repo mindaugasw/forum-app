@@ -1,6 +1,9 @@
 import React from "react";
+// import { v4 as uuid } from 'uuid';
 import ThreadListItem from "./ThreadListItem";
 import ThreadForm from "./ThreadForm";
+import { getThreadList } from "../Api/thread_api";
+
 
 function countThreadsNumber(threads) {
     return threads.length;
@@ -10,17 +13,27 @@ export default class ThreadList extends React.Component {
     constructor(props) {
         super(props);
         
+
+        
         this.state = {
             redRowId: null,
             threads: [
-                { id: 1, name: 'Alice. \'I\'M not wish.' },
-                { id: 2, name: 'Alice folded her great hurry; \'and that green leaves. As.' },
-                { id: 3, name: 'The Rabbit angrily. \'It was sitting.' },
+                // { uuid: uuid(), id: 1, name: 'Alice. \'I\'M not wish.' },
+                // { uuid: uuid(), id: 2, name: 'Alice folded her great hurry; \'and that green leaves. As.' },
+                // { uuid: uuid(), id: 3, name: 'The Rabbit angrily. \'It was sitting.' },
             ]
         }
         
         this.handleRowClick = this.handleRowClick.bind(this);
-        this.handleNewItemSubmit = this.handleNewItemSubmit.bind(this);
+        this.handleNewItemAdd = this.handleNewItemAdd.bind(this);
+        this.handleDeleteItem = this.handleDeleteItem.bind(this);
+    }
+
+    componentDidMount() {
+        getThreadList()
+            .then((data) =>
+                this.setState({threads: data.items})
+            );
     }
 
     handleRowClick(id) {
@@ -29,8 +42,27 @@ export default class ThreadList extends React.Component {
         });
     }
 
-    handleNewItemSubmit(id, name) {
-        console.log(id + ' - ' + name);
+    handleNewItemAdd(id, title) {
+        const newId = isNaN(id) ? Math.random() : id;
+
+        const newThread = {
+            id: newId,
+            title: title
+        };
+        
+        this.setState(prevState => {
+            return {
+                threads: [...prevState.threads, newThread]
+            };
+        });
+    }
+    
+    handleDeleteItem(id) {
+        this.setState(prevState => {
+           return {
+               threads: prevState.threads.filter(t => t.id !== id)
+           };
+        });
     }
     
     render() {
@@ -40,18 +72,17 @@ export default class ThreadList extends React.Component {
            return (
                <ThreadListItem key={item.id}
                    {...item}
-                   // id={item.id}
-                   // name={item.name}
                    isRed={redRowId === item.id}
                    onRowClick={this.handleRowClick}
+                   onDeleteItem={this.handleDeleteItem}
                />
            );
         });
         
         return <div>
+            <ThreadForm onNewItemAdd={this.handleNewItemAdd} />
             {threadsJsx}
             Total threads {countThreadsNumber(this.state.threads)}
-            <ThreadForm onNewItemSubmit={this.handleNewItemSubmit} />
         </div>;
     }
 }

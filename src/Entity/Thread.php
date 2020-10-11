@@ -27,7 +27,7 @@ class Thread
      * @ORM\Column(type="integer")
 	 * @Groups({"thread_read"})
      */
-    private $id;
+    private $id; // TODO replace with uuid?
 
     /**
      * @ORM\Column(type="string", length=255)

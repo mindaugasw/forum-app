@@ -1,7 +1,13 @@
+@import "~@fortawesome/fontawesome-free/css/all.min.css"; /*TODO is ALL FA needed?*/
+
 body {
     background-color: aliceblue;
 }
 
 .activeRow {
     color: #C82829;
+}
+
+.fa {
+    /*color: black; !*TODO by default FA renders purple icons?*!*/
 }

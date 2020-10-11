@@ -11,6 +11,8 @@ import './styles/app.css';
 import React from 'react';
 import {render} from "react-dom";
 import ReactApp from "./js/components/ReactApp";
+// import '@fortawesome/fontawesome-free/js/all';
+
 
 // Need jQuery? Install it with "yarn add jquery", then uncomment to import it.
 // import $ from 'jquery';
