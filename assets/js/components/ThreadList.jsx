@@ -79,10 +79,13 @@ export default class ThreadList extends React.Component {
            );
         });
         
-        return <div>
+        return (
+        <div>
             <ThreadForm onNewItemAdd={this.handleNewItemAdd} />
+            <b>Threads list</b><br/>
+            Total items: {countThreadsNumber(this.state.threads)}
             {threadsJsx}
-            Total threads {countThreadsNumber(this.state.threads)}
-        </div>;
+        </div>
+        );
     }
 }

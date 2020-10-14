@@ -26,9 +26,11 @@ export default class ThreadForm extends React.Component {
     render() {
         return (
             <form onSubmit={ this.handleFormSubmit }>
+                <b>Add thread</b><br/>
                 ID: <input name='id' type='number' />
                 title: <input name='title' type='text' />
                 <button type='submit'>Add</button>
+                <hr/>
             </form>
         );
     }
