@@ -3,6 +3,7 @@ import React from "react";
 import ThreadListItem from "./ThreadListItem";
 import ThreadForm from "./ThreadForm";
 import { getThreadList } from "../Api/thread_api";
+import Paginator from "./Paginator";
 
 
 function countThreadsNumber(threads) {
@@ -17,11 +18,11 @@ export default class ThreadList extends React.Component {
         
         this.state = {
             redRowId: null,
-            threads: [
+            threads: [],
                 // { uuid: uuid(), id: 1, name: 'Alice. \'I\'M not wish.' },
                 // { uuid: uuid(), id: 2, name: 'Alice folded her great hurry; \'and that green leaves. As.' },
                 // { uuid: uuid(), id: 3, name: 'The Rabbit angrily. \'It was sitting.' },
-            ]
+            pagination: null
         }
         
         this.handleRowClick = this.handleRowClick.bind(this);
@@ -32,7 +33,7 @@ export default class ThreadList extends React.Component {
     componentDidMount() {
         getThreadList()
             .then((data) =>
-                this.setState({threads: data.items})
+                this.setState({threads: data.items, pagination: data.pagination})
             );
     }
 
@@ -83,6 +84,9 @@ export default class ThreadList extends React.Component {
         <div>
             <ThreadForm onNewItemAdd={this.handleNewItemAdd} />
             <b>Threads list</b><br/>
+            <b>Pagination</b><br/>
+            <Paginator {...this.state.pagination} />
+            <b>Items</b><br/>
             Total items: {countThreadsNumber(this.state.threads)}
             {threadsJsx}
         </div>

@@ -73,7 +73,7 @@ export default class AuthForm extends React.Component {
 
         return (
         <div>
-            <b>Auth form</b>
+            <b>Authentication</b>
             <form onSubmit={ this.handleFormSubmit }>
                 Username: <input name='username' type='text' />
                 Password: <input name='password' type='password' />
