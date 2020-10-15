@@ -17,6 +17,8 @@ export default class AuthForm extends React.Component {
 
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
         this.tryAutoLogin = this.tryAutoLogin.bind(this);
+        this.parseJwt = this.parseJwt.bind(this);
+        this.handleLogout = this.handleLogout.bind(this);
     }
 
     componentDidMount() {
@@ -37,19 +39,33 @@ export default class AuthForm extends React.Component {
         api_fetch('POST', '/login_check', body)
             .then(json => {
                 console.log('Successfully logged in');
-                this.props.onAuthLoad(json.token, null); // TODO decode JWT
+                this.props.onAuthLoad(json.token, this.parseJwt(json.token));
             })
             .catch((response) => console.log('Authentication error', response))
     }
 
+    /**
+     * Decodes JWT and returns it's payload
+     * // TODO move to API utils class?
+     */
+    parseJwt(token) {
+        return JSON.parse(atob(token.split('.')[1]));
+    }
+
+    /**
+     * Try automatic log in using refresh token
+     */
     tryAutoLogin() {
-        // automatically log in using refresh token
         api_fetch('POST', '/token/refresh')
             .then(json => {
                 console.log('Successfully automatically authenticated');
-                this.props.onAuthLoad(json.token, null);
+                this.props.onAuthLoad(json.token, this.parseJwt(json.token));
             })
             .catch((response) => console.log('Authentication error', response))
+    }
+
+    handleLogout() {
+        this.props.onAuthLoad(null, null);
     }
 
     render() {
@@ -66,7 +82,8 @@ export default class AuthForm extends React.Component {
             Auth loaded: {authLoaded.toString()} <br/>
             Is authenticated: {isAuthenticated.toString()} <br/>
             JWT: <input name='jwt' type='text' value={jwt||''} readOnly='readOnly'/><br/>
-            User: {JSON.stringify(user)}
+            User obj: {JSON.stringify(user)}<br/>
+            <button onClick={this.handleLogout}>Log out</button>
             <hr/>
         </div>
         );
