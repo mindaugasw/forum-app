@@ -9,8 +9,8 @@
 import './styles/app.css';
 
 import React from 'react';
-import {render} from "react-dom";
-import ReactApp from "./js/components/ReactApp";
+import {render} from 'react-dom';
+import ReactApp from './js/components/ReactApp';
 // import '@fortawesome/fontawesome-free/js/all';
 
 

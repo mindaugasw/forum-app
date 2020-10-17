@@ -1,6 +1,13 @@
 import React from "react";
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link, NavLink
+} from "react-router-dom";
 import ThreadList from "./ThreadList";
 import AuthForm from "./AuthForm";
+import ThreadForm from "./ThreadForm";
 
 export default class ReactApp extends React.Component {
     constructor(props) {
@@ -31,11 +38,42 @@ export default class ReactApp extends React.Component {
     }
 
 
-    render() {
+    /*render() {
         return (
         <div>
             <AuthForm {...this.state.auth} onAuthLoad={this.handleAuthUpdate} />
             <ThreadList/>
         </div>);
+    }*/
+
+    render() {
+        return (
+          <Router>
+              <div>
+
+                  <nav>
+                      <ul>
+                          <li><NavLink to='/'>Home</NavLink></li>
+                          <li><NavLink to='/threadlist'>Thread list</NavLink></li>
+                          <li><NavLink to='/threadform'>Thread form</NavLink></li>
+                          <li><NavLink to='/authform'>Auth form</NavLink></li>
+                      </ul>
+                  </nav>
+
+                  <Switch>
+                      <Route exact path='/'>
+                          App homepage
+                      </Route>
+                      <Route path='/threadlist'>
+                          <ThreadList/>
+                      </Route>
+                      <Route path='/authform'>
+                          <AuthForm {...this.state.auth} onAuthLoad={this.handleAuthUpdate} />
+                      </Route>
+                  </Switch>
+
+              </div>
+          </Router>
+        );
     }
 }
