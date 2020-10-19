@@ -46,7 +46,7 @@ export default class AuthForm extends React.Component {
 
     /**
      * Decodes JWT and returns it's payload
-     * // TODO move to API utils class?
+     * TODO move to API utils class?
      */
     parseJwt(token) {
         return JSON.parse(atob(token.split('.')[1]));

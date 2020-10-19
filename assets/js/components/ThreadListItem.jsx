@@ -16,9 +16,9 @@ export default class ThreadListItem extends React.Component {
                 onClick={() => onRowClick(id)}
             >
                 Thread #{id}: {title+' '}
-                <a href='#' onClick={(event) => handleDeleteClick(event, id)}>
+                {/*<a href='#' onClick={(event) => handleDeleteClick(event, id)}>
                     <span className='fa fa-trash'/>
-                </a>
+                </a>*/}
             </div>);
     }
     

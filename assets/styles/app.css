@@ -1,4 +1,4 @@
-@import "~@fortawesome/fontawesome-free/css/all.min.css"; /*TODO is ALL FA needed?*/
+@import "~@fortawesome/fontawesome-free/css/all.min.css"; /*TODO is ALL FA needed? Maybe smaller subset is enough? */
 
 body {
     background-color: aliceblue;
@@ -6,8 +6,4 @@ body {
 
 .activeRow {
     color: #C82829;
-}
-
-.fa {
-    /*color: black; !*TODO by default FA renders purple icons?*!*/
 }

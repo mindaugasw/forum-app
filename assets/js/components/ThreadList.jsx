@@ -4,6 +4,8 @@ import ThreadListItem from "./ThreadListItem";
 import ThreadForm from "./ThreadForm";
 import { getThreadList } from "../Api/thread_api";
 import Paginator from "./Paginator";
+import { Switch, Route, Link } from "react-router-dom";
+import ThreadView from "./ThreadView";
 
 
 function countThreadsNumber(threads) {
@@ -71,12 +73,16 @@ export default class ThreadList extends React.Component {
         
         const threadsJsx = this.state.threads.map((item) => {
            return (
-               <ThreadListItem key={item.id}
-                   {...item}
-                   isRed={redRowId === item.id}
-                   onRowClick={this.handleRowClick}
-                   onDeleteItem={this.handleDeleteItem}
-               />
+               <li key={item.id}>
+                   <Link to={'/threads/'+item.id}>
+                       <ThreadListItem
+                           {...item}
+                           isRed={redRowId === item.id}
+                           onRowClick={this.handleRowClick}
+                           onDeleteItem={this.handleDeleteItem}
+                       />
+                   </Link>
+               </li>
            );
         });
         
@@ -88,7 +94,16 @@ export default class ThreadList extends React.Component {
             <Paginator {...this.state.pagination} />
             <b>Items</b><br/>
             Total items: {countThreadsNumber(this.state.threads)}
-            {threadsJsx}
+            <ul>
+                {threadsJsx}
+            </ul>
+
+            {/*<Switch>
+                <Route path={'/threads/:threadId'}>
+                    <ThreadView {this.state.threads.filter()} />
+                </Route>
+            </Switch>*/}
+
         </div>
         );
     }
