@@ -6,6 +6,8 @@ use App\Repository\VoteCommentRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Represents vote from a single user on a single comment.
+ * 
  * @ORM\Entity(repositoryClass=VoteCommentRepository::class)
  */
 class VoteComment

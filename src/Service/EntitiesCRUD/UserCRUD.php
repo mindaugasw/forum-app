@@ -15,6 +15,10 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Security;
 use ZxcvbnPhp\Zxcvbn;
 
+/**
+ * Provides methods for more complex User CRUD operations.
+ * NOTE: does NOT save changes to DB on its own!
+ */
 class UserCRUD
 {
 	private string $app_env;
@@ -131,9 +135,10 @@ class UserCRUD
 	 */
 	private function ensureSafePassword(string $plainPassword): bool
 	{
+		// TODO replace with different zxcvbn library
+		// (this one does not match js zxcvbn scoring)
 		$zxcvbn = new Zxcvbn();
 		$passwordData = $zxcvbn->passwordStrength($plainPassword);
-		// TODO replace with different zxcvbn implementation (to match js scoring)
 		
 		if ($passwordData['score'] < 2 && $this->app_env !== 'dev')
 		{

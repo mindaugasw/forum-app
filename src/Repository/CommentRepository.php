@@ -5,11 +5,8 @@ namespace App\Repository;
 use App\Entity\Comment;
 use App\Entity\Thread;
 use App\Service\VotingService;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Knp\Component\Pager\Event\Subscriber\Paginate\Callback\CallbackPagination;
 use Knp\Component\Pager\PaginatorInterface;
-use Symfony\Component\Security\Core\Security;
 
 class CommentRepository extends PaginatedBaseRepository
 {

@@ -13,6 +13,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 
+/**
+ * Provides methods for more complex Comment CRUD operations.
+ * NOTE: does NOT save changes to DB on its own!
+ */
 class CommentCRUD
 {
 	private EntityManagerInterface $em;

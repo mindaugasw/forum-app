@@ -58,7 +58,7 @@ class ApiResponseFactory
 	 * @param null $detail Human-readable explanation (more detailed, an addition to $message)
 	 * @return JsonResponse
 	 */
-	public function ErrorResponse(string $type, int $status = 500, string $message = null, $detail = null)
+	public function ErrorResponse(string $type, int $status = 500, string $message = null, $detail = null): JsonResponse
 	{
 		$data = [
 			'error' => [

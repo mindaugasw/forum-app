@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Comment;
 use App\Entity\Thread;
 use App\Entity\User;
-use App\Repository\CommentRepository;
 use App\Service\EntitiesCRUD\CommentCRUD;
 use App\Service\VotingService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -15,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/api/threads")
  */
-class CommentController extends BaseController
+class CommentController extends BaseApiController
 {
 	private CommentCRUD $commentCRUD;
 	

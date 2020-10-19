@@ -22,7 +22,7 @@ class AppFixtures extends Fixture
 	const VOTE_THREAD_CHANCE = 70; // chance for each user to vote on each thread 
 	const VOTE_COMMENT_CHANCE = 30; // chance for each user to vote on each comment 
 	
-	private array $entityNames = [ // Entities to load. For each one there must be a method loadName()
+	private array $entityNames = [ // Entities to load, in loading order. For each one there must be a method loadName()
 		'Users',
 		'Threads',
 		'Comments',

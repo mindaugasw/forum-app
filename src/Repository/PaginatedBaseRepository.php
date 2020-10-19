@@ -4,7 +4,6 @@
 namespace App\Repository;
 
 
-use App\Entity\Thread;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\Event\Subscriber\Paginate\Callback\CallbackPagination;

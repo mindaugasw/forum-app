@@ -12,7 +12,6 @@ use App\Entity\VoteThread;
 use App\Exception\ApiBadRequestException;
 use App\Exception\ApiServerException;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Security;
 
 class VotingService
@@ -39,6 +38,7 @@ class VotingService
 		
 		if ($this->user === null)
 			throw new ApiServerException('Tried to vote while unauthorized.');
+			// Server exception because there are auth checks in the controller
 		
 		if ($thread->getAuthor() === $this->user)
 			throw new ApiBadRequestException('Voting on your own threads is not allowed.');
@@ -81,6 +81,7 @@ class VotingService
 		
 		if ($this->user === null)
 			throw new ApiServerException('Tried to vote while unauthorized.');
+			// Server exception because there are auth checks in the controller
 		
 		if ($comment->getAuthor() === $this->user)
 			throw new ApiBadRequestException('Voting on your own comments is not allowed.');
