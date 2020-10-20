@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/api/users")
  */
-class UserController extends BaseController
+class UserController extends BaseApiController
 {
 	private UserCRUD $userCRUD;
 	

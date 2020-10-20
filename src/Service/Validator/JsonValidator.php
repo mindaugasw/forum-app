@@ -13,6 +13,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  * http://www.inanzzz.com/index.php/post/umax/using-native-symfony-serializer-and-validator-for-json-api
  */
 
+/**
+ * Validates JSON input on entities create or edit
+ */
 class JsonValidator
 {
 	private SerializerInterface $serializer;
@@ -76,7 +79,6 @@ class JsonValidator
 			throw new ApiBadRequestException('Empty body.');
 		}
 		
-		//$this->CheckAllowedFields($json, $allowedFields);
 		$model = get_class($obj);
 		
 		try {

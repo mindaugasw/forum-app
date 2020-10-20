@@ -29,6 +29,7 @@
         "symfony/serializer": "5.1.*",
         "symfony/twig-pack": "^1.0",
         "symfony/validator": "5.1.*",
+        "symfony/webpack-encore-bundle": "^1.7",
         "symfony/yaml": "5.1.*"
     },
     "require-dev": {
@@ -82,6 +83,12 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "db-reset": [
+            "symfony console doctrine:database:drop --if-exists --force",
+            "symfony console doctrine:database:create --if-not-exists",
+            "symfony console doctrine:migrations:migrate -n",
+            "symfony console doctrine:fixtures:load -n"
         ]
     },
     "conflict": {

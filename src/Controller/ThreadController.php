@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/api/threads")
  */
-class ThreadController extends BaseController
+class ThreadController extends BaseApiController
 {
 	private ThreadCRUD $threadCRUD;
 	

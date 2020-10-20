@@ -30,19 +30,25 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    App\Controller\BaseController:
-        class: App\Controller\BaseController
+    App\Controller\BaseApiController:
+        class: App\Controller\BaseApiController
         calls:
             - injectDependencies: ['@Doctrine\ORM\EntityManagerInterface', '@App\Service\ApiResponseFactory', '@App\Service\Validator\JsonValidator', '@App\Service\Validator\QueryParamsValidator']
-
-    App\EventListener\ExceptionListener:
-        tags:
-            - { name: kernel.event_listener, event: kernel.exception }
-        arguments: ["%kernel.environment%"]
 
     App\Service\EntitiesCRUD\UserCRUD:
         class: App\Service\EntitiesCRUD\UserCRUD
         arguments: ["%kernel.environment%"]
+        
+        
+    # --- EVENTS ---
+    App\EventListener\ExceptionListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
+        arguments: [ "%kernel.environment%" ]
+    
+    App\EventListener\JWTCreatedListener:
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
 
     # from https://github.com/markitosgv/JWTRefreshTokenBundle/issues/200#issuecomment-681620256
     gesdinet.jwtrefreshtoken.refresh_token_manager:

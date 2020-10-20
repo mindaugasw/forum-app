@@ -4,17 +4,16 @@
 namespace App\Repository;
 
 
-use App\Entity\Thread;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\Event\Subscriber\Paginate\Callback\CallbackPagination;
 use Knp\Component\Pager\PaginatorInterface;
 
-abstract class BaseRepository extends ServiceEntityRepository
+abstract class PaginatedBaseRepository extends ServiceEntityRepository
 {
 	private PaginatorInterface $paginator;
 	
-	public function __construct(ManagerRegistry $registry, string $entityClass, PaginatorInterface $paginator)
+	public function __construct(ManagerRegistry $registry, string $entityClass, PaginatorInterface $paginator) // TODO move $paginator to setter DI
 	{
 		parent::__construct($registry, $entityClass);
 		$this->paginator = $paginator;

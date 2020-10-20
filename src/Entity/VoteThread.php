@@ -6,6 +6,8 @@ use App\Repository\VoteThreadRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Represents vote from a single user on a single thread.
+ * 
  * @ORM\Entity(repositoryClass=VoteThreadRepository::class)
  */
 class VoteThread

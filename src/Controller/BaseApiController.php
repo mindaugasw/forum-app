@@ -10,7 +10,7 @@ use Knp\Component\Pager\Pagination\PaginationInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-abstract class BaseController extends AbstractController
+abstract class BaseApiController extends AbstractController
 {
 	protected EntityManagerInterface $em;
 	protected ApiResponseFactory $responses;

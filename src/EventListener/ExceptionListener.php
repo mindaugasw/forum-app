@@ -42,10 +42,15 @@ class ExceptionListener
 		$statusCode = $exception instanceof HttpExceptionInterface ? $exception->getStatusCode() : 500;
 		
 		if ($exception instanceof ClientFriendlyExceptionInterface || $this->app_env === 'dev')
+		{
 			$message = $exception->getMessage();
+			$type = get_class($exception);
+		}
 		else
+		{
 			$message = '';
-		$type = get_class($exception);
+			$type = '';
+		}
 		
 		$response = $this->responses->ErrorResponse($type, $statusCode, $message);
 		$event->setResponse($response);

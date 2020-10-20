@@ -11,31 +11,31 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
+/**
+ * Validates query params based on given requirements
+ */
 class QueryParamsValidator
 {
-	// Query params keys
+	// Query params keys (as they should appear in the URL)
 	public const ORDER_BY = 'orderby';
 	public const ORDER_DIR = 'orderdir';
 	public const PAGE_NUM = 'page';
 	public const PER_PAGE = 'perpage';
 	
-	// TODO use violator like in JsonValidator
+	// TODO use $violator like in JsonValidator
 	//private ViolationUtil $violator;
 	
-	// Default number of items per page, from config in knp_paginator.yaml
+	// Default number of items per page, set in config in knp_paginator.yaml
 	private int $perPageConfig;
-	
-	//private ContainerBagInterface $params;
 	
 	public function __construct(ParameterBagInterface $params)
 	{
-		//$this->params = $params;
 		$this->perPageConfig = $params->get('per_page_default');
 	}
 	
 	/**
 	 * Returns ordering and pagination data from query params.
-	 * (Joins Ordering and Pagination params validation into one method)
+	 * (Joins Ordering and Pagination methods into one method)
 	 * 
 	 * @param Request $request
 	 * @param string|null $entityName Entity name, used for ordering fields validation. If null, ordering is skipped

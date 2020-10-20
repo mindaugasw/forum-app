@@ -24,6 +24,7 @@ use Symfony\Component\Security\Http\Util\TargetPathTrait;
 /*
  * NOT USED ANYMORE.
  * Replaced by JWT auth.
+ * TODO remove this
  */
 class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements PasswordAuthenticatedInterface
 {

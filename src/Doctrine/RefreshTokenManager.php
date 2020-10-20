@@ -15,6 +15,7 @@ class RefreshTokenManager extends BaseRefreshTokenManager
 {
 	// TODO remove this when issue is fixed
 	// https://github.com/markitosgv/JWTRefreshTokenBundle/issues/200#issuecomment-681620256
+	// Also remove gesdinet.jwtrefreshtoken.refresh_token_manager in services.yaml
 	
 	/**
 	 * @var EntityManagerInterface

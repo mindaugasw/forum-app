@@ -16,13 +16,10 @@ use Symfony\Component\Security\Core\Security;
  */
 class VoteCommentRepository extends ServiceEntityRepository
 {
-	/** @var Security */
-	private $security;
 	
-	public function __construct(ManagerRegistry $registry, Security $security)
+	public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, VoteComment::class);
-		$this->security = $security;
 	}
 	
 	/**
