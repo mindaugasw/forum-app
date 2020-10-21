@@ -64,7 +64,7 @@ class UserCRUD
 	
 	public function createNew(Request $request)
 	{
-		$newUser = $this->jsonValidator->ValidateNew($request->getContent(), User::class, ['user_write']);
+		$newUser = $this->jsonValidator->ValidateNew($request->getContent(), User::class, ['user_create']);
 		
 		if ($this->userRepo->findOneBy(['username' => $newUser->getUsername()]) !== null)
 			throw new ApiBadRequestException("This username is already in use: ".$newUser->getUsername());
@@ -104,17 +104,26 @@ class UserCRUD
 	 */
 	private function editByUserHimself(User $user, Request $request)
 	{
-		$oldPassword = $user->getPassword();
-		$this->jsonValidator->ValidateEdit($request->getContent(), $user, ['user_write_himself']);
+		$oldPasswordHash = $user->getPassword();
+		$this->jsonValidator->ValidateEdit($request->getContent(), $user, ['user_edit_himself']);
+		$newPasswordPlaintext = $user->getPassword(); // Returns newly deserialized plaintext password OR old password hash (if new password was not set)
 		
-		$newPassword = $user->getPassword();
-		if ($oldPassword !== $newPassword)
+		if ($oldPasswordHash !== $newPasswordPlaintext) // Password was changed
 		{
-			$this->ensureSafePassword($newPassword);
-			$user->setPassword($this->passwordEncoder->encodePassword($user, $user->getPassword()));
+			$oldPasswordPlaintext = $user->getOldPassword();
+			
+			$user->setPassword($oldPasswordHash); // Temporarily set back to old password (as it is overwritten by deserializer). Needed for isPasswordValid method
+			
+			if (!$this->passwordEncoder->isPasswordValid($user, $oldPasswordPlaintext))
+			{
+				throw new ApiBadRequestException('Old password does not match currently set password.');
+			}
+			
+			$this->ensureSafePassword($newPasswordPlaintext);
+			$user->setPassword($this->passwordEncoder->encodePassword($user, $newPasswordPlaintext));
 		}
 		
-		return $user;		
+		return $user;
 	}
 	
 	/**
@@ -122,7 +131,7 @@ class UserCRUD
 	 */
 	private function editAsAdmin(User $user, Request $request)
 	{
-		$this->jsonValidator->ValidateEdit($request->getContent(), $user, ['user_write_admin']);
+		$this->jsonValidator->ValidateEdit($request->getContent(), $user, ['user_edit_admin']);
 		$this->ensureValidRoles($user->getRoles());
 		
 		return $user;

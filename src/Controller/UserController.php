@@ -89,47 +89,4 @@ class UserController extends BaseApiController
 		
 		// TODO: should user threads and comments also be deleted on user delete?
 	}
-	
-	
-    /*
-     * Login is handled by JWT auth, at path /api/login_check
-     * 
-     * Route("/login", name="app_login")
-     *
-    /*public function login(AuthenticationUtils $authenticationUtils): Response
-    {
-    	throw new Exception('Login should be handled by JWT auth.');
-    	if ($this->getUser()) {
-            return $this->redirectToRoute('target_path');
-        }
-
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
-
-        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
-    }*/
-
-    /**
-     * @Route("/logout", methods={"POST"})
-     */
-    public function logout(Request $request)
-    {
-		if ($request->cookies->has('refresh_token') === true)
-		{
-			$refreshToken = $this->em->getRepository(RefreshToken::class)->findOneBy(
-				['refreshToken' => $request->cookies->get('refresh_token')]);
-			
-			if ($refreshToken !== null)
-			{
-				$this->em->remove($refreshToken);
-				$this->em->flush();
-			}
-		}
-		
-    	$response = $this->responses->ApiResponse(null, 200);
-    	$response->headers->clearCookie('refresh_token');
-    	return $response;
-    }
 }
