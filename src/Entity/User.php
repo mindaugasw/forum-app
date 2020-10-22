@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -16,6 +17,14 @@ class User implements UserInterface
 {
 	const ROLE_USER = 'ROLE_USER';
 	const ROLE_ADMIN = 'ROLE_ADMIN';
+	
+	/**
+	 * Serializer groups:
+	 * user_read
+	 * user_create - new user creation, only by user himself
+	 * user_edit_himself - edit user info, by himself
+	 * user_edit_admin - edit user info, by admin
+	 */
 	
     /**
      * @ORM\Id
@@ -27,22 +36,33 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-	 * @Groups({"user_read", "user_write"})
+	 * @Groups({"user_read", "user_create"})
+	 * @Assert\Length(
+	 *     min=4,
+	 *     max=25,
+	 *     allowEmptyString=false
+	 * )
      */
     private $username;
 
     /**
      * @ORM\Column(type="json")
-	 * @Groups({"user_read", "user_write", "user_write_admin"})
+	 * @Groups({"user_read", "user_edit_admin"})
      */
     private $roles = [];
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
-	 * @Groups({"user_write", "user_write_himself"})
+	 * @Groups({"user_create", "user_edit_himself"})
      */
     private $password;
+	
+	/**
+	 * @var string Currently set plaintext password. Used only when deserializing edited user.
+	 * @Groups({"user_edit_himself"})
+	 */
+    private $oldPassword;
 
     /**
      * @ORM\OneToMany(targetEntity=Thread::class, mappedBy="author", cascade={"remove"})
@@ -102,7 +122,7 @@ class User implements UserInterface
     	if ($pos !== false)
     		unset($roles[$pos]); // Do not store the default role in DB
 		
-        $this->roles = $roles;
+        $this->roles = array_values($roles); // array_values needed as unset() above does not update indices
 
         return $this;
     }
@@ -126,6 +146,22 @@ class User implements UserInterface
     public function setPassword(string $password): self
     {
         $this->password = $password;
+
+        return $this;
+    }
+	
+	/**
+	 * Get old password form input (plaintext)
+	 * @return string
+	 */
+    public function getOldPassword(): string
+    {
+        return (string) $this->oldPassword;
+    }
+
+    public function setOldPassword(string $oldPassword): self
+    {
+        $this->oldPassword = $oldPassword;
 
         return $this;
     }

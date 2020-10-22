@@ -72,7 +72,6 @@ abstract class BaseApiController extends AbstractController
 	 */
 	protected function ApiPaginatedResponse(PaginationInterface $data, int $status = 200, array $groups = [], array $ignoredAttributes = []): JsonResponse
 	{
-		//dd($this->serializer->serialize(['wtf' => 'asdasdasdasd'], 'json'));
 		return $this->responses->ApiPaginatedResponse($data, $status, $groups, $ignoredAttributes);
 	}
 }

@@ -76,6 +76,7 @@ class Comment
 	private $userVote = 0;
 
     /**
+	 * TODO change to votesSum
      * @ORM\Column(type="integer")
 	 * @Groups({"comment_read"})
      */

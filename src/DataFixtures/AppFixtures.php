@@ -85,6 +85,10 @@ class AppFixtures extends Fixture
 			if ($hash === null)
 				$hash = $this->passwordEncoder->encodePassword($user, 'password');
 			$user->setPassword($hash);
+			
+			if ($i === 0)
+				$user->setRoles([User::ROLE_ADMIN]);
+			
 			$this->entities['users'][] = $user;
 			$this->em->persist($user);
 		}

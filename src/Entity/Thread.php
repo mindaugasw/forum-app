@@ -100,6 +100,7 @@ class Thread
     private $userVote = 0;
 
     /**
+	 * TODO change to votesSum
      * @ORM\Column(type="integer")
 	 * @Groups({"thread_read"})
      */

@@ -42,8 +42,8 @@
     },
     "repositories": [
         {
-            "url": "https://bitbucket.org/mindaugas932/jwtrefreshtokenbundle.git",
-            "type": "vcs"
+            "url": "git@github.com:lukacovicadam/JWTRefreshTokenBundle.git",
+            "type": "git"
         }
     ],
     "config": {
