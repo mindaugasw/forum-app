@@ -6,6 +6,7 @@ import { getThreadList } from "../Api/thread_api";
 import Paginator from "./Paginator";
 import { Switch, Route, Link } from "react-router-dom";
 import ThreadView from "./ThreadView";
+import ReduxTest from "./ReduxTest";
 
 
 function countThreadsNumber(threads) {
