@@ -5,7 +5,7 @@ import { combineReducers } from "@reduxjs/toolkit";
 import threadReducer from "../threads";
 
 const rootReducer = combineReducers({
-    thread: threadReducer,
+    threads: threadReducer,
     counter: counterReducer,
     isLogged: loggedReducer
 })

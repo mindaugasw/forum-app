@@ -1,8 +1,8 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { increment, decrement } from "../redux/actions/actions";
+import { increment, decrement } from "../../redux/actions/actions";
 
-export default function ReduxTest() {
+export default function Counter() {
 
         const counter = useSelector(state => state.counter);
         const dispatch = useDispatch();

@@ -47,7 +47,7 @@ const decrement = () => {
 // Store
 // import { createStore } from '@reduxjs/toolkit';
 // import rootReducer from './js/redux/reducers/rootReducer';
-import ReduxTest from "./js/components/ReduxTest";
+import Counter from "./js/components/ReduxTest/Counter";
 import { Provider } from "react-redux";
 /*let store = createStore(
     rootReducer
@@ -62,18 +62,18 @@ import { Provider } from "react-redux";
 
 import store from "./js/store";
 import { addThread } from "./js/redux/threads";
+import ThreadListRedux from "./js/components/ReduxTest/ThreadListRedux";
 
 store.subscribe(() => console.log(store.getState()));
 window.store = store;
 window.addThread = addThread;
 
+store.dispatch(addThread({id: 2, title: 'From app.js'}));
 
 
 render(
     <Provider store={store}>
-        <ReduxTest
-            /*incrementAction={() => store.dispatch(increment())}
-            decrementAction={() => store.dispatch(decrement())}*/
-        />
+        {/*<Counter />*/}
+        <ThreadListRedux />
         <ReactApp />
     </Provider>, document.getElementById('sample-div'));
