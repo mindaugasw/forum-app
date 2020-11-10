@@ -2,10 +2,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { addThread } from "../../redux/threads";
 
-const mapDispatchtoProps = dispatch => {
+/*const mapDispatchtoProps = dispatch => {
     return {
         addThread: thread => dispatch(addThread(thread))
     };
+}*/
+
+const mapDispatchtoProps = {
+    addThread
 }
 
 class ConnectedForm extends React.Component {

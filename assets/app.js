@@ -64,11 +64,11 @@ import store from "./js/store";
 import { addThread } from "./js/redux/threads";
 import ThreadListRedux from "./js/components/ReduxTest/ThreadListRedux";
 
-store.subscribe(() => console.log(store.getState()));
-window.store = store;
-window.addThread = addThread;
+// store.subscribe(() => console.log(store.getState()));
+// window.store = store;
+// window.addThread = addThread;
 
-store.dispatch(addThread({id: 2, title: 'From app.js'}));
+// store.dispatch(addThread({id: 2, title: 'From app.js'}));
 
 
 render(
