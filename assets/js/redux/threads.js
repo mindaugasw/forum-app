@@ -1,14 +1,17 @@
 import { getThreadList } from "../Api/thread_api";
-import {createAction, createReducer} from "@reduxjs/toolkit";
+import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 
 // --- Actions ---
 const BASE = 'thread/';
 const ADD = BASE + 'add';
-// const GET_DATA = BASE + 'dataLoad';
-const DATA_LOADED = BASE + 'dataLoaded';
+const LOAD_LIST = BASE + 'loadList';
 
 // --- Action Creators ---
+/**
+ * @param title Title for new thread
+ *
+ */
 export const addThread = createAction(ADD, function prepare(title) {
     return {
         payload: {
@@ -17,27 +20,38 @@ export const addThread = createAction(ADD, function prepare(title) {
     }
 });
 
-export const getThreads = () => {
-    return function (dispatch) {
-        getThreadList()
-            .then((data) =>
-                dispatch({ type: DATA_LOADED, payload: { list: data.items, pagination: data.pagination }})
-            );
-    }
-}
+export const getThreads = createAsyncThunk(LOAD_LIST, () => {
+    return getThreadList()
+        // Handle errors here. https://www.valentinog.com/blog/redux/#modern-redux-with-redux-toolkit-createasyncthunk
+        .then(payload => payload);
+});
 
 // --- Reducer ---
-const initialState = {
-    list: []
-}
-
-export const threadReducer = createReducer(initialState, {
-    [addThread]: (state, action) => {
-        state.list.push(action.payload);
+export const threadSlice = createSlice({
+    name: 'thread',
+    initialState: {
+        list: [],
+        loading: false,
+        pagination: {}
     },
-    [DATA_LOADED]: (state, action) => {
-        state.list = action.payload.list;
-        state.pagination = action.payload.pagination;
+    reducers: {
+        addThread: (state, action) => {
+            state.list.push(action.payload);
+        }
+    },
+    extraReducers: {
+        [getThreads.pending]: state => {
+            state.loading = true;
+        },
+        [getThreads.fulfilled]: (state, action) => {
+            state.loading = false;
+            state.list = action.payload.items;
+            state.pagination = action.payload.pagination;
+        },
+        [getThreads.rejected]: (state, action) => {
+            state.loading = false;
+            console.log('ERROR during action');
+        }
     }
 });
 
@@ -46,6 +60,7 @@ export const threadReducer = createReducer(initialState, {
 export const threadMiddleware = ({ getState, dispatch }) => {
     return function (next) {
         return function (action) {
+
             switch (action.type) {
                 case ADD:
                     const thread = action.payload;

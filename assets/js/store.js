@@ -1,9 +1,9 @@
 import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
-import { threadReducer, threadMiddleware } from "./redux/threads";
+import { threadSlice, threadMiddleware } from "./redux/threads";
 
 const store = configureStore({
     reducer: {
-        threads: threadReducer,
+        threads: threadSlice.reducer,
     },
     middleware: [
         ...getDefaultMiddleware(),
