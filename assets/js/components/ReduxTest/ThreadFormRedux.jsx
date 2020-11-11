@@ -2,11 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { addThread, getThreads } from "../../redux/threads";
 
-/*const mapDispatchtoProps = dispatch => {
-    return {
-        addThread: thread => dispatch(addThread(thread))
-    };
-}*/
 
 const mapDispatchToProps = {
     addThread,
