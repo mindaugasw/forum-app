@@ -1,47 +1,81 @@
+import { getThreadList } from "../Api/thread_api";
+import {createAction, createReducer} from "@reduxjs/toolkit";
 
-// Actions
+
+// --- Actions ---
 const BASE = 'thread/';
 const ADD = BASE + 'add';
+// const GET_DATA = BASE + 'dataLoad';
+const DATA_LOADED = BASE + 'dataLoaded';
 
-// Reducer
+// --- Action Creators ---
+/*export function addThread(payload) {
+    return { type: ADD, payload }; // payload: { id, title }
+}*/
+
+export const addThread = createAction(ADD, function prepare(title) {
+    return {
+        payload: {
+            title
+        }
+    }
+});
+
+export const getThreads = () => {
+    return function (dispatch) {
+        getThreadList()
+            .then((data) =>
+                dispatch({ type: DATA_LOADED, payload: { list: data.items, pagination: data.pagination }})
+                // this.setState({threads: data.items, pagination: data.pagination})
+            );
+    }
+}
+
+/*export const getThreads = createAction(GET_DATA, function prepare(title) {
+    return function (dispatch) {
+        console.log('asdc');
+        getThreadList()
+            .then(data => {
+                console.log("loaded");
+                dispatch({type: DATA_LOADED, payload: {list: data.items, pagination: data.pagination}});
+            });
+    }
+});*/
+
+// --- Reducer ---
 const initialState = {
     list: [
-        { id: 1, title: 'Initial state thread'}
+        //{ id: 1, title: 'Initial state thread'}
     ]
 }
 
-export default function threadReducer(state = initialState, action) {
+/*export function threadReducer(state = initialState, action) {
     switch (action.type) {
         case ADD:
-            /*// eslint-disable-next-line no-case-declarations
-            let newId = 1;
-            if (state.list.length > 0)
-                newId = state.list[state.list.length - 1].id + 1;
-
-
-            return Object.assign({}, state, {
-                list: state.list.concat({
-                    id: newId,
-                    title: action.payload.title
-                })
-            });*/
-
             return Object.assign({}, state, {
                 list: state.list.concat(action.payload)
             });
 
+        case DATA_LOADED:
+            return Object.assign({}, state, action.payload);
+
         default:
             return state;
     }
-}
+}*/
+
+export const threadReducer = createReducer(initialState, {
+    [addThread]: (state, action) => {
+        state.list.push(action.payload);
+    },
+    [DATA_LOADED]: (state, action) => {
+        state.list = action.payload.list;
+        state.pagination = action.payload.pagination;
+    }
+});
 
 
-// Action Creators
-export function addThread(payload) {
-    return { type: ADD, payload }; // payload: { id, title }
-}
-
-// Middleware
+// --- Middleware ---
 export const threadMiddleware = ({ getState, dispatch }) => {
     return function (next) {
         return function (action) {

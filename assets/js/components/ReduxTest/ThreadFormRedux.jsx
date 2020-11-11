@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { addThread } from "../../redux/threads";
+import { addThread, getThreads } from "../../redux/threads";
 
 /*const mapDispatchtoProps = dispatch => {
     return {
@@ -8,8 +8,15 @@ import { addThread } from "../../redux/threads";
     };
 }*/
 
-const mapDispatchtoProps = {
-    addThread
+const mapDispatchToProps = {
+    addThread,
+    getThreads
+}
+
+const mapStateToProps = state => {
+    return {
+        threads: state.threads.list
+    }
 }
 
 class ConnectedForm extends React.Component {
@@ -23,6 +30,10 @@ class ConnectedForm extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    componentDidMount() {
+        this.props.getThreads();
+    }
+
     handleChange(event) {
         this.setState({ [event.target.id]: event.target.value });
     }
@@ -30,7 +41,7 @@ class ConnectedForm extends React.Component {
     handleSubmit(event) {
         event.preventDefault();
         const { title } = this.state;
-        this.props.addThread({ title });
+        this.props.addThread(title);
         // this.setState({ title: "" });
     }
 
@@ -54,6 +65,6 @@ class ConnectedForm extends React.Component {
     }
 }
 
-const ThreadFormRedux = connect(null, mapDispatchtoProps)(ConnectedForm);
+const ThreadFormRedux = connect(null, mapDispatchToProps)(ConnectedForm);
 
 export default ThreadFormRedux;
