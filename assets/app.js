@@ -9,13 +9,19 @@
 import './styles/app.css';
 
 import React from 'react';
-import {render} from 'react-dom';
+import { render } from 'react-dom';
 import ReactApp from './js/components/ReactApp';
 // import '@fortawesome/fontawesome-free/js/all';
+import { Provider } from "react-redux";
 
+import store from "./js/store";
+import ThreadListRedux from "./js/components/ReduxTest/ThreadListRedux";
+import AuthFormRedux from "./js/components/ReduxTest/AuthFormRedux";
 
-// Need jQuery? Install it with "yarn add jquery", then uncomment to import it.
-// import $ from 'jquery';
-
-console.log('Webpack Encore @ assets/app.js');
-render(<ReactApp />, document.getElementById('sample-div'));
+render(
+    <Provider store={store}>
+        <AuthFormRedux />
+        <ThreadListRedux />
+        <ReactApp />
+    </Provider>, document.getElementById('sample-div')
+);
