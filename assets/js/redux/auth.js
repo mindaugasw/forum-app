@@ -1,6 +1,5 @@
-import {createAction, createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import API from "../Api/API";
-import {useDispatch} from "react-redux";
 
 
 // --- Actions ---
@@ -9,9 +8,8 @@ const LOG_IN_MANUAL = BASE + 'login'; // When user fills login form
 const TOKEN_REFRESH = BASE + 'refresh'; // Automatic token refresh
 const LOG_OUT = BASE + 'logout';
 
-const PENDING = '/pending';
-const FULFILLED = '/fulfilled';
-const REJECTED = '/REJECTED';
+const FULFILLED = '/fulfilled'; // Used to combine async thunk name, e.g. TOKEN_REFRESH+FULFILLED
+const REJECTED = '/rejected';
 
 
 
@@ -52,7 +50,8 @@ export const tokenRefresh = createAsyncThunk(
                 else
                     return response.json().then(r => thunkAPI.rejectWithValue(r));
             });
-    });
+});
+
 
 
 // --- Reducer ---
@@ -65,7 +64,7 @@ export const authSlice = createSlice({
         loaded: false,
         isLoggedIn: false,
         jwt: null,
-        timer: null, // Used for automatic token refresh
+        timer: null, // Timer used for automatic token refresh
     },
     reducers: {
 
@@ -74,11 +73,6 @@ export const authSlice = createSlice({
         [login.fulfilled]: (state, action) => {
             console.log('Manual login successful');
             const p = action.payload;
-            /*state.loaded = true;
-            state.isLoggedIn = true;
-            state.jwt = p.token;
-            state.user = p.user;
-            state.timer = p.timer;*/
             setAuthState(state, true, p.token, p.user, p.timer);
         },
         [login.rejected]: (state, action) => {
@@ -87,35 +81,9 @@ export const authSlice = createSlice({
         },
 
 
-        [logout.fulfilled]: (state, action) => {
-            console.log('Logout successful');
-            /*state.loaded = true;
-            state.isLoggedIn = false;
-            state.jwt = null;
-            state.user = null;
-            state.timer = null;*/
-            setAuthState(state, false, null, null, null);
-        },
-        [logout.rejected]: (state, action) => {
-            console.log('Logout failed: ' + action.payload.code);
-            /*state.loaded = true;
-            state.isLoggedIn = false;
-            state.jwt = null;
-            state.user = null;
-            state.timer = null;*/
-            setAuthState(state, false, null, null, null);
-        },
-
-
         [tokenRefresh.fulfilled]: (state, action) => {
             console.log('Automatic login successful');
             const p = action.payload;
-
-            /*state.loaded = true;
-            state.isLoggedIn = true;
-            state.jwt = p.token;
-            state.user = p.user;
-            state.timer = p.timer;*/
             setAuthState(state, true, p.token, p.user, p.timer);
         },
         [tokenRefresh.rejected]: (state, action) => {
@@ -123,12 +91,16 @@ export const authSlice = createSlice({
             if (state.isLoggedIn) {
                 // TODO display error if user was logged out during token refresh
             }
+            setAuthState(state, false, null, null, null);
+        },
 
-            /*state.loaded = true;
-            state.isLoggedIn = false;
-            state.jwt = null;
-            state.user = null;
-            state.timer = null;*/
+
+        [logout.fulfilled]: (state, action) => {
+            console.log('Logout successful');
+            setAuthState(state, false, null, null, null);
+        },
+        [logout.rejected]: (state, action) => {
+            console.log('Logout failed: ' + action.payload.code);
             setAuthState(state, false, null, null, null);
         },
     }
@@ -143,16 +115,9 @@ export const authMiddleware = ({ getState, dispatch }) => {
             let p; // To prevent syntax error "Block scoped variables cannot be redeclared"
 
             switch (action.type) {
-                /*case LOG_IN_MANUAL + FULFILLED:
-                    console.log('@ middleware - '+LOG_IN_MANUAL+FULFILLED);
-                    p = action.payload;
-                    p.user = jwtDecode(p.token);
-                    p.timer = restartTimer(getState().auth.timer, p.user.exp, dispatch);
-                    break;*/
 
                 case LOG_IN_MANUAL + FULFILLED:
                 case TOKEN_REFRESH + FULFILLED:
-                    // console.log('@ middleware - ('+TOKEN_REFRESH+'/'+LOG_IN_MANUAL+')'+FULFILLED);
                     p = action.payload;
                     p.user = jwtDecode(p.token);
                     p.timer = restartTimer(getState().auth.timer, p.user.exp, dispatch);
@@ -162,7 +127,6 @@ export const authMiddleware = ({ getState, dispatch }) => {
                 case LOG_OUT + FULFILLED:
                 case LOG_OUT + REJECTED:
                     stopTimer(getState().auth.timer);
-                    // console.log('@ middleware - '+REJECTED);
                     break;
 
             }
@@ -196,9 +160,9 @@ function setAuthState(state, isLoggedIn, jwt, user, timer) {
 }
 
 /**
- * Restart automatic token refresh timer. Stops old one (if it exists),
+ * Restart timer for automatic token refresh. Stops old one (if it exists),
  * creates new one, starts and returns it.
- * New timer will be set to tick after 85% time until JWT expiry.
+ * New timer will be set to timeout after 85% time until JWT expiry.
  * @param oldTimer Previous timer object or null
  * @param jwtExp JWT expiry timestamp (exp from decoded JWT)
  * @param dispatch Dispatch function from the middleware
@@ -208,7 +172,7 @@ function restartTimer(oldTimer, jwtExp, dispatch) {
         clearTimeout(oldTimer);
 
     const timeoutMs = (jwtExp * 1000 - Date.now()) * 0.85; // Refresh token after 85% expiry time
-    console.log('Token refresh in ' + (timeoutMs / 1000));
+
     return setTimeout(() => {
         dispatch(tokenRefresh());
     }, timeoutMs);
