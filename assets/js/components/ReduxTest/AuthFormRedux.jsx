@@ -1,11 +1,12 @@
 import React from 'react';
 import { connect } from "react-redux";
-import { login, logout } from "../../redux/auth";
+import { login, logout, tokenRefresh } from "../../redux/auth";
 import PropTypes from "prop-types";
 
 const mapDispatchToProps = {
     login,
-    logout
+    logout,
+    tokenRefresh
 }
 
 const mapStateToProps = state => {
@@ -34,7 +35,7 @@ class ConnectedAuthForm extends React.Component {
     }
 
     componentDidMount() {
-        // TODO refresh token
+        this.props.tokenRefresh();
     }
 
     handleFormSubmit(event) {
@@ -51,7 +52,7 @@ class ConnectedAuthForm extends React.Component {
     }
 
     handleLogout() {
-        // TODO
+        this.props.logout();
     }
 
     render() {
@@ -65,20 +66,14 @@ class ConnectedAuthForm extends React.Component {
                 <form onSubmit={ this.handleFormSubmit }>
                     Username: <input name='username' type='text' /><br />
                     Password: <input name='password' type='password' /><br />
-                    <button type='submit'>Log in</button>
+                    <button type='submit'>Log in</button>{'  '}
+                    <button type='button' onClick={this.handleLogout}>Log out</button>
                 </form>
 
                 Auth {loaded ? 'loaded' : 'not loaded'},{' '}
                 {isLoggedIn ?
                     `logged in as: ${this.props.username} (#${this.props.id}), [${this.props.roles}]`
                     : 'not logged in'}
-
-
-                {/*Auth loaded: {authLoaded.toString()} <br/>
-                Is authenticated: {isAuthenticated.toString()} <br/>
-                JWT: <input name='jwt' type='text' value={jwt||''} readOnly='readOnly'/><br/>
-                User obj: {JSON.stringify(user)}<br/>
-                <button onClick={this.handleLogout}>Log out</button>*/}
                 <hr />
             </div>
         );
