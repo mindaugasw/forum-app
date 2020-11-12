@@ -7,6 +7,7 @@ const BASE = 'thread/';
 const ADD = BASE + 'add';
 const LOAD_LIST = BASE + 'loadList';
 
+
 // --- Action Creators ---
 /**
  * @param title Title for new thread
@@ -26,12 +27,13 @@ export const getThreads = createAsyncThunk(LOAD_LIST, () => {
         .then(payload => payload);
 });
 
+
 // --- Reducer ---
 export const threadSlice = createSlice({
     name: 'thread',
     initialState: {
         list: [],
-        loading: false,
+        loading: false, // change 'loading' to 'loaded'
         pagination: {}
     },
     reducers: {
@@ -74,8 +76,10 @@ export const threadMiddleware = ({ getState, dispatch }) => {
 
         }
     }
-}
+};
 
+
+// --- Helper methods ---
 /**
  * Add ID to new thread (if it doesn't exist)
  * @param thread Thread object in the payload (action.payload)

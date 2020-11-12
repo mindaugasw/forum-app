@@ -56,7 +56,7 @@ export default class ReactApp extends React.Component {
                           <li><NavLink to='/'>Home</NavLink></li>
                           <li><NavLink to='/threadlist'>Thread list</NavLink></li>
                           <li><NavLink to='/threadform'>Thread form</NavLink></li>
-                          <li><NavLink to='/authform'>Auth form</NavLink></li>
+                          {/*<li><NavLink to='/authform'>Auth form</NavLink></li>*/}
                       </ul>
                   </nav>
 
@@ -67,9 +67,9 @@ export default class ReactApp extends React.Component {
                       <Route path='/threadlist'>
                           <ThreadList/>
                       </Route>
-                      <Route path='/authform'>
+                      {/*<Route path='/authform'>
                           <AuthForm {...this.state.auth} onAuthLoad={this.handleAuthUpdate} />
-                      </Route>
+                      </Route>*/}
                   </Switch>
 
               </div>

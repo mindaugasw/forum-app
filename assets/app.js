@@ -16,9 +16,11 @@ import { Provider } from "react-redux";
 
 import store from "./js/store";
 import ThreadListRedux from "./js/components/ReduxTest/ThreadListRedux";
+import AuthFormRedux from "./js/components/ReduxTest/AuthFormRedux";
 
 render(
     <Provider store={store}>
+        <AuthFormRedux />
         <ThreadListRedux />
         <ReactApp />
     </Provider>, document.getElementById('sample-div')
