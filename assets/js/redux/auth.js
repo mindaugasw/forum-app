@@ -76,7 +76,7 @@ export const authSlice = createSlice({
             setAuthState(state, true, p.token, p.user, p.timer);
         },
         [login.rejected]: (state, action) => {
-            console.log('Manual login failed: ' + action.payload.code);
+            console.log('Manual login failed: ' + getSafe(() => action.payload.code, 'unknown error'));
             state.loaded = true;
         },
 
@@ -87,11 +87,12 @@ export const authSlice = createSlice({
             setAuthState(state, true, p.token, p.user, p.timer);
         },
         [tokenRefresh.rejected]: (state, action) => {
-            console.log('Automatic login failed: ' + action.payload.code);
-            if (state.isLoggedIn) {
-                // TODO display error if user was logged out during token refresh
+            const errorCode = getSafe(() => action.payload.code, 'unknown error');
+            console.log('Automatic login failed: ' + errorCode);
+
+            if (state.isLoggedIn && errorCode === 401) {
+                setAuthState(state, false, null, null, null);
             }
-            setAuthState(state, false, null, null, null);
         },
 
 
@@ -100,7 +101,7 @@ export const authSlice = createSlice({
             setAuthState(state, false, null, null, null);
         },
         [logout.rejected]: (state, action) => {
-            console.log('Logout failed: ' + action.payload.code);
+            console.log('Logout failed: ' + getSafe(() => action.payload.code, 'unknown error'));
             setAuthState(state, false, null, null, null);
         },
     }

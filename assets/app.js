@@ -13,6 +13,7 @@ import { render } from 'react-dom';
 import ReactApp from './js/components/ReactApp';
 // import '@fortawesome/fontawesome-free/js/all';
 import { Provider } from "react-redux";
+import "./js/utils";
 
 import store from "./js/store";
 import ThreadListRedux from "./js/components/ReduxTest/ThreadListRedux";

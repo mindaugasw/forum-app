@@ -1,3 +1,2 @@
 lexik_jwt_authentication:
-#    token_ttl: 31104000 # 1 year on dev 
-    token_ttl: 100
+    token_ttl: 31104000 # 1 year on dev 
