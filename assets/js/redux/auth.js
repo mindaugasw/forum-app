@@ -124,10 +124,11 @@ export const authMiddleware = ({ getState, dispatch }) => {
                     p.timer = restartTimer(getState().auth.timer, p.user.exp, dispatch);
                     break;
 
-                case TOKEN_REFRESH + REJECTED:  // Clear timer just in case
+                // case TOKEN_REFRESH + REJECTED:  // Clear timer just in case
                 case LOG_OUT + FULFILLED:
                 case LOG_OUT + REJECTED:
                     stopTimer(getState().auth.timer);
+                    // TODO redirect to homepage
                     break;
 
             }

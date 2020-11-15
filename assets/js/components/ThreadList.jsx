@@ -2,7 +2,7 @@ import React from "react";
 // import { v4 as uuid } from 'uuid';
 import ThreadListItem from "./ThreadListItem";
 import ThreadForm from "./ThreadForm";
-import { getThreadList } from "../Api/thread_api";
+// import { getThreadList } from "../Api/thread_api";
 import Paginator from "./Paginator";
 import { Switch, Route, Link } from "react-router-dom";
 import ThreadView from "./ThreadView";
@@ -33,10 +33,10 @@ export default class ThreadList extends React.Component {
     }
 
     componentDidMount() {
-        getThreadList()
+        /*getThreadList()
             .then((data) =>
                 this.setState({threads: data.items, pagination: data.pagination})
-            );
+            );*/
     }
 
     handleRowClick(id) {

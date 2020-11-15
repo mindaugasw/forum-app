@@ -1,6 +1,6 @@
 import React from 'react';
-import '../Api/api_fetch';
-import {api_fetch} from "../Api/api_fetch";
+// import '../Api/api_fetch';
+// import {api_fetch} from "../Api/api_fetch";
 import PropTypes from "prop-types";
 
 
@@ -56,12 +56,12 @@ export default class AuthForm extends React.Component {
      * Try automatic log in using refresh token
      */
     tryAutoLogin() {
-        api_fetch('POST', '/token/refresh')
+        /*api_fetch('POST', '/token/refresh')
             .then(json => {
                 console.log('Successfully automatically authenticated');
                 this.props.onAuthLoad(json.token, this.parseJwt(json.token));
             })
-            .catch((response) => console.log('Authentication error', response))
+            .catch((response) => console.log('Authentication error', response))*/
     }
 
     handleLogout() {

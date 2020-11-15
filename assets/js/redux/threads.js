@@ -1,5 +1,5 @@
-import { getThreadList } from "../Api/thread_api";
 import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import API from "../Api/API";
 
 
 // --- Actions ---
@@ -7,11 +7,12 @@ const BASE = 'thread/';
 const ADD = BASE + 'add';
 const LOAD_LIST = BASE + 'loadList';
 
+const FULFILLED = '/fulfilled'; // Used to combine async thunk name, e.g. TOKEN_REFRESH+FULFILLED
+const REJECTED = '/rejected';
 
 // --- Action Creators ---
 /**
  * @param title Title for new thread
- *
  */
 export const addThread = createAction(ADD, function prepare(title) {
     return {
@@ -21,10 +22,18 @@ export const addThread = createAction(ADD, function prepare(title) {
     }
 });
 
-export const getThreads = createAsyncThunk(LOAD_LIST, () => {
-    return getThreadList()
-        // Handle errors here. https://www.valentinog.com/blog/redux/#modern-redux-with-redux-toolkit-createasyncthunk
-        .then(payload => payload);
+export const getThreads = createAsyncThunk(LOAD_LIST, (param, thunkAPI) => {
+    // return getThreadList()
+    return API.Threads.GetList()
+        .then(response => {
+            if (response.ok)
+                return response.json().then();
+            else
+                return response.json().then(r => thunkAPI.rejectWithValue(r));
+        });
+
+        // .then(payload => payload);
+        // TODO Handle errors
 });
 
 
@@ -32,8 +41,15 @@ export const getThreads = createAsyncThunk(LOAD_LIST, () => {
 export const threadSlice = createSlice({
     name: 'thread',
     initialState: {
-        list: [],
-        loading: false, // change 'loading' to 'loaded'
+        list: [
+            /*{
+                id, title, content, createdAt, updatedAt, edited, commentsCount,
+                userVote, votesCount, author: {
+                    id, username, roles: []
+                }
+            }*/
+        ],
+        loaded: false,
         pagination: {}
     },
     reducers: {
@@ -42,17 +58,17 @@ export const threadSlice = createSlice({
         }
     },
     extraReducers: {
-        [getThreads.pending]: state => {
+        /*[getThreads.pending]: state => {
             state.loading = true;
-        },
+        },*/
         [getThreads.fulfilled]: (state, action) => {
-            state.loading = false;
+            state.loaded = true;
             state.list = action.payload.items;
             state.pagination = action.payload.pagination;
         },
         [getThreads.rejected]: (state, action) => {
-            state.loading = false;
-            console.log('ERROR during action');
+            state.loaded = false;
+            console.log('Failed fetching threads: ' + getSafe(() => action.payload.code, 'unknown error'));
         }
     }
 });
@@ -102,3 +118,4 @@ function threadTitleValid(thread) {
     return ('title' in thread) && thread.title.trim().length > 0;
 }
 
+window.API = API;

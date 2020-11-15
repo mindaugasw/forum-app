@@ -19,6 +19,7 @@ module.exports = {
         "react/prop-types": 0
     },
     globals: {
-        "getSafe": true
+        "getSafe": true,
+        "store": true
     }
 };

@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { addThread, getThreads } from "../../redux/threads";
+import { addThread } from "../../redux/threads";
 
 
 const mapDispatchToProps = {
     addThread,
-    getThreads
+    // getThreads
 }
 
 const mapStateToProps = state => {
@@ -26,7 +26,7 @@ class ConnectedForm extends React.Component {
     }
 
     componentDidMount() {
-        this.props.getThreads();
+        // this.props.getThreads();
     }
 
     handleChange(event) {
