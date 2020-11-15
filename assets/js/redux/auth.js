@@ -89,6 +89,7 @@ export const authSlice = createSlice({
         [tokenRefresh.rejected]: (state, action) => {
             const errorCode = getSafe(() => action.payload.code, 'unknown error');
             console.log('Automatic login failed: ' + errorCode);
+            state.loaded = true;
 
             if (state.isLoggedIn && errorCode === 401) {
                 setAuthState(state, false, null, null, null);

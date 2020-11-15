@@ -31,13 +31,23 @@ class ConnectedThreadList extends React.Component {
         this.state = {
             threadsLoadRequested
         }
+
+        this.stateString = this.stateString.bind(this);
+
+        console.log('Constructing - '+this.stateString());
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
+        console.log('Pre-update - ' +this.stateString());
         if (!this.props.threadsLoaded && this.props.authLoaded && !this.state.threadsLoadRequested) {
             this.props.getThreads();
             this.setState({threadsLoadRequested: true});
         }
+        console.log('Post-update - ' +this.stateString());
+    }
+
+    stateString() {
+        return `p.threadsL: ${this.props.threadsLoaded}, p.authL: ${this.props.authLoaded}, s.tLR: ${this.state.threadsLoadRequested}`;
     }
 
     render() {
