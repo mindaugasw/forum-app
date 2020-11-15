@@ -1,18 +1,18 @@
 import React from "react";
 // import { v4 as uuid } from 'uuid';
-import ThreadListItem from "./ThreadListItem";
-import ThreadForm from "./ThreadForm";
+import __ThreadListItem from "./__ThreadListItem";
+import __ThreadForm from "./__ThreadForm";
 // import { getThreadList } from "../Api/thread_api";
-import Paginator from "./Paginator";
+import __Paginator from "./__Paginator";
 import { Switch, Route, Link } from "react-router-dom";
-import ThreadView from "./ThreadView";
+import __ThreadView from "./__ThreadView";
 
 
 function countThreadsNumber(threads) {
     return threads.length;
 }
 
-export default class ThreadList extends React.Component {
+export default class __ThreadList extends React.Component {
     constructor(props) {
         super(props);
         
@@ -75,7 +75,7 @@ export default class ThreadList extends React.Component {
            return (
                <li key={item.id}>
                    <Link to={'/threads/'+item.id}>
-                       <ThreadListItem
+                       <__ThreadListItem
                            {...item}
                            isRed={redRowId === item.id}
                            onRowClick={this.handleRowClick}
@@ -88,10 +88,10 @@ export default class ThreadList extends React.Component {
         
         return (
         <div>
-            <ThreadForm onNewItemAdd={this.handleNewItemAdd} />
+            <__ThreadForm onNewItemAdd={this.handleNewItemAdd} />
             <b>Threads list</b><br/>
             <b>Pagination</b><br/>
-            <Paginator {...this.state.pagination} />
+            <__Paginator {...this.state.pagination} />
             <b>Items</b><br/>
             Total items: {countThreadsNumber(this.state.threads)}
             <ul>
@@ -100,7 +100,7 @@ export default class ThreadList extends React.Component {
 
             {/*<Switch>
                 <Route path={'/threads/:threadId'}>
-                    <ThreadView {this.state.threads.filter()} />
+                    <__ThreadView {this.state.threads.filter()} />
                 </Route>
             </Switch>*/}
 

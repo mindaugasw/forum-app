@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default class ThreadListItem extends React.Component {
+export default class __ThreadListItem extends React.Component {
     render() {
         const { id, title, isRed, onRowClick, onDeleteItem } = this.props;
         

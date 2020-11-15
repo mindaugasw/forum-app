@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from "react-redux";
 import { login, logout, tokenRefresh } from "../../redux/auth";
 import PropTypes from "prop-types";
+import Loading from "../Loading";
 
 const mapDispatchToProps = {
     login,
@@ -70,7 +71,7 @@ class ConnectedAuthForm extends React.Component {
                     <button type='button' onClick={this.handleLogout}>Log out</button>
                 </form>
 
-                Auth {loaded ? 'loaded' : 'not loaded'},{' '}
+                Auth {loaded ? 'loaded' : <Loading />},{' '}
                 {isLoggedIn ?
                     `logged in as: ${this.props.username} (#${this.props.id}), [${this.props.roles}]`
                     : 'not logged in'}

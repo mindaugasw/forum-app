@@ -18,38 +18,32 @@ const REJECTED = '/rejected';
  * Login with given credentials
  * @param credentials Credentials object {username: '', password: ''}
  */
-export const login = createAsyncThunk(
-    LOG_IN_MANUAL,
-    (credentials, thunkAPI) => {
-        return API.Auth.LogIn(credentials.username, credentials.password)
-            .then(response => {
-                if (response.ok)
-                    return response.json().then();
-                else
-                    return response.json().then(r => thunkAPI.rejectWithValue(r));
-            });
+export const login = createAsyncThunk(LOG_IN_MANUAL, (credentials, thunkAPI) => {
+    return API.Auth.LogIn(credentials.username, credentials.password)
+        .then(response => {
+            if (response.ok)
+                return response.json().then();
+            else
+                return response.json().then(r => thunkAPI.rejectWithValue(r));
+        });
 });
-export const logout = createAsyncThunk(
-    LOG_OUT,
-    (param, thunkAPI) => {
-        return API.Auth.LogOut()
-            .then(response => {
-                if (response.ok)
-                    return response.json().then();
-                else
-                    return response.json().then(r => thunkAPI.rejectWithValue(r));
-            });
+export const logout = createAsyncThunk(LOG_OUT, (param, thunkAPI) => {
+    return API.Auth.LogOut()
+        .then(response => {
+            if (response.ok)
+                return response.json().then();
+            else
+                return response.json().then(r => thunkAPI.rejectWithValue(r));
+        });
 });
-export const tokenRefresh = createAsyncThunk(
-    TOKEN_REFRESH,
-    (param, thunkAPI) => {
-        return API.Auth.TokenRefresh()
-            .then(response => {
-                if (response.ok)
-                    return response.json().then();
-                else
-                    return response.json().then(r => thunkAPI.rejectWithValue(r));
-            });
+export const tokenRefresh = createAsyncThunk(TOKEN_REFRESH, (param, thunkAPI) => {
+    return API.Auth.TokenRefresh()
+        .then(response => {
+            if (response.ok)
+                return response.json().then();
+            else
+                return response.json().then(r => thunkAPI.rejectWithValue(r));
+        });
 });
 
 
@@ -58,13 +52,13 @@ export const tokenRefresh = createAsyncThunk(
 export const authSlice = createSlice({
     name: 'auth',
     initialState: {
-        user: null, /* {
+        user: null, /* {    // user object. Available only after login
             id, username, roles: [], iat, exp
         },*/
-        loaded: false,
+        loaded: false,  // Is the initial TOKEN_REFRESH request finished?
         isLoggedIn: false,
-        jwt: null,
-        timer: null, // Timer used for automatic token refresh
+        jwt: null,      // Full encoded token
+        timer: null,    // Timer used for automatic token refresh
     },
     reducers: {
 

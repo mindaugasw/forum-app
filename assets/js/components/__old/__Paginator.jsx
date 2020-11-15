@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class Paginator extends React.Component {
+export default class __Paginator extends React.Component {
     constructor(props) {
         super(props);
 

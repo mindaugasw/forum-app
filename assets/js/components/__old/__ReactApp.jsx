@@ -5,11 +5,11 @@ import {
     Route,
     Link, NavLink
 } from "react-router-dom";
-import ThreadList from "./ThreadList";
-import AuthForm from "./AuthForm";
-import ThreadForm from "./ThreadForm";
+import __ThreadList from "./__ThreadList";
+import __AuthForm from "./__AuthForm";
+import __ThreadForm from "./__ThreadForm";
 
-export default class ReactApp extends React.Component {
+export default class __ReactApp extends React.Component {
     constructor(props) {
         super(props);
 
@@ -41,8 +41,8 @@ export default class ReactApp extends React.Component {
     /*render() {
         return (
         <div>
-            <AuthForm {...this.state.auth} onAuthLoad={this.handleAuthUpdate} />
-            <ThreadList/>
+            <__AuthForm {...this.state.auth} onAuthLoad={this.handleAuthUpdate} />
+            <__ThreadList/>
         </div>);
     }*/
 
@@ -65,10 +65,10 @@ export default class ReactApp extends React.Component {
                           App homepage
                       </Route>
                       <Route path='/threadlist'>
-                          <ThreadList/>
+                          <__ThreadList/>
                       </Route>
                       {/*<Route path='/authform'>
-                          <AuthForm {...this.state.auth} onAuthLoad={this.handleAuthUpdate} />
+                          <__AuthForm {...this.state.auth} onAuthLoad={this.handleAuthUpdate} />
                       </Route>*/}
                   </Switch>
 

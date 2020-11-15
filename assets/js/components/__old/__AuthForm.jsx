@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 
 // https://medium.com/@ryanchenkie_40935/react-authentication-how-to-store-jwt-in-a-cookie-346519310e81
 
-export default class AuthForm extends React.Component {
+export default class __AuthForm extends React.Component {
     constructor(props) {
         super(props);
 

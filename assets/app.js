@@ -10,19 +10,19 @@ import './styles/app.css';
 
 import React from 'react';
 import { render } from 'react-dom';
-import ReactApp from './js/components/ReactApp';
 // import '@fortawesome/fontawesome-free/js/all';
 import { Provider } from "react-redux";
 import "./js/utils/utils";
 
 import store from "./js/store";
-import ThreadListRedux from "./js/components/ReduxTest/ThreadListRedux";
-import AuthFormRedux from "./js/components/ReduxTest/AuthFormRedux";
+import ReactAppRedux from "./js/components/ReactAppRedux";
+
 
 render(
     <Provider store={store}>
-        <AuthFormRedux />
-        <ThreadListRedux />
-        <ReactApp />
+        {/*<SingleThreadRedux />*/}
+        {/*<ThreadListRedux />*/}
+        {/*<__ReactApp />*/}
+        <ReactAppRedux />
     </Provider>, document.getElementById('sample-div')
 );

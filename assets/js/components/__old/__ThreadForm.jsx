@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from 'prop-types';
 
-export default class ThreadForm extends React.Component {
+export default class __ThreadForm extends React.Component {
     constructor(props) {
         super(props);
         
