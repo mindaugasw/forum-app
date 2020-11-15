@@ -18,9 +18,11 @@ import "./js/utils/utils";
 import store from "./js/store";
 import ThreadListRedux from "./js/components/ReduxTest/ThreadListRedux";
 import AuthFormRedux from "./js/components/ReduxTest/AuthFormRedux";
+import EventTest from "./js/components/ReduxTest/EventTest";
 
 render(
     <Provider store={store}>
+        <EventTest />
         <AuthFormRedux />
         <ThreadListRedux />
         <ReactApp />

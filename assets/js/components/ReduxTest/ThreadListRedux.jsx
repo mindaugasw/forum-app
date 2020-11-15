@@ -2,10 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import ThreadFormRedux from "./ThreadFormRedux";
 import { getThreads } from "../../redux/threads";
+import { resultAction } from "../../redux/events";
 import Loading from "../Loading";
 
 const mapDispatchToProps = {
-    getThreads
+    getThreads,
+    resultAction
 }
 
 const mapStateToProps = state => {
@@ -34,16 +36,16 @@ class ConnectedThreadList extends React.Component {
 
         this.stateString = this.stateString.bind(this);
 
-        console.log('Constructing - '+this.stateString());
+        // console.log('Constructing - '+this.stateString());
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log('Pre-update - ' +this.stateString());
+        // console.log('Pre-update - ' +this.stateString());
         if (!this.props.threadsLoaded && this.props.authLoaded && !this.state.threadsLoadRequested) {
             this.props.getThreads();
             this.setState({threadsLoadRequested: true});
         }
-        console.log('Post-update - ' +this.stateString());
+        // console.log('Post-update - ' +this.stateString());
     }
 
     stateString() {
