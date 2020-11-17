@@ -22,9 +22,5 @@ module.exports = {
         "getSafe": true,
         "store": true,
         "LoadState": true,
-        "findGetParameter": true,
-        "buildParamsUrl": true,
-        "readParamsUrlWithDefaults": true,
-        "readParamsObjectWithDefaults": true,
     }
 };

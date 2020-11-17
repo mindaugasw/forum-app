@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { getThreads } from "../../redux/threads";
 import Loading from "../Loading";
 import {Link} from "react-router-dom";
+import Paginator from "../Paginator";
+import UrlBuilder from "../../utils/UrlBuilder";
 
 const mapDispatchToProps = {
     getThreads
@@ -11,8 +13,6 @@ const mapDispatchToProps = {
 const mapStateToProps = state => {
     return {
         threads: state.threads.list,
-        // pagination: state.threads.list.pagination,
-        // threadsLoaded: state.threads.list.loaded,
         authLoaded: state.auth.loaded
     };
 };
@@ -21,21 +21,9 @@ class ConnectedThreadList extends React.Component {
     constructor(props) {
         super(props);
 
-        /*let threadsLoadRequested = false;
-        if (!props.threadsLoaded && props.authLoaded) {
-            // TODO test this
-            props.getThreads();
-            threadsLoadRequested = true;
-        }*/
-
-        // this.getListUrl = this.getListUrl.bind(this);
-        // this.loadThreadsList = this.loadThreadsList.bind(this);
-
-        /*this.state = {
-            url: readParamsUrl()
-        }*/
-
-        // this.props.getThreads(readParamsUrl());
+        this.getListUrl = this.getListUrl.bind(this);
+        this.getPaginationListUrl = this.getPaginationListUrl.bind(this);
+        this.handlePageNavigation = this.handlePageNavigation.bind(this);
         this.loadThreadsList();
     }
 
@@ -55,27 +43,33 @@ class ConnectedThreadList extends React.Component {
         }
     }
 
-    getListUrl() {
-        return readParamsUrlWithDefaults(1, 20, 'id', 'DESC');
+    getListUrl(page = 1) {
+        return UrlBuilder.ReadParamsUrlWithDefaults(page, 20, 'id', 'DESC');
+        // return UrlBuilder.ReadParamsUrlWithReplace(page, 20, 'id', 'DESC');
+    }
+
+    getPaginationListUrl(page) {
+        return UrlBuilder.ReadParamsUrlWithReplace(page);
+    }
+
+    handlePageNavigation() {
+        // Needed to force refresh component. Link click by default only sets GET params,
+        // which do not force components update
+        this.setState({
+            'refreshComponent': Math.random(),
+        });
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        /*if (!this.props.threadsLoaded && this.props.authLoaded && !this.state.threadsLoadRequested) {
-            this.props.getThreads();
-            this.setState({threadsLoadRequested: true});
-        }*/
         this.loadThreadsList();
     }
-
 
     render() {
         if (this.props.threads.loaded !== LoadState.Done) {
             return <Loading />
         }
 
-        const {threads, pagination} = this.props;
-
-        const list = threads.items.map(t => {
+        const list = this.props.threads.items.map(t => {
             const createdAt = new Date(t.createdAt).formatDefault();
 
             return (
@@ -90,15 +84,21 @@ class ConnectedThreadList extends React.Component {
             );
         });
 
+        const paginator = <Paginator pagination={this.props.threads.pagination}
+                                     linkGenerator={this.getPaginationListUrl}
+                                     onClick={this.handlePageNavigation} />
+
         return (
             <div>
                 <hr/>
                 <b>ThreadListRedux.jsx</b><br/>
                 {/*<ThreadFormRedux/>*/}
 
+                {paginator}
                 <ul>
                     {list}
                 </ul>
+                {paginator}
                 <hr/>
             </div>
         );

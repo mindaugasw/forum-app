@@ -75,6 +75,8 @@ const initialState = {
         ]
     },
     single: { // Single thread, currently viewed
+        id: null, // This thread id, same as in item.id. Repeated here to avoid
+                  // additional item===null check before checking item id
         item: null, // Actual thread object
         loaded: false,
         comments: { // Comments for currently viewed thread

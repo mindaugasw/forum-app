@@ -8,8 +8,8 @@ import {
 } from "react-router-dom";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router";
-import SingleThreadRedux from "../ReduxTest/SingleThreadRedux";
-import ThreadListRedux from "../ReduxTest/ThreadListRedux";
+import SingleThreadRedux from "./SingleThreadRedux";
+import ThreadListRedux from "./ThreadListRedux";
 
 
 class ThreadPage extends React.Component {
