@@ -17,7 +17,6 @@ export default class API {
         headers.append('Accept', 'application/json');
         if (body !== null)
             headers.append('Content-Type', 'application/json');
-        // TODO append Authorization header
 
         if (authHeader) {
             const {isLoggedIn, jwt} = store.getState().auth;
@@ -39,8 +38,12 @@ API.BaseUrl = '/api';
 
 
 API.Threads = class {
-    static GetList() {
-        return API.Fetch('GET', '/threads/', null, true)
+    /**
+     * @param params Url defining list GET params, like page, perpage, orderby, orderdir.
+     * e.g. url='?page=1&perpage=20&orderby=id&orderdir=DESC'
+     */
+    static GetList(params) {
+        return API.Fetch('GET', '/threads/'+params, null, true)
             .then(response => response);
     }
 }

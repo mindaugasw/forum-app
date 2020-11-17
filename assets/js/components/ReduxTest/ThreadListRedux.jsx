@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import ThreadFormRedux from "./ThreadFormRedux";
-import { getThreads } from "../../redux/threads";
+import { getThreads, GenerateThreadsParamsUrl } from "../../redux/threads";
 import Loading from "../Loading";
+import {Link} from "react-router-dom";
 
 const mapDispatchToProps = {
     getThreads
@@ -10,9 +11,9 @@ const mapDispatchToProps = {
 
 const mapStateToProps = state => {
     return {
-        threads: state.threads.list,
-        pagination: state.threads.pagination,
-        threadsLoaded: state.threads.loaded,
+        threads: state.threads.list.items,
+        pagination: state.threads.list.pagination,
+        threadsLoaded: state.threads.list.loaded,
         authLoaded: state.auth.loaded
     };
 };
@@ -52,7 +53,10 @@ class ConnectedThreadList extends React.Component {
             const createdAt = new Date(t.createdAt).formatDefault();
 
             return (
-                <li key={t.id}>{t.id}: {t.title}<br/>
+                <li key={t.id}>
+                    <Link to={`/threads/${t.id}`}>
+                        {t.id}: {t.title}
+                    </Link><br/>
                     By <a href="#">{t.author.username}</a> @ {createdAt}
                     . {t.commentsCount} comments.{' '}
                     Vote: {t.userVote === 1 ? '🔼' : t.userVote === -1 ? '🔻' : '-'}
@@ -63,7 +67,7 @@ class ConnectedThreadList extends React.Component {
         return (
             <div>
                 <hr/>
-                <b>TESTING ZONE - ThreadListRedux.jsx</b><br/>
+                <b>ThreadListRedux.jsx</b><br/>
                 {/*<ThreadFormRedux/>*/}
 
                 <ul>

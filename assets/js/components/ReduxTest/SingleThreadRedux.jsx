@@ -1,6 +1,7 @@
 import React from "react";
 import {connect} from "react-redux";
 import { withRouter } from "react-router";
+import {Link} from "react-router-dom";
 
 
 const mapDispatchToProps = {}
@@ -19,7 +20,10 @@ class SingleThreadRedux extends React.Component {
         const {match} = this.props;
 
         return (
-            <div>Single thread view - #{match.params.id}</div>
+            <div>
+                Single thread view - #{match.params.id}<br/>
+                <Link to='/threads'>Back - threads index</Link>
+            </div>
         );
     }
 

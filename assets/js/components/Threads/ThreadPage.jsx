@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-    BrowserRouter as Router,
     Switch,
     Route,
     Link,
@@ -10,12 +9,12 @@ import {
 import PropTypes from "prop-types";
 import { withRouter } from "react-router";
 import SingleThreadRedux from "../ReduxTest/SingleThreadRedux";
+import ThreadListRedux from "../ReduxTest/ThreadListRedux";
 
 
 class ThreadPage extends React.Component {
     constructor(props) {
         super(props);
-
     }
 
 
@@ -25,16 +24,18 @@ class ThreadPage extends React.Component {
         return (
             <div>
                 THREAD PAGE<br/>
-                {console.log(match)}
+                {/*{console.log(match)}*/}
                 <Switch>
                     <Route exact path={match.path}>
                         Threads list - index
+                        <ThreadListRedux />
                     </Route>
                     <Route path={`${match.path}/:id`} >
                         <SingleThreadRedux />
                     </Route>
                     <Route>
-                        404
+                        404<br/>
+                        Tried accessing path: {match.path}
                     </Route>
                 </Switch>
             </div>
@@ -48,6 +49,4 @@ class ThreadPage extends React.Component {
     }
 }
 
-// const ThreadPageWithRouter = withRouter(ThreadPage);
 export default withRouter(ThreadPage);
-// export default ThreadPage;

@@ -13,3 +13,16 @@ window.getSafe = (fn, defaultVal) => {
         return defaultVal;
     }
 }
+
+/**
+ * Add any property to a promise and return resolved promise
+ * @param name
+ * @param value
+ * @returns {Promise<*>}
+ */
+Promise.prototype.addProperty = function (name, value) {
+    return this.then(x => {
+        x[name] = value;
+        return x;
+    });
+}

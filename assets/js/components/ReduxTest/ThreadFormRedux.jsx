@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { addThread } from "../../redux/threads";
+// import { addThread } from "../../redux/threads";
 
 
 const mapDispatchToProps = {
-    addThread,
+    // addThread,
     // getThreads
 }
 
@@ -36,7 +36,7 @@ class ConnectedForm extends React.Component {
     handleSubmit(event) {
         event.preventDefault();
         const { title } = this.state;
-        this.props.addThread(title);
+        // this.props.addThread(title);
         // this.setState({ title: "" });
     }
 
