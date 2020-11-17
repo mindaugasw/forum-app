@@ -31,10 +31,9 @@ const REJECTED = '/rejected';
 /**
  * @param url Url defining list GET params, like page, perpage, orderby, orderdir.
  * e.g. url='?page=1&perpage=20&orderby=id&orderdir=DESC'
- * Use GenerateThreadsParamsUrl helper method to get the URL string.
  */
 export const getThreads = createAsyncThunk(LOAD_LIST, (url, thunkAPI) => {
-    if (!url) url = GenerateThreadsParamsUrl();
+    // if (!url) url = buildParamsUrl();
 
     return API.Threads.GetList(url)
         .then(response => {
@@ -64,7 +63,7 @@ const initialState = {
         url: null,  // URL from which list was loaded, including pagination, sorting, filtering params.
                     // Can be used to check if currently loaded list is the needed one, if the url matches.
                     // For that reason URL generation helper method should be always used to get new url.
-        loaded: false,
+        loaded: 0, // LoadingState.NotRequested
         pagination: {},
         items: [
             /*{
@@ -99,20 +98,19 @@ export const threadSlice = createSlice({
         }*/
     },
     extraReducers: {
-        [getThreads.pending]: state => {
-            state.list.loaded = false;
+        [getThreads.pending]: (state, action) => {
+            state.list.loaded = LoadState.Loading;
+            state.list.url = action.meta.arg;
         },
         [getThreads.fulfilled]: (state, action) => {
-            console.log(action);
-
             state.list.url = action.payload.url;
-            state.list.loaded = true;
+            state.list.loaded = LoadState.Done;
             state.list.pagination = action.payload.pagination;
             state.list.items = action.payload.items;
         },
         [getThreads.rejected]: (state, action) => {
             state.list.url = action.payload.url;
-            state.list.loaded = false;
+            state.list.loaded = LoadState.Done;
             console.log('Failed fetching threads: ' + getSafe(() => action.payload.code, 'unknown error'));
         }
     }
@@ -170,11 +168,11 @@ export const threadMiddleware = ({ getState, dispatch }) => {
     return ('title' in thread) && thread.title.trim().length > 0;
 }*/
 
-export function GenerateThreadsParamsUrl(page=1, perpage=20,
+/*export function GenerateThreadsParamsUrl(page=1, perpage=20,
                                   orderby='id', orderdir='DESC') {
     return `?page=${page}&perpage=${perpage}&orderby=${orderby}&orderdir=${orderdir}`;
 }
 export function GenerateCommentsUrl(threadId, page=1, perpage=10,
                                     orderby='id', orderdir='ASC') {
     throw 'Not implemented';
-}
+}*/

@@ -20,6 +20,11 @@ module.exports = {
     },
     globals: {
         "getSafe": true,
-        "store": true
+        "store": true,
+        "LoadState": true,
+        "findGetParameter": true,
+        "buildParamsUrl": true,
+        "readParamsUrlWithDefaults": true,
+        "readParamsObjectWithDefaults": true,
     }
 };
