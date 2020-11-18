@@ -48,11 +48,11 @@ class CommentCRUD
 	 * @param Request $request
 	 * @return Comment[]|\Knp\Component\Pager\Pagination\PaginationInterface
 	 */
-	public function getList(Request $request)
+	public function getList(Thread $thread, Request $request)
 	{
 		$params = $this->queryValidator->Everything($request, Comment::class, null, ['edited', 'thread', 'author', 'userVote']);
 		
-		return $this->commentRepo->findByPaginated([], $params['ordering'], $params['pagination']);
+		return $this->commentRepo->findByPaginated(['thread' => $thread->getId()], $params['ordering'], $params['pagination']);
 	}
 	
 	public function createNew(Thread $thread, Request $request)

@@ -15,14 +15,14 @@ import { Provider } from "react-redux";
 import "./js/utils/utils";
 
 import store from "./js/store";
-import ReactAppRedux from "./js/components/ReactAppRedux";
+import ReactApp from "./js/components/ReactApp";
 
 
 render(
     <Provider store={store}>
         {/*<SingleThreadRedux />*/}
-        {/*<ThreadListRedux />*/}
+        {/*<ThreadList />*/}
         {/*<__ReactApp />*/}
-        <ReactAppRedux />
+        <ReactApp />
     </Provider>, document.getElementById('sample-div')
 );

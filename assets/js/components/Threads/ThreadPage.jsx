@@ -8,8 +8,8 @@ import {
 } from "react-router-dom";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router";
-import SingleThreadRedux from "./SingleThreadRedux";
-import ThreadListRedux from "./ThreadListRedux";
+import SingleThreadRedux from "./SingleThread";
+import ThreadList from "./ThreadList";
 
 
 class ThreadPage extends React.Component {
@@ -28,7 +28,7 @@ class ThreadPage extends React.Component {
                 <Switch>
                     <Route exact path={match.path}>
                         Threads list - index
-                        <ThreadListRedux />
+                        <ThreadList />
                     </Route>
                     <Route path={`${match.path}/:id`} >
                         <SingleThreadRedux />

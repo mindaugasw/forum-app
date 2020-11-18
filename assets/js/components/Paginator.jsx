@@ -22,11 +22,13 @@ class Paginator extends Component {
     }
 
     render() {
-
         const p = this.props.pagination;
 
         const pageRange = p.pagesInRange.map(page => {
-            return this.getLink(page, page === p.current ? page+' (current)' : page, page);
+            let link = this.getLink(page, page, page);
+            if (page === p.current)
+                return <b key={page}><i>{link}</i></b>;
+            return link;
         }).reduce((prev, curr) => [prev, ' ', curr]);
 
         const first = p.first === p.current ? '' : this.getLink(p.first, 'First');

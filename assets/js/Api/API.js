@@ -30,7 +30,7 @@ export default class API {
             method: method,
             headers: headers,
             body: body
-        }).then(response => response);
+        });//.then(response => response);
     }
 
 }
@@ -39,15 +39,27 @@ API.BaseUrl = '/api';
 
 API.Threads = class {
     /**
-     * @param params Url defining list GET params, like page, perpage, orderby, orderdir.
+     * @param paramsUrl Url defining list GET params, like page, perpage, orderby, orderdir.
      * e.g. url='?page=1&perpage=20&orderby=id&orderdir=DESC'
      */
-    static GetList(params) {
-        return API.Fetch('GET', '/threads/'+params, null, true)
-            .then(response => response);
+    static GetList(paramsUrl) {
+        return API.Fetch('GET', '/threads/'+paramsUrl, null, true);
+            // .then(response => response);
+    }
+
+    static GetSingle(id) {
+        return API.Fetch('GET', `/threads/${id}/`, null, true);
+            // .then(response => response);
+    }
+
+    /**
+     * @param url Url with thread id and comments list GET params.
+     * e.g. url='100/comments/?page=1&perpage=20&orderby=id&orderdir=DESC'
+     */
+    static GetCommentsList(url) {
+        return API.Fetch('GET', '/threads/'+url, null, true);
     }
 }
-
 
 API.Auth = class {
     static LogIn(username, password) {
@@ -56,17 +68,17 @@ API.Auth = class {
             password
         };
 
-        return API.Fetch('POST', '/login_check', body, false)
-            .then(response => response);
+        return API.Fetch('POST', '/login_check', body, false);
+            // .then(response => response);
     }
 
     static TokenRefresh() {
-        return API.Fetch('POST', '/token/refresh', null, false)
-            .then(response => response);
+        return API.Fetch('POST', '/token/refresh', null, false);
+            // .then(response => response);
     }
 
     static LogOut() {
-        return API.Fetch('POST', '/logout', null, false)
-            .then(response => response);
+        return API.Fetch('POST', '/logout', null, false);
+            // .then(response => response);
     }
 }

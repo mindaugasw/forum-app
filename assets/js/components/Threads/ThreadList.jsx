@@ -17,16 +17,24 @@ const mapStateToProps = state => {
     };
 };
 
-class ConnectedThreadList extends React.Component {
+class ThreadList extends React.Component {
     constructor(props) {
         super(props);
+
+        this.loadThreadsList();
 
         this.getListUrl = this.getListUrl.bind(this);
         this.getPaginationListUrl = this.getPaginationListUrl.bind(this);
         this.handlePageNavigation = this.handlePageNavigation.bind(this);
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
         this.loadThreadsList();
     }
 
+    /**
+     * Checks if currently loaded data matches needed data for this view. If not, loads needed data.
+     */
     loadThreadsList() {
         const t = this.props.threads;
         const targetUrl = this.getListUrl();
@@ -43,25 +51,45 @@ class ConnectedThreadList extends React.Component {
         }
     }
 
+    /**
+     * Retrieve url with GET params for currently viewed list
+     * @param page
+     * @returns {string}
+     */
     getListUrl(page = 1) {
-        return UrlBuilder.ReadParamsUrlWithDefaults(page, 20, 'id', 'DESC');
-        // return UrlBuilder.ReadParamsUrlWithReplace(page, 20, 'id', 'DESC');
+        return UrlBuilder.ReadParamsWithDefaults({
+                page: page, perpage: 20, orderby: 'id', orderdir: 'DESC'}).GetUrl();
+
+        // return UrlBuilder.ReadParamsUrlWithDefaults(page, 20, 'id', 'DESC');
     }
 
+    /**
+     * Retrieve url with GET params for specific page, to be used in pagination links
+     */
     getPaginationListUrl(page) {
-        return UrlBuilder.ReadParamsUrlWithReplace(page);
+        return UrlBuilder.ReadParamsWithReplace(
+                {page: page},
+                {perpage: 20, orderby: 'id', orderdir: 'DESC'}).GetUrl();
+
+
+        // ---
+        /*let paramsObj = UrlBuilder.ReadCurrentParamsWithDefaults();
+        paramsObj.page = page;
+
+        return UrlBuilder.BuildParamsUrl_v2(paramsObj);*/
+        // ---
+        // return UrlBuilder.ReadParamsUrlWithReplace(page);
     }
 
+    /**
+     * Used from child paginator component, on navigation click to any other page
+     */
     handlePageNavigation() {
         // Needed to force refresh component. Link click by default only sets GET params,
         // which do not force components update
         this.setState({
             'refreshComponent': Math.random(),
         });
-    }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        this.loadThreadsList();
     }
 
     render() {
@@ -92,7 +120,6 @@ class ConnectedThreadList extends React.Component {
             <div>
                 <hr/>
                 <b>ThreadListRedux.jsx</b><br/>
-                {/*<ThreadFormRedux/>*/}
 
                 {paginator}
                 <ul>
@@ -105,6 +132,4 @@ class ConnectedThreadList extends React.Component {
     }
 }
 
-const ThreadListRedux = connect(mapStateToProps, mapDispatchToProps)(ConnectedThreadList);
-
-export default ThreadListRedux;
+export default connect(mapStateToProps, mapDispatchToProps)(ThreadList);

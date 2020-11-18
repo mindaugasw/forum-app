@@ -70,6 +70,7 @@ export const authSlice = createSlice({
             setAuthState(state, true, p.token, p.user, p.timer);
         },
         [login.rejected]: (state, action) => {
+            // TODO change .code to .error.status and test it
             console.log('Manual login failed: ' + getSafe(() => action.payload.code, 'unknown error'));
             state.loaded = true;
         },
@@ -81,6 +82,7 @@ export const authSlice = createSlice({
             setAuthState(state, true, p.token, p.user, p.timer);
         },
         [tokenRefresh.rejected]: (state, action) => {
+            // TODO change .code to .error.status and test it
             const errorCode = getSafe(() => action.payload.code, 'unknown error');
             console.log('Automatic login failed: ' + errorCode);
             state.loaded = true;
@@ -96,6 +98,7 @@ export const authSlice = createSlice({
             setAuthState(state, false, null, null, null);
         },
         [logout.rejected]: (state, action) => {
+            // TODO change .code to .error.status and test it
             console.log('Logout failed: ' + getSafe(() => action.payload.code, 'unknown error'));
             setAuthState(state, false, null, null, null);
         },

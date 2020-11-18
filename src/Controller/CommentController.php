@@ -35,7 +35,7 @@ class CommentController extends BaseApiController
 	 */
 	public function getList(Thread $thread, Request $request)
 	{
-		$data = $this->commentCRUD->getList($request);
+		$data = $this->commentCRUD->getList($thread, $request);
 		return $this->ApiPaginatedResponse(
 			$data, 200, ['comment_read', 'user_read'], ['threads', 'comments']
 		);

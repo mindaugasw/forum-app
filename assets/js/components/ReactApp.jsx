@@ -8,7 +8,7 @@ import {
 import AuthFormRedux from "./ReduxTest/AuthFormRedux";
 import ThreadPage from "./Threads/ThreadPage";
 
-export default class ReactAppRedux extends React.Component {
+class ReactApp extends React.Component {
     constructor(props) {
         super(props);
 
@@ -35,7 +35,7 @@ export default class ReactAppRedux extends React.Component {
                             App homepage
                         </Route>
                         <Route path='/threads'>
-                            {/*<ThreadListRedux />*/}
+                            {/*<ThreadList />*/}
                             <ThreadPage />
                         </Route>
                         {/*<Route path='/authform'>
@@ -52,3 +52,5 @@ export default class ReactAppRedux extends React.Component {
         );
     }
 }
+
+export default ReactApp;
