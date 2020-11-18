@@ -1,9 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import API from "../utils/API";
 import {login, logout} from "./auth";
+import * as CRUD from "./postsCRUD";
 
 /*
- * Contains logic from threads loading, listing and viewing, along with their respective comments loading, viewing.
+ * Contains logic for threads loading, listing and viewing, along with their respective comments loading, viewing.
+ * Threads and comments CRUD logic can be found in ./postsCRUD.js
  */
 
 
@@ -27,7 +29,6 @@ const REJECTED = '/rejected';
 export const getThreads = createAsyncThunk(LOAD_LIST, (url, thunkAPI) => {
     return API.Threads.GetList(url)
         .then(response => {
-
             let payload = response.json();
             if (response.ok) {
                 return payload;
@@ -125,57 +126,55 @@ export const threadSlice = createSlice({
     initialState: initialState,
     reducers: {
     },
-    extraReducers: {
-        [getThreads.pending]: (state, action) => {
+    extraReducers: builder => {
+    builder
+        .addCase(getThreads.pending, (state, action) => {
             state.list.loaded = LoadState.Loading;
             state.list.url = action.meta.arg;
-        },
-        [getThreads.fulfilled]: (state, action) => {
+        })
+        .addCase(getThreads.fulfilled, (state, action) => {
             // state.list.url = action.payload.url;
             state.list.loaded = LoadState.Done;
             state.list.pagination = action.payload.pagination;
             state.list.items = action.payload.items;
-        },
-        [getThreads.rejected]: (state, action) => {
+        })
+        .addCase(getThreads.rejected, (state, action) => {
             state.list.url = action.payload.url;
             state.list.loaded = LoadState.Done;
             // TODO change .code to .error.status and test it
             console.error('Failed fetching threads: ' + getSafe(() => action.payload.code, 'unknown error'));
-        },
+        })
 
-
-        [getSingleThread.pending]: (state, action) => {
+        .addCase(getSingleThread.pending, (state, action) => {
             state.single.loaded = LoadState.Loading;
             state.single.id = action.meta.arg;
-        },
-        [getSingleThread.fulfilled]: (state, action) => {
+        })
+        .addCase(getSingleThread.fulfilled, (state, action) => {
             state.single.item = action.payload;
             state.single.loaded = LoadState.Done;
-        },
-        [getSingleThread.rejected]: (state, action) => {
+        })
+        .addCase(getSingleThread.rejected, (state, action) => {
             // state.single.id = null;
             // state.single.item = null;
             // state.single.loaded = LoadState.NotRequested; // Commented out because causes infinite loop
             console.error(`Failed fetching thread #${action.meta.arg}: ${getSafe(() => action.payload.error.status, 'unknown error')}`);
-        },
+        })
 
-
-        [getComments.pending]: (state, action) => {
+        .addCase(getComments.pending, (state, action) => {
             state.single.comments.loaded = LoadState.Loading;
             state.single.comments.url = action.meta.arg;
-        },
-        [getComments.fulfilled]: (state, action) => {
+        })
+        .addCase(getComments.fulfilled, (state, action) => {
             state.single.comments.loaded = LoadState.Done;
             state.single.comments.items = action.payload.items;
             state.single.comments.pagination = action.payload.pagination;
-        },
-        [getComments.rejected]: (state, action) => {
+        })
+        .addCase(getComments.rejected, (state, action) => {
             // state.single.comments.items = null;
             console.error(`Failed fetching comments: ${action.meta.arg}, error: ${getSafe(() => action.payload.error.status, 'unknown error')}`);
-        },
+        })
 
-
-        [submitVote.pending]: (state, action) => {
+        .addCase(submitVote.pending, (state, action) => {
             const args = action.meta.arg;
             let items = []; // Array of items (threads/comment) on which to apply the vote
 
@@ -200,23 +199,38 @@ export const threadSlice = createSlice({
                 x.votesCount += args.direction - x.userVote;
                 x.userVote = args.direction;
             });
-        },
-        [submitVote.rejected]: (state, action) => {
+        })
+        .addCase(submitVote.rejected, (state, action) => {
             console.error(`Failed voting: ${
                 getSafe(() => action.payload.error.status, 'unknown error')
                 }, {id: ${action.meta.arg.id}, direction: ${action.meta.arg.direction
                 }, isThread: ${action.meta.arg.isThread}}`);
-        },
+        })
 
+        /*.addCase(login.fulfilled, (state, action) => {
+            return initialState;
+        })
+        .addCase(logout.fulfilled, (state, action) => {
+            return initialState;
+        })*/
 
-        [login.fulfilled]: (state, action) => {
+        // Full state reset
+        .addMatcher(action => {
+            const matchingActions = [
+                login.fulfilled.type,
+                logout.fulfilled.type,
+                CRUD.createComment.fulfilled.type,
+            ];
+
+            return matchingActions.indexOf(action.type) > -1;
+        }, (state, action) => {
+            console.log('CLEAR');
             return initialState;
-        },
-        [logout.fulfilled]: (state, action) => {
-            return initialState;
-        },
+        })
     }
 });
+
+
 
 
 // --- Middleware ---

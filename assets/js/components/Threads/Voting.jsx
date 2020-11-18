@@ -61,16 +61,17 @@ class Voting extends Component {
 }
 
 Voting.propTypes = {
-    // From props
+    // From props:
     post: PropTypes.object.isRequired, // Thread or comment object
     isThread: PropTypes.bool.isRequired, // is this thread or comment vote?
 
-    // From redux state
-    isLoggedIn: PropTypes.bool.isRequired,
-    user: PropTypes.object,
+    // Automatically-passed props commented out for IDE to not suggest them when inserting Voting component
+    // From redux state:
+    // isLoggedIn: PropTypes.bool.isRequired,
+    // user: PropTypes.object,
 
-    // Redux actions
-    submitVote: PropTypes.func.isRequired,
+    // Redux actions:
+    // submitVote: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Voting);

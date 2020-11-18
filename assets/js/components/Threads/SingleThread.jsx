@@ -8,6 +8,7 @@ import PropTypes from "prop-types";
 import Loading from "../Loading";
 import Paginator from "../Paginator";
 import Voting from "./Voting";
+import NewCommentForm from "./CommentForm";
 
 const mapDispatchToProps = {
     getSingleThread,
@@ -148,6 +149,7 @@ class SingleThread extends React.Component {
                     {t.item.content}
 
                     {commentsJsx}
+                    <NewCommentForm threadId={t.item.id} />
                 </div>;
         }
 

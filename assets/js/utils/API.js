@@ -68,6 +68,14 @@ API.Threads = class {
     static SubmitCommentVote(commentId, voteValue) {
         return API.Fetch('POST', `/threads/comments/${commentId}/vote/${voteValue}/`, null, true);
     }
+
+    // --- CRUD operations ---
+
+    static CreateComment(threadId, content) {
+        const body = {content};
+        return API.Fetch('POST', `/threads/${threadId}/comments/`, body, true);
+    }
+
 }
 
 API.Auth = class {
