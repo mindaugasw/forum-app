@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from "react-redux";
-import { login, logout, tokenRefresh } from "../../redux/auth";
+import { login, logout, tokenRefresh } from "../redux/auth";
 import PropTypes from "prop-types";
-import Loading from "../Loading";
+import Loading from "./Loading";
 
 const mapDispatchToProps = {
     login,
@@ -62,7 +62,7 @@ class ConnectedAuthForm extends React.Component {
         return (
             <div>
                 <hr />
-                <b>AUTH stuff - AuthFormRedux.jsx</b>
+                <b>Authentication</b>
 
                 <form onSubmit={ this.handleFormSubmit }>
                     Username: <input name='username' type='text' /><br />
@@ -94,6 +94,6 @@ class ConnectedAuthForm extends React.Component {
     }
 }
 
-const AuthFormRedux = connect(mapStateToProps, mapDispatchToProps)(ConnectedAuthForm);
+const AuthForm = connect(mapStateToProps, mapDispatchToProps)(ConnectedAuthForm);
 
-export default AuthFormRedux;
+export default AuthForm;

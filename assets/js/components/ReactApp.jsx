@@ -5,7 +5,7 @@ import {
     Route,
     Link, NavLink
 } from "react-router-dom";
-import AuthFormRedux from "./ReduxTest/AuthFormRedux";
+import AuthForm from "./AuthForm";
 import ThreadPage from "./Threads/ThreadPage";
 
 class ReactApp extends React.Component {
@@ -16,12 +16,11 @@ class ReactApp extends React.Component {
     }
 
     render() {
-        // TODO add auth form
         return (
             <Router>
                 <div>
 
-                    <AuthFormRedux />
+                    <AuthForm />
 
                     <nav>
                         <ul>
@@ -35,13 +34,8 @@ class ReactApp extends React.Component {
                             App homepage
                         </Route>
                         <Route path='/threads'>
-                            {/*<ThreadList />*/}
                             <ThreadPage />
                         </Route>
-                        {/*<Route path='/authform'>
-                          <__AuthForm {...this.state.auth} onAuthLoad={this.handleAuthUpdate} />
-                      </Route>*/}
-
                         <Route>
                             No route found - 404
                         </Route>

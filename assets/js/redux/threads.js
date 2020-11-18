@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import API from "../Api/API";
+import API from "../utils/API";
 
 /*
  * Contains logic from threads loading, listing and viewing, along with their respective comments loading, viewing.
@@ -8,7 +8,6 @@ import API from "../Api/API";
 
 // --- Actions ---
 const BASE = 'thread/';
-// const ADD = BASE + 'add';
 const LOAD_LIST = BASE + 'loadList';
 const LOAD_SINGLE = BASE + 'loadSingle';
 const LOAD_COMMENTS = BASE + 'loadComments';
@@ -19,38 +18,16 @@ const REJECTED = '/rejected';
 
 
 // --- Action Creators ---
-/*
- * @param title Title for new thread
- */
-/*export const addThread = createAction(ADD, function prepare(title) {
-    return {
-        payload: {
-            title
-        }
-    }
-});*/
-
 /**
  * @param url Url defining list GET params, like page, perpage, orderby, orderdir.
  * e.g. url='?page=1&perpage=20&orderby=id&orderdir=DESC'
  */
 export const getThreads = createAsyncThunk(LOAD_LIST, (url, thunkAPI) => {
-    // if (!url) url = buildParamsUrl();
-
     return API.Threads.GetList(url)
         .then(response => {
 
-            let payload = response.json();//.addProperty('url', url);
-            // payload.url = url;
-            // console.log(payload);
+            let payload = response.json();
             if (response.ok) {
-                // console.log(payload);
-                /*return payload.then(x => {
-                    let y = x;
-                    y.url = url;
-                    return y;
-                });*/
-                // return payload.addProperty('url', url);
                 return payload;
             }
             else
@@ -80,14 +57,13 @@ export const getSingleThread = createAsyncThunk(LOAD_SINGLE, (id, thunkAPI) => {
 
 /**
  * @param url Url defining thread id and comments list GET params, like page, perpage, orderby, orderdir.
- * e.g. url='100/comments/?page=1&perpage=20&orderby=id&orderdir=DESC'
+ * e.g. url='/threads/100/comments/?page=1&perpage=20&orderby=id&orderdir=DESC'
  */
 export const getComments = createAsyncThunk(LOAD_COMMENTS, (url, thunkAPI) => {
     return API.Threads.GetCommentsList(url)
         .then(response => {
             let payload = response.json();
             if (response.ok) {
-                // payload.then(p => console.log(p));
                 return payload;
             } else {
                 return payload.then(x => thunkAPI.rejectWithValue(x));
@@ -104,7 +80,7 @@ const initialState = {
         loaded: 0, // LoadState.NotRequested
         pagination: {},
         items: [
-            /*{
+            /*example item: {
                 id, title, content, createdAt, updatedAt, edited, commentsCount,
                 userVote, votesCount, author: {
                     id, username, roles: []
@@ -131,9 +107,6 @@ export const threadSlice = createSlice({
     name: 'thread',
     initialState: initialState,
     reducers: {
-        /*addThread: (state, action) => {
-            state.list.push(action.payload);
-        }*/
     },
     extraReducers: {
         [getThreads.pending]: (state, action) => {
@@ -191,19 +164,6 @@ export const threadMiddleware = ({ getState, dispatch }) => {
         return function (action) {
 
             switch (action.type) {
-                /*case LOAD_LIST:
-                case LOAD_LIST+PENDING:
-                case LOAD_LIST+FULFILLED:
-                case LOAD_LIST+REJECTED:
-                    console.log(action.type);
-                    console.log(action.payload);
-                    break;*/
-                /*case ADD:
-                    const thread = action.payload;
-                    addIdToThread(thread, getState().threads.list);
-                    if (!threadTitleValid(thread))
-                        return dispatch({ type: "error/titleEmpty"});
-                    return next(action);*/
             }
 
             return next(action);
@@ -211,36 +171,3 @@ export const threadMiddleware = ({ getState, dispatch }) => {
         }
     }
 };
-
-
-// --- Helper methods ---
-/*
- * Add ID to new thread (if it doesn't exist)
- * @param thread Thread object in the payload (action.payload)
- * @param threadList Already existing threads list (state.threads.list)
- */
-/*function addIdToThread(thread, threadList) {
-    if (!('id' in thread)) {
-        let newId = 1;
-        if (threadList.length > 0)
-            newId = threadList[threadList.length - 1].id + 1;
-        thread.id = newId;
-    }
-}*/
-
-/*
- * Ensure that new thread title is set and not whitespace-only
- * @param thread Thread object
- */
-/*function threadTitleValid(thread) {
-    return ('title' in thread) && thread.title.trim().length > 0;
-}*/
-
-/*export function GenerateThreadsParamsUrl(page=1, perpage=20,
-                                  orderby='id', orderdir='DESC') {
-    return `?page=${page}&perpage=${perpage}&orderby=${orderby}&orderdir=${orderdir}`;
-}
-export function GenerateCommentsUrl(threadId, page=1, perpage=10,
-                                    orderby='id', orderdir='ASC') {
-    throw 'Not implemented';
-}*/

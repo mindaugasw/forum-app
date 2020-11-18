@@ -20,9 +20,6 @@ import ReactApp from "./js/components/ReactApp";
 
 render(
     <Provider store={store}>
-        {/*<SingleThreadRedux />*/}
-        {/*<ThreadList />*/}
-        {/*<__ReactApp />*/}
         <ReactApp />
     </Provider>, document.getElementById('sample-div')
 );

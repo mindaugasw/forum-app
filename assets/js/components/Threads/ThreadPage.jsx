@@ -23,8 +23,7 @@ class ThreadPage extends React.Component {
 
         return (
             <div>
-                THREAD PAGE<br/>
-                {/*{console.log(match)}*/}
+                Thread parent page<br/>
                 <Switch>
                     <Route exact path={match.path}>
                         Threads list - index

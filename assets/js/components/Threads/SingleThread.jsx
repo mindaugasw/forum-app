@@ -41,6 +41,9 @@ class SingleThread extends React.Component {
         this.loadComments();
     }
 
+    /**
+     * Checks if currently loaded data matches needed data for this view. If not, loads needed data.
+     */
     loadThread() {
         const t = this.props.thread;
         const targetId = this.state.id;
@@ -52,6 +55,9 @@ class SingleThread extends React.Component {
         }
     }
 
+    /**
+     * Checks if currently loaded data matches needed data for this view. If not, loads needed data.
+     */
     loadComments() {
         const c = this.props.thread.comments;
         const targetUrl = this.getListUrl();
@@ -63,38 +69,32 @@ class SingleThread extends React.Component {
         }
     }
 
+    /**
+     * Retrieve url with GET params for currently viewed coments list
+     * @param page
+     * @returns {string}
+     */
     getListUrl(page = 1) {
         return this.state.id + '/comments/' +
             UrlBuilder.ReadParamsWithDefaults({
                 page: page, perpage: 10, orderby: 'id', orderdir: 'ASC'}).GetUrl();
-
-        // ---
-        /*return this.state.id+'/comments/'+UrlBuilder.BuildParamsUrl_v2(
-            UrlBuilder.ReadCurrentParamsWithDefaults({
-                page: page, perpage: 10, orderby: 'id', orderdir: 'ASC'
-        }));*/
-        // ---
-        // return `${this.state.id}/comments/${UrlBuilder
-        //     .ReadParamsUrlWithDefaults(page, 10, 'id', 'ASC')}`;
     }
 
+    /**
+     * Retrieve url with GET params for specific page, to be used in pagination links
+     */
     getPaginationListUrl(page) {
         return `/threads/${this.state.id}/comments/` +
             UrlBuilder.ReadParamsWithReplace(
                 {page: page},
                 {perpage: 10, orderby: 'id', orderdir: 'ASC'}
             ).GetUrl();
-
-        // return UrlBuilder.ReadParamsUrlWithReplace(page);
     }
 
-    handlePageNavigation() {
-        // Needed to force refresh component. Link click by default only sets GET params,
-        // which do not force components update
-        this.setState({
-            'refreshComponent': Math.random(),
-        });
-    }
+    /**
+     * Used from child paginator component, on navigation click to any other page
+     */
+    handlePageNavigation() {}
 
     render() {
         const t = this.props.thread;
@@ -140,8 +140,6 @@ class SingleThread extends React.Component {
                     {commentsJsx}
                 </div>;
         }
-
-
 
         return (
             <div>

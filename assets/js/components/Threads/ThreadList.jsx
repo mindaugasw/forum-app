@@ -59,8 +59,6 @@ class ThreadList extends React.Component {
     getListUrl(page = 1) {
         return UrlBuilder.ReadParamsWithDefaults({
                 page: page, perpage: 20, orderby: 'id', orderdir: 'DESC'}).GetUrl();
-
-        // return UrlBuilder.ReadParamsUrlWithDefaults(page, 20, 'id', 'DESC');
     }
 
     /**
@@ -70,15 +68,6 @@ class ThreadList extends React.Component {
         return UrlBuilder.ReadParamsWithReplace(
                 {page: page},
                 {perpage: 20, orderby: 'id', orderdir: 'DESC'}).GetUrl();
-
-
-        // ---
-        /*let paramsObj = UrlBuilder.ReadCurrentParamsWithDefaults();
-        paramsObj.page = page;
-
-        return UrlBuilder.BuildParamsUrl_v2(paramsObj);*/
-        // ---
-        // return UrlBuilder.ReadParamsUrlWithReplace(page);
     }
 
     /**

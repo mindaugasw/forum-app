@@ -15,9 +15,9 @@ class HomeController extends AbstractController
     {
 		$env = $this->getParameter('kernel.environment');
 	
-		if ($env === 'prod') // TODO make single template
-			return $this->render('default/index_empty.html.twig');
-		else
-			return $this->render('default/index.html.twig');
+		//if ($env === 'prod') // TODO make single template
+		//	return $this->render('default/index_empty.html.twig');
+		//else
+		return $this->render('default/index.html.twig', ['env' => $env]);
     }
 }
