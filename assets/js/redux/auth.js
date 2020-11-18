@@ -47,19 +47,22 @@ export const tokenRefresh = createAsyncThunk(TOKEN_REFRESH, (param, thunkAPI) =>
 });
 
 
+// --- State ---
+const initialState = {
+    user: null, /* {    // user object. Available only after login
+            id, username, roles: [], iat, exp
+        },*/
+    loaded: false,  // Is the initial TOKEN_REFRESH request finished?
+    isLoggedIn: false,
+    jwt: null,      // Full encoded token
+    timer: null,    // Timer used for automatic token refresh
+}
+
 
 // --- Reducer ---
 export const authSlice = createSlice({
     name: 'auth',
-    initialState: {
-        user: null, /* {    // user object. Available only after login
-            id, username, roles: [], iat, exp
-        },*/
-        loaded: false,  // Is the initial TOKEN_REFRESH request finished?
-        isLoggedIn: false,
-        jwt: null,      // Full encoded token
-        timer: null,    // Timer used for automatic token refresh
-    },
+    initialState: initialState,
     reducers: {
 
     },
@@ -71,7 +74,7 @@ export const authSlice = createSlice({
         },
         [login.rejected]: (state, action) => {
             // TODO change .code to .error.status and test it
-            console.log('Manual login failed: ' + getSafe(() => action.payload.code, 'unknown error'));
+            console.error('Manual login failed: ' + getSafe(() => action.payload.code, 'unknown error'));
             state.loaded = true;
         },
 
@@ -84,7 +87,7 @@ export const authSlice = createSlice({
         [tokenRefresh.rejected]: (state, action) => {
             // TODO change .code to .error.status and test it
             const errorCode = getSafe(() => action.payload.code, 'unknown error');
-            console.log('Automatic login failed: ' + errorCode);
+            console.info('Automatic login failed: ' + errorCode);
             state.loaded = true;
 
             if (state.isLoggedIn && errorCode === 401) {
@@ -99,7 +102,7 @@ export const authSlice = createSlice({
         },
         [logout.rejected]: (state, action) => {
             // TODO change .code to .error.status and test it
-            console.log('Logout failed: ' + getSafe(() => action.payload.code, 'unknown error'));
+            console.error('Logout failed: ' + getSafe(() => action.payload.code, 'unknown error'));
             setAuthState(state, false, null, null, null);
         },
     }

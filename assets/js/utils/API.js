@@ -59,6 +59,15 @@ API.Threads = class {
     static GetCommentsList(url) {
         return API.Fetch('GET', '/threads/'+url, null, true);
     }
+
+    static SubmitThreadVote(threadId, voteValue) {
+
+        return API.Fetch('POST', `/threads/${threadId}/vote/${voteValue}/`, null, true);
+    }
+
+    static SubmitCommentVote(commentId, voteValue) {
+        return API.Fetch('POST', `/threads/comments/${commentId}/vote/${voteValue}/`, null, true);
+    }
 }
 
 API.Auth = class {

@@ -87,12 +87,10 @@ class CommentController extends BaseApiController
 	}
 	
 	/**
-	 * @Route("/{thread}/comments/{comment}/vote/{voteValue}/", methods={"POST"}, requirements={"voteValue"="1|0|-1"})
+	 * @Route("/comments/{comment}/vote/{voteValue}/", methods={"POST"}, requirements={"voteValue"="1|0|-1"})
 	 * @IsGranted(User::ROLE_USER)
-	 * 
-	 * @param int $thread Used to keep consistent routes structure but prevent useless DB query for $thread. 
 	 */
-	public function vote(int $thread, Comment $comment, int $voteValue, VotingService $votingService)
+	public function vote(Comment $comment, int $voteValue, VotingService $votingService)
 	{
 		$votingService->submitCommentVote($comment, $voteValue);
 		

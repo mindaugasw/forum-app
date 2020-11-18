@@ -7,6 +7,7 @@ import {getSingleThread, getComments} from "../../redux/threads";
 import PropTypes from "prop-types";
 import Loading from "../Loading";
 import Paginator from "../Paginator";
+import Voting from "./Voting";
 
 const mapDispatchToProps = {
     getSingleThread,
@@ -16,6 +17,7 @@ const mapStateToProps = state => {
     return {
         thread: state.threads.single,
         authLoaded: state.auth.loaded,
+        isLoggedIn: state.auth.isLoggedIn,
     };
 }
 
@@ -103,6 +105,8 @@ class SingleThread extends React.Component {
         let threadJsx;
         let commentsJsx;
 
+
+        // --- Comments ---
         if (c.loaded !== LoadState.Done) {
             commentsJsx = <Loading/>;
         } else {
@@ -110,7 +114,9 @@ class SingleThread extends React.Component {
                 return (
                     <li key={ci.id}>
                         {ci.content}<br/>
-                        #{ci.id} by {ci.author.username} at {ci.createdAt}<br/>
+                        #{ci.id} by {ci.author.username} at {ci.createdAt},{' '}
+                        <Voting post={ci} isThread={false} />
+                        <br/>
                     </li>
                 );
             });
@@ -128,13 +134,17 @@ class SingleThread extends React.Component {
                 </div>;
         }
 
+
+        // --- Thread ---
         if (t.loaded !== LoadState.Done) {
             threadJsx = <Loading/>;
         } else {
             threadJsx =
                 <div>
                     <h3>{t.item.title}</h3>
-                    #{t.id} by {t.item.author.username} at {t.item.createdAt}<br/>
+                    #{t.id} by {t.item.author.username} at {t.item.createdAt},{' '}
+                    <Voting post={t.item} isThread={true} />
+                    <br/>
                     {t.item.content}
 
                     {commentsJsx}
@@ -153,6 +163,7 @@ class SingleThread extends React.Component {
         return {
             thread: PropTypes.object.isRequired,
             authLoaded: PropTypes.bool.isRequired,
+            isLoggedIn: PropTypes.bool.isRequired,
             match: PropTypes.object.isRequired,
         };
     }
