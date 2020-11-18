@@ -14,6 +14,13 @@ module.exports = {
     },
     rules: {
         "no-console": 0,
-        "no-unused-vars": 0
+        "no-unused-vars": 0,
+        "no-case-declarations": 0,
+        "react/prop-types": 0
+    },
+    globals: {
+        "getSafe": true,
+        "store": true,
+        "LoadState": true,
     }
 };

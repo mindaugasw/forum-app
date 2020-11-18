@@ -1,51 +1,80 @@
-import React from 'react';
+import React, {Component} from 'react';
+import PropTypes from "prop-types";
+import {Link} from "react-router-dom";
 
-export default class Paginator extends React.Component {
-    constructor(props) {
-        super(props);
-
+class Paginator extends Component {
+    getLink(page, text = null, key = null) {
+        if (!key)
+            return (
+                <Link to={this.props.linkGenerator(page)}
+                      onClick={this.props.onClick}>
+                    {text !== null ? text : page}
+                </Link>
+            );
+        else
+            return (
+                <Link key={key}
+                      to={this.props.linkGenerator(page)}
+                      onClick={this.props.onClick}>
+                    {text !== null ? text : page}
+                </Link>
+            );
     }
 
     render() {
-        const {
-            totalCount,             // Total items matching criteria
-            currentItemCount,       // Actual items in this page
-            numItemsPerPage,        // Requested items per page
+        const p = this.props.pagination;
 
-            firstItemNumber,        // Id of first item in the page
-            lastItemNumber,         // Id of last item in the page
+        const pageRange = p.pagesInRange.map(page => {
+            let link = this.getLink(page, page, page);
+            if (page === p.current)
+                return <b key={page}><i>{link}</i></b>;
+            return link;
+        }).reduce((prev, curr) => [prev, ' ', curr]);
 
-            first,                  // First page number
-            previous,               // Previous page number. !!! Not available on 1st page
-            current,                // Current page number
-            next,                   // Next page number. !!! Not available on last page
-            last,                   // Last page number
-
-            pageCount,              // Pages count, of items matching criteria
-            pageRange,              // Pages count in this range
-
-            firstPageInRange,       // First page number in this range
-            lastPageInRange,        // Last page number in this range
-            pagesInRange            // Array of page numbers for this range
-        } = this.props;
-
-        let rangeJsx = null;
-        if (pagesInRange) {
-            rangeJsx = pagesInRange.map(page => {
-                return <li key={page}><a href='#'>Page {page}</a></li>;
-            });
-            rangeJsx.unshift(<li key={first+'-first'}><a href='#'>First ({first})</a></li>);
-            rangeJsx.push(<li key={last+'-last'}><a href='#'>Last ({last})</a></li>);
-        }
+        const first = p.first === p.current ? '' : this.getLink(p.first, 'First');
+        const last = p.last === p.current ? '' : this.getLink(p.last, 'Last');
 
         return (
             <div>
-                Page {current}/{last}, items {firstItemNumber}-{lastItemNumber} out of {totalCount}, {numItemsPerPage} items per page<br/>
-                <ul>
-                    {rangeJsx}
-                </ul>
+                Pagination:
+                {first}{' '}
+                {pageRange}{' '}
+                {last}
             </div>
         );
     }
 
+    static get propTypes() {
+        return {
+            linkGenerator: PropTypes.func.isRequired, // Should be a function from parent component, accepting page number and returning target link
+            onClick: PropTypes.func.isRequired, // Can be used to force update component on page navigation
+            pagination: PropTypes.object.isRequired, /*{
+                "totalCount": 100,      // Total items matching criteria
+                "pageCount": 5,         // Total pages count of matching items
+                "currentItemCount": 20, // Actual items in this page
+                "numItemsPerPage": 20,  // Requested items per page
+
+                "firstItemNumber": 1,   // Page start item id
+                "lastItemNumber": 20,   // Page end item id
+
+                // Page navigation:
+                "first": 1,
+                "previous": 1,          // Not available on 1st page
+                "current": 2,
+                "next": 3,              // Not available on last page
+                "last": 5,
+
+                // Page range:
+                "pageRange": 5,         // Items count in this page range
+                "firstPageInRange": 1,  // First page number in range
+                "pagesInRange": [1, 2, 3, 4, 5],
+                "lastPageInRange": 5,   // Last page number in range
+
+                "startPage": 1,         // same as firstPageInRange (?)
+                "endPage": 5            // same as lastPageInRange (?)
+            }*/
+        };
+    }
 }
+
+export default Paginator;

@@ -26,7 +26,6 @@ Backend:
 
 Frontend:
 - React
-- React router
 - Redux
 - Bootstrap
 

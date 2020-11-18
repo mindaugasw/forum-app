@@ -1,30 +1,43 @@
 import React from 'react';
-import '../Api/api_fetch';
-import {api_fetch} from "../Api/api_fetch";
+import { connect } from "react-redux";
+import { login, logout, tokenRefresh } from "../redux/auth";
 import PropTypes from "prop-types";
+import Loading from "./Loading";
 
+const mapDispatchToProps = {
+    login,
+    logout,
+    tokenRefresh
+}
 
-// https://medium.com/@ryanchenkie_40935/react-authentication-how-to-store-jwt-in-a-cookie-346519310e81
+const mapStateToProps = state => {
+    let user = {};
+    if (state.auth.user !== null) {
+        user = {
+            id: state.auth.user.id,
+            username: state.auth.user.username,
+            roles: state.auth.user.roles
+        };
+    }
 
-export default class AuthForm extends React.Component {
+    return {
+        ...user,
+        loaded: state.auth.loaded,
+        isLoggedIn: state.auth.isLoggedIn,
+    };
+}
+
+class ConnectedAuthForm extends React.Component {
     constructor(props) {
         super(props);
 
-        // this.state = {
-        //     authLoaded: false,
-        //     isAuthenticated: false
-        // }
-
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
-        this.tryAutoLogin = this.tryAutoLogin.bind(this);
-        this.parseJwt = this.parseJwt.bind(this);
         this.handleLogout = this.handleLogout.bind(this);
     }
 
     componentDidMount() {
-        this.tryAutoLogin();
+        this.props.tokenRefresh();
     }
-
 
     handleFormSubmit(event) {
         event.preventDefault();
@@ -36,66 +49,51 @@ export default class AuthForm extends React.Component {
             'password': passwordInput.value
         }
 
-        api_fetch('POST', '/login_check', body)
-            .then(json => {
-                console.log('Successfully logged in');
-                this.props.onAuthLoad(json.token, this.parseJwt(json.token));
-            })
-            .catch((response) => console.log('Authentication error', response))
-    }
-
-    /**
-     * Decodes JWT and returns it's payload
-     * TODO move to API utils class?
-     */
-    parseJwt(token) {
-        return JSON.parse(atob(token.split('.')[1]));
-    }
-
-    /**
-     * Try automatic log in using refresh token
-     */
-    tryAutoLogin() {
-        api_fetch('POST', '/token/refresh')
-            .then(json => {
-                console.log('Successfully automatically authenticated');
-                this.props.onAuthLoad(json.token, this.parseJwt(json.token));
-            })
-            .catch((response) => console.log('Authentication error', response))
+        this.props.login(body);
     }
 
     handleLogout() {
-        this.props.onAuthLoad(null, null);
+        this.props.logout();
     }
 
     render() {
-        const {jwt, authLoaded, isAuthenticated, user } = this.props;
+        const {loaded, isLoggedIn} = this.props;
 
         return (
-        <div>
-            <b>Authentication</b>
-            <form onSubmit={ this.handleFormSubmit }>
-                Username: <input name='username' type='text' />
-                Password: <input name='password' type='password' />
-                <button type='submit'>Log in</button>
-            </form><br/>
-            Auth loaded: {authLoaded.toString()} <br/>
-            Is authenticated: {isAuthenticated.toString()} <br/>
-            JWT: <input name='jwt' type='text' value={jwt||''} readOnly='readOnly'/><br/>
-            User obj: {JSON.stringify(user)}<br/>
-            <button onClick={this.handleLogout}>Log out</button>
-            <hr/>
-        </div>
+            <div>
+                <hr />
+                <b>Authentication</b>
+
+                <form onSubmit={ this.handleFormSubmit }>
+                    Username: <input name='username' type='text' /><br />
+                    Password: <input name='password' type='password' /><br />
+                    <button type='submit'>Log in</button>{'  '}
+                    <button type='button' onClick={this.handleLogout}>Log out</button>
+                </form>
+
+                Auth {loaded ? 'loaded' : <Loading />},{' '}
+                {isLoggedIn ?
+                    `logged in as: ${this.props.username} (#${this.props.id}), [${this.props.roles}]`
+                    : 'not logged in'}
+                <hr />
+            </div>
         );
     }
 
     static get propTypes() {
+        const p = PropTypes;
         return {
-            onAuthLoad: PropTypes.func.isRequired,
-            jwt: PropTypes.string,
-            authLoaded: PropTypes.bool.isRequired,
-            isAuthenticated: PropTypes.bool.isRequired,
-            user: PropTypes.object
-        };
+            login: p.func.isRequired,
+            logout: p.func.isRequired,
+            loaded: p.bool.isRequired,
+            isLoggedIn: p.bool.isRequired,
+            id: p.number,
+            username: p.string,
+            roles: p.array,
+        }
     }
 }
+
+const AuthForm = connect(mapStateToProps, mapDispatchToProps)(ConnectedAuthForm);
+
+export default AuthForm;

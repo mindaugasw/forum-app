@@ -9,13 +9,17 @@
 import './styles/app.css';
 
 import React from 'react';
-import {render} from 'react-dom';
-import ReactApp from './js/components/ReactApp';
+import { render } from 'react-dom';
 // import '@fortawesome/fontawesome-free/js/all';
+import { Provider } from "react-redux";
+import "./js/utils/utils";
+
+import store from "./js/store";
+import ReactApp from "./js/components/ReactApp";
 
 
-// Need jQuery? Install it with "yarn add jquery", then uncomment to import it.
-// import $ from 'jquery';
-
-console.log('Webpack Encore @ assets/app.js');
-render(<ReactApp />, document.getElementById('sample-div'));
+render(
+    <Provider store={store}>
+        <ReactApp />
+    </Provider>, document.getElementById('sample-div')
+);
