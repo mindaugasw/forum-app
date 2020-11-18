@@ -31,7 +31,20 @@ export const createComment = createAsyncThunk(CREATE_COMMENT, (params, thunkAPI)
             }
         });
 });
-
+/**
+ * @param {threadId<number>, commentId<number>, content<string>} params Thread and comment ids, updated comment content
+ */
+export const editComment = createAsyncThunk(EDIT_COMMENT, (params, thunkAPI) => {
+    return API.Threads.EditComment(params.threadId, params.commentId, params.content)
+        .then(response => {
+            let payload = response.json();
+            if (response.ok) {
+                return payload;
+            } else {
+                return thunkAPI.rejectWithValue(payload);
+            }
+        });
+})
 /**
  * @param {threadId<number>, commentId<number>} params Thread and comment id
  */

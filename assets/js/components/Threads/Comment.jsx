@@ -4,6 +4,7 @@ import Voting from "./Voting";
 import {connect} from "react-redux";
 import {canUserManagePost} from "../../redux/auth";
 import {deleteComment} from "../../redux/postsCRUD";
+import CommentForm from "./CommentForm";
 
 const mapStateToProps = state => {
     return {
@@ -21,6 +22,11 @@ class Comment extends Component {
 
         this.handleDeleteClick = this.handleDeleteClick.bind(this);
         this.handleEditClick = this.handleEditClick.bind(this);
+        this.handleCancelEditClick = this.handleCancelEditClick.bind(this);
+
+        this.state = {
+            editMode : false
+        }
     }
 
     handleDeleteClick(event) {
@@ -36,10 +42,26 @@ class Comment extends Component {
     
     handleEditClick(event) {
         event.preventDefault();
+        this.setState({editMode: true});
+    }
+
+    handleCancelEditClick(event) {
+        event.preventDefault();
+        this.setState({editMode: false});
     }
 
     render() {
         const c = this.props.comment;
+
+        if (this.state.editMode) {
+            return (
+                <li>
+                    <CommentForm editMode={true} threadId={this.props.thread.id}
+                                 comment={c} cancelCallback={this.handleCancelEditClick} />
+                </li>
+            );
+        }
+
 
         let editDeleteJsx = null;
         if (canUserManagePost(this.props.user, c)) {

@@ -220,6 +220,7 @@ export const threadSlice = createSlice({
                 login.fulfilled.type,
                 logout.fulfilled.type,
                 CRUD.createComment.fulfilled.type,
+                CRUD.editComment.fulfilled.type,
                 CRUD.deleteComment.fulfilled.type,
             ];
 

@@ -8,7 +8,7 @@ import PropTypes from "prop-types";
 import Loading from "../Loading";
 import Paginator from "../Paginator";
 import Voting from "./Voting";
-import NewCommentForm from "./CommentForm";
+import CommentForm from "./CommentForm";
 import Comment from "./Comment";
 
 const mapDispatchToProps = {
@@ -115,13 +115,6 @@ class SingleThread extends React.Component {
             let listJsx = c.items.map(ci => { // ci for comment item
                 return (
                     <Comment key={ci.id} comment={ci} thread={t.item} />
-
-                    /*<li key={ci.id}>
-                        {ci.content}<br/>
-                        #{ci.id} by {ci.author.username} at {ci.createdAt},{' '}
-                        <Voting post={ci} isThread={false} />
-                        <br/>
-                    </li>*/
                 );
             });
 
@@ -152,7 +145,7 @@ class SingleThread extends React.Component {
                     {t.item.content}
 
                     {commentsJsx}
-                    <NewCommentForm threadId={t.item.id} />
+                    <CommentForm editMode={false} threadId={t.item.id} />
                 </div>;
         }
 

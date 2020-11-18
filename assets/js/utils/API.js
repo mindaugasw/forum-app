@@ -76,6 +76,11 @@ API.Threads = class {
         return API.Fetch('POST', `/threads/${threadId}/comments/`, body, true);
     }
 
+    static EditComment(threadId, commentId, content) {
+        const body = {content};
+        return API.Fetch('PATCH', `/threads/${threadId}/comments/${commentId}/`, body, true);
+    }
+
     static DeleteComment(threadId, commentId) {
         return API.Fetch('DELETE', `/threads/${threadId}/comments/${commentId}/`, null, true);
     }
