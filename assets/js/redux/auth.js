@@ -185,3 +185,23 @@ function stopTimer(timer) {
     if (timer !== null)
         clearTimeout(timer);
 }
+
+/**
+ * Is the given user admin? Checks for admin role on user object.
+ * @param user
+ * @returns {*|boolean}
+ */
+export function isUserAdmin(user) {
+    return user && user.roles.indexOf('ROLE_ADMIN') > -1;
+}
+
+/**
+ * Does given user have permissions to manage (edit, delete) given thread/comment?
+ * Checks if user is admin or is author of that thread/comment.
+ * @param user User object
+ * @param post Thread or comment object
+ * @returns {*|boolean}
+ */
+export function canUserManagePost(user, post) {
+    return isUserAdmin(user) || user.id === post.author.id;
+}

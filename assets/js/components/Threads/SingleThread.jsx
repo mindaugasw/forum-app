@@ -9,6 +9,7 @@ import Loading from "../Loading";
 import Paginator from "../Paginator";
 import Voting from "./Voting";
 import NewCommentForm from "./CommentForm";
+import Comment from "./Comment";
 
 const mapDispatchToProps = {
     getSingleThread,
@@ -113,12 +114,14 @@ class SingleThread extends React.Component {
         } else {
             let listJsx = c.items.map(ci => { // ci for comment item
                 return (
-                    <li key={ci.id}>
+                    <Comment key={ci.id} comment={ci} thread={t.item} />
+
+                    /*<li key={ci.id}>
                         {ci.content}<br/>
                         #{ci.id} by {ci.author.username} at {ci.createdAt},{' '}
                         <Voting post={ci} isThread={false} />
                         <br/>
-                    </li>
+                    </li>*/
                 );
             });
 

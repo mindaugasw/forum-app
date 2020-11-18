@@ -76,6 +76,10 @@ API.Threads = class {
         return API.Fetch('POST', `/threads/${threadId}/comments/`, body, true);
     }
 
+    static DeleteComment(threadId, commentId) {
+        return API.Fetch('DELETE', `/threads/${threadId}/comments/${commentId}/`, null, true);
+    }
+
 }
 
 API.Auth = class {

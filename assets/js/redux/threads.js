@@ -220,11 +220,11 @@ export const threadSlice = createSlice({
                 login.fulfilled.type,
                 logout.fulfilled.type,
                 CRUD.createComment.fulfilled.type,
+                CRUD.deleteComment.fulfilled.type,
             ];
 
             return matchingActions.indexOf(action.type) > -1;
         }, (state, action) => {
-            console.log('CLEAR');
             return initialState;
         })
     }
