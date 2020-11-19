@@ -71,6 +71,20 @@ API.Threads = class {
 
     // --- CRUD operations ---
 
+    static CreateThread(title, content) {
+        const body = {title, content};
+        return API.Fetch('POST', `/threads/`, body, true);
+    }
+
+    static EditThread(id, title, content) {
+        const body = {title, content};
+        return API.Fetch('PATCH', `/threads/${id}/`, body, true);
+    }
+
+    static DeleteThread(id) {
+        return API.Fetch('DELETE', `/threads/${id}/`, null, true);
+    }
+
     static CreateComment(threadId, content) {
         const body = {content};
         return API.Fetch('POST', `/threads/${threadId}/comments/`, body, true);

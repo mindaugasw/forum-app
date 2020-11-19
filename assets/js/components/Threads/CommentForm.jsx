@@ -63,7 +63,7 @@ class CommentForm extends Component {
 
                     <input type="text" name="content" onChange={this.handleTextboxChange} value={this.state.contentValue}/>
                     <button type="submit">Submit</button>{' '}
-                    <button onClick={cancelCallback}>Cancel</button>
+                    {editMode ? <button onClick={cancelCallback}>Cancel</button> : null }
                 </form>
             </div>
         );

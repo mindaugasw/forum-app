@@ -16,9 +16,9 @@ const LOAD_SINGLE = BASE + 'loadSingle';
 const LOAD_COMMENTS = BASE + 'loadComments';
 const SUBMIT_VOTE = BASE + 'vote';
 
-const PENDING = '/pending'; // Used to combine async thunk name, e.g. TOKEN_REFRESH+FULFILLED
-const FULFILLED = '/fulfilled';
-const REJECTED = '/rejected';
+// const PENDING = '/pending'; // Used to combine async thunk name, e.g. TOKEN_REFRESH+FULFILLED
+// const FULFILLED = '/fulfilled';
+// const REJECTED = '/rejected';
 
 
 // --- Action Creators ---
@@ -207,18 +207,15 @@ export const threadSlice = createSlice({
                 }, isThread: ${action.meta.arg.isThread}}`);
         })
 
-        /*.addCase(login.fulfilled, (state, action) => {
-            return initialState;
-        })
-        .addCase(logout.fulfilled, (state, action) => {
-            return initialState;
-        })*/
 
         // Full state reset
         .addMatcher(action => {
             const matchingActions = [
                 login.fulfilled.type,
                 logout.fulfilled.type,
+                CRUD.createThread.fulfilled.type,
+                CRUD.editThread.fulfilled.type,
+                CRUD.deleteThread.fulfilled.type,
                 CRUD.createComment.fulfilled.type,
                 CRUD.editComment.fulfilled.type,
                 CRUD.deleteComment.fulfilled.type,

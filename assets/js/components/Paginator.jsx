@@ -35,6 +35,7 @@ class Paginator extends Component {
         const last = p.last === p.current ? '' : this.getLink(p.last, 'Last');
 
         return (
+            // TODO hide pagination if there's no elements
             <div>
                 Pagination:
                 {first}{' '}

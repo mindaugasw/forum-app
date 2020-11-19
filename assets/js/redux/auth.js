@@ -203,5 +203,5 @@ export function isUserAdmin(user) {
  * @returns {*|boolean}
  */
 export function canUserManagePost(user, post) {
-    return isUserAdmin(user) || user.id === post.author.id;
+    return isUserAdmin(user) || (user && user.id === post.author.id);
 }

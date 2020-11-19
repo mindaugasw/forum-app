@@ -1,5 +1,9 @@
 import "./dateFormat";
 
+/*
+ * Random small functions that do not fit anywhere else
+ */
+
 /**
  * Safely evaluate possibly-undefined value
  * @param fn Value to evaluate
