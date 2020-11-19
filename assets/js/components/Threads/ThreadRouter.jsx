@@ -13,7 +13,7 @@ import ThreadList from "./ThreadList";
 import ThreadForm from "./ThreadForm";
 
 
-class ThreadPage extends React.Component {
+class ThreadRouter extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -53,4 +53,4 @@ class ThreadPage extends React.Component {
     }
 }
 
-export default withRouter(ThreadPage);
+export default withRouter(ThreadRouter);

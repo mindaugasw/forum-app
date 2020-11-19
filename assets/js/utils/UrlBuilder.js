@@ -1,5 +1,13 @@
+/**
+ * Defines paths for frontend routing and provides path building utilities
+ */
+class UrlBuilder {
 
-export default class UrlBuilder {
+    static Home() { return '/'; }
+    static Login() { return '/login'; }
+    static Logout() { return '/logout'; }
+    static Register() { return '/register'; }
+    static About() { return '/about'; }
 
     /**
      * Find GET parameter in the url and return its value or null, if not found.
@@ -57,6 +65,17 @@ export default class UrlBuilder {
     }
 }
 
+UrlBuilder.Threads = class Threads {
+    static List() { return '/threads'; } /*TODO change to /*/
+    static Single(id) { return `${Threads.List()}/${id}`; }
+    static Create() { return `${Threads.List()}/create`; }
+}
+
+UrlBuilder.Users = class Users {
+    static List() { return '/users'; }
+    static Single(id) { return `${Users.List()}/${id}`; }
+}
+
 export class ListGetParams {
     constructor(page, perpage, orderby, orderdir) {
         this.page = page;
@@ -69,3 +88,5 @@ export class ListGetParams {
 ListGetParams.prototype.GetUrl = function () {
     return `?page=${this.page}&perpage=${this.perpage}&orderby=${this.orderby}&orderdir=${this.orderdir}`;
 };
+
+export default UrlBuilder;
