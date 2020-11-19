@@ -5,6 +5,7 @@ import Loading from "../Loading";
 import {Link} from "react-router-dom";
 import Paginator from "../Paginator";
 import UrlBuilder from "../../utils/UrlBuilder";
+import Voting from "./Voting";
 
 const mapDispatchToProps = {
     getThreads
@@ -13,7 +14,8 @@ const mapDispatchToProps = {
 const mapStateToProps = state => {
     return {
         threads: state.threads.list,
-        authLoaded: state.auth.loaded
+        authLoaded: state.auth.loaded,
+        isLoggedIn: state.auth.isLoggedIn,
     };
 };
 
@@ -95,8 +97,10 @@ class ThreadList extends React.Component {
                         {t.id}: {t.title}
                     </Link><br/>
                     By <a href="#">{t.author.username}</a> @ {createdAt}
-                    . {t.commentsCount} comments.{' '}
-                    Vote: {t.userVote === 1 ? '🔼' : t.userVote === -1 ? '🔻' : '-'}
+                    . {t.commentsCount} comments.
+                    {' '}
+                    {/*Vote: {t.userVote === 1 ? '🔼' : t.userVote === -1 ? '🔻' : '-'}*/}
+                    <Voting post={t} isThread={true} />
                 </li>
             );
         });

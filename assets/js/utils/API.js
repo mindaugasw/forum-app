@@ -59,6 +59,46 @@ API.Threads = class {
     static GetCommentsList(url) {
         return API.Fetch('GET', '/threads/'+url, null, true);
     }
+
+    static SubmitThreadVote(threadId, voteValue) {
+
+        return API.Fetch('POST', `/threads/${threadId}/vote/${voteValue}/`, null, true);
+    }
+
+    static SubmitCommentVote(commentId, voteValue) {
+        return API.Fetch('POST', `/threads/comments/${commentId}/vote/${voteValue}/`, null, true);
+    }
+
+    // --- CRUD operations ---
+
+    static CreateThread(title, content) {
+        const body = {title, content};
+        return API.Fetch('POST', `/threads/`, body, true);
+    }
+
+    static EditThread(id, title, content) {
+        const body = {title, content};
+        return API.Fetch('PATCH', `/threads/${id}/`, body, true);
+    }
+
+    static DeleteThread(id) {
+        return API.Fetch('DELETE', `/threads/${id}/`, null, true);
+    }
+
+    static CreateComment(threadId, content) {
+        const body = {content};
+        return API.Fetch('POST', `/threads/${threadId}/comments/`, body, true);
+    }
+
+    static EditComment(threadId, commentId, content) {
+        const body = {content};
+        return API.Fetch('PATCH', `/threads/${threadId}/comments/${commentId}/`, body, true);
+    }
+
+    static DeleteComment(threadId, commentId) {
+        return API.Fetch('DELETE', `/threads/${threadId}/comments/${commentId}/`, null, true);
+    }
+
 }
 
 API.Auth = class {

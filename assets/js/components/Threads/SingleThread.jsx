@@ -4,18 +4,29 @@ import {withRouter} from "react-router";
 import {Link} from "react-router-dom";
 import UrlBuilder from "../../utils/UrlBuilder";
 import {getSingleThread, getComments} from "../../redux/threads";
+import {editThread, deleteThread} from "../../redux/postsCRUD";
 import PropTypes from "prop-types";
 import Loading from "../Loading";
 import Paginator from "../Paginator";
+import Voting from "./Voting";
+import CommentForm from "./CommentForm";
+import Comment from "./Comment";
+import {canUserManagePost} from "../../redux/auth";
+import ThreadForm from "./ThreadForm";
 
 const mapDispatchToProps = {
     getSingleThread,
-    getComments
+    getComments,
+
+    editThread,
+    deleteThread
 }
 const mapStateToProps = state => {
     return {
         thread: state.threads.single,
         authLoaded: state.auth.loaded,
+        isLoggedIn: state.auth.isLoggedIn,
+        user: state.auth.user,
     };
 }
 
@@ -26,11 +37,15 @@ class SingleThread extends React.Component {
         this.state = {
             id: parseInt(this.props.match.params.id), // This thread id
             // TODO show error if id is NaN
+            editMode: false,
         }
 
         this.getListUrl = this.getListUrl.bind(this);
         this.getPaginationListUrl = this.getPaginationListUrl.bind(this);
         this.handlePageNavigation = this.handlePageNavigation.bind(this);
+        this.handleDeleteClick = this.handleDeleteClick.bind(this);
+        this.handleEditClick = this.handleEditClick.bind(this);
+        this.handleCancelEditClick = this.handleCancelEditClick.bind(this);
 
         this.loadThread();
         this.loadComments();
@@ -39,6 +54,27 @@ class SingleThread extends React.Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
         this.loadThread();
         this.loadComments();
+    }
+
+    handleDeleteClick(event) {
+        event.preventDefault();
+
+        if (!canUserManagePost(this.props.user, this.props.thread)) {
+            console.error('You don\'t have permissions to do that');
+            return;
+        }
+
+        this.props.deleteThread({threadId: this.props.thread.id});
+    }
+
+    handleEditClick(event) {
+        event.preventDefault();
+        this.setState({editMode: true});
+    }
+
+    handleCancelEditClick(event) {
+        event.preventDefault();
+        this.setState({editMode: false});
     }
 
     /**
@@ -100,18 +136,14 @@ class SingleThread extends React.Component {
         const t = this.props.thread;
         const c = this.props.thread.comments;
 
-        let threadJsx;
-        let commentsJsx;
-
+        // --- Comments ---
+        let commentsListJsx;
         if (c.loaded !== LoadState.Done) {
-            commentsJsx = <Loading/>;
+            commentsListJsx = <Loading/>;
         } else {
             let listJsx = c.items.map(ci => { // ci for comment item
                 return (
-                    <li key={ci.id}>
-                        {ci.content}<br/>
-                        #{ci.id} by {ci.author.username} at {ci.createdAt}<br/>
-                    </li>
+                    <Comment key={ci.id} comment={ci} thread={t.item} />
                 );
             });
 
@@ -119,7 +151,7 @@ class SingleThread extends React.Component {
                                          linkGenerator={this.getPaginationListUrl}
                                          onClick={this.handlePageNavigation} />
 
-            commentsJsx =
+            commentsListJsx =
                 <div>
                     <h3>Comments (total {t.item.commentsCount})</h3>
                     {paginator}
@@ -128,16 +160,40 @@ class SingleThread extends React.Component {
                 </div>;
         }
 
+
+        // --- Thread ---
+        let threadJsx;
+        let threadContentJsx;
         if (t.loaded !== LoadState.Done) {
             threadJsx = <Loading/>;
         } else {
+            if (this.state.editMode) {
+                threadContentJsx = <ThreadForm editMode={true} thread={t.item} cancelCallback={this.handleCancelEditClick} />
+            } else {
+                let editDeleteJsx = null;
+                if (canUserManagePost(this.props.user, t.item)) {
+                    editDeleteJsx =
+                        <span>
+                        <a href="#" onClick={this.handleEditClick}>Edit</a>,{' '}
+                            <a href="#" onClick={this.handleDeleteClick}>Delete</a>
+                    </span>;
+                }
+
+                threadContentJsx =
+                    <div>
+                        <h3>{t.item.title}</h3>
+                        #{t.id} by {t.item.author.username} at {t.item.createdAt},{' '}
+                        <Voting post={t.item} isThread={true} />, {editDeleteJsx}
+                        <br/>
+                        {t.item.content}
+                    </div>;
+            }
+
             threadJsx =
                 <div>
-                    <h3>{t.item.title}</h3>
-                    #{t.id} by {t.item.author.username} at {t.item.createdAt}<br/>
-                    {t.item.content}
-
-                    {commentsJsx}
+                    {threadContentJsx}
+                    {commentsListJsx}
+                    <CommentForm editMode={false} threadId={t.item.id} />
                 </div>;
         }
 
@@ -148,14 +204,13 @@ class SingleThread extends React.Component {
             </div>
         );
     }
+}
 
-    static get propTypes() {
-        return {
-            thread: PropTypes.object.isRequired,
-            authLoaded: PropTypes.bool.isRequired,
-            match: PropTypes.object.isRequired,
-        };
-    }
+SingleThread.propTypes = {
+    // thread: PropTypes.object.isRequired,
+    // authLoaded: PropTypes.bool.isRequired,
+    // isLoggedIn: PropTypes.bool.isRequired,
+    // match: PropTypes.object.isRequired,
 }
 
 export default withRouter(

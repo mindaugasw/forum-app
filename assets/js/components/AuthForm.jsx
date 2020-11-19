@@ -27,7 +27,7 @@ const mapStateToProps = state => {
     };
 }
 
-class ConnectedAuthForm extends React.Component {
+class AuthForm extends React.Component {
     constructor(props) {
         super(props);
 
@@ -94,6 +94,4 @@ class ConnectedAuthForm extends React.Component {
     }
 }
 
-const AuthForm = connect(mapStateToProps, mapDispatchToProps)(ConnectedAuthForm);
-
-export default AuthForm;
+export default connect(mapStateToProps, mapDispatchToProps)(AuthForm);

@@ -10,6 +10,7 @@ import PropTypes from "prop-types";
 import { withRouter } from "react-router";
 import SingleThreadRedux from "./SingleThread";
 import ThreadList from "./ThreadList";
+import ThreadForm from "./ThreadForm";
 
 
 class ThreadPage extends React.Component {
@@ -24,10 +25,14 @@ class ThreadPage extends React.Component {
         return (
             <div>
                 Thread parent page<br/>
+                <Link to={`${match.path}/create`}>Create new thread</Link><br/>
                 <Switch>
                     <Route exact path={match.path}>
                         Threads list - index
                         <ThreadList />
+                    </Route>
+                    <Route path={`${match.path}/create`} >
+                        <ThreadForm editMode={false} />
                     </Route>
                     <Route path={`${match.path}/:id`} >
                         <SingleThreadRedux />
