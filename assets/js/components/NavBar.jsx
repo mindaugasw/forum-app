@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
-import {Navbar, Nav, NavDropdown, Image, Spinner} from 'react-bootstrap';
+import {Navbar, Nav, NavDropdown, Image, Spinner, Button, OverlayTrigger, Tooltip} from 'react-bootstrap';
 import {Link, NavLink} from "react-router-dom";
 import { connect } from "react-redux";
 import UrlBuilder from "../utils/UrlBuilder";
@@ -54,12 +54,11 @@ class NavBar extends Component {
                 <Link to='/'>
                     <Navbar.Brand>Forum app</Navbar.Brand>
                 </Link>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
 
                         <Nav.Item>
-                            <Nav.Link as={NavLink} to={UrlBuilder.Threads.List()}>Topics list</Nav.Link>
+                            <Nav.Link as={NavLink} to={UrlBuilder.Threads.Index()}>Topics list</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
                             <Nav.Link as={NavLink} to={UrlBuilder.Threads.Create()} disabled={!auth.isLoggedIn}>New topic</Nav.Link> {/*TODO add tooltip to login if not logged in*/}
@@ -73,37 +72,48 @@ class NavBar extends Component {
 
                     </Nav>
 
-                    {/* Dev features. TODO remove*/}
-                    <Nav className="justify-content-center">
-                        <Nav.Item>
-                            <Nav.Link as={NavLink} to={UrlBuilder.Login()}>Login</Nav.Link>
-                        </Nav.Item>
-
-                        {/* Breakpoint indicator */}
-                        <div className={'d-none'}>
-                            None
-                        </div>
-                        <div className={'d-block d-sm-none'} style={{color: 'brown'}}>
-                            XS
-                        </div>
-                        <div className={'d-none d-sm-block d-md-none'} style={{color: 'orange'}}>
-                            SM
-                        </div>
-                        <div className={'d-none d-md-block d-lg-none'} style={{color: 'red'}}>
-                            MD
-                        </div>
-                        <div className={'d-none d-lg-block d-xl-none'} style={{color: 'green'}}>
-                            LG
-                        </div>
-                        <div className={'d-none d-xl-block'} style={{color: 'blue'}}>
-                            XL
-                        </div>
-                    </Nav>
 
                     <Nav className="justify-content-end">
+                        {/* Extra login link, visible even when logged in already */}
+                        {APP_ENV === 'dev' && auth.isLoggedIn ?
+                            <Nav.Item>
+                                <Nav.Link as={NavLink} to={UrlBuilder.Login()}>Login form</Nav.Link>
+                            </Nav.Item>
+                            : ''}
                         {profileArea}
                     </Nav>
                 </Navbar.Collapse>
+
+
+                {/* Bootstrap breakpoints indicator */}
+                {APP_ENV === 'dev' ?
+                <OverlayTrigger
+                    placement='bottom'
+                    overlay={<Tooltip id='breakpoint-indicator-tooltip'>
+                        Bootstrap breakpoint indicator. Shown only on dev.
+                    </Tooltip>}
+                >
+                    <span className='ml-auto mr-3'>
+                        <Button variant='danger' className='d-block d-sm-none' disabled style={{pointerEvents: "none"}}>
+                            XS
+                        </Button>
+                        <Button variant='warning' className='d-none d-sm-block d-md-none' disabled style={{pointerEvents: "none"}}>
+                            SM
+                        </Button>
+                        <Button variant='success' className='d-none d-md-block d-lg-none' disabled style={{pointerEvents: "none"}}>
+                            MD
+                        </Button>
+                        <Button variant='primary' className='d-none d-lg-block d-xl-none' disabled style={{pointerEvents: "none"}}>
+                            LG
+                        </Button>
+                        <Button variant='dark' className='d-none d-xl-block' disabled style={{pointerEvents: "none"}}>
+                            XL
+                        </Button>
+                    </span>
+                </OverlayTrigger>
+                : ''}
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+
             </Navbar>
         );
     }

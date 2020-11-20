@@ -6,13 +6,13 @@ import {
     Link, NavLink
 } from "react-router-dom";
 import AuthForm from "./AuthForm";
-import ThreadPage from "./Threads/ThreadRouter";
 import NavBar from "./NavBar";
 import {tokenRefresh} from "../redux/auth";
 import { connect } from "react-redux";
 import UrlBuilder from "../utils/UrlBuilder";
 import Homepage from "./Homepage";
 import {Container, Row, Col} from "react-bootstrap";
+import ThreadRouter from "./Threads/ThreadRouter";
 
 const mapDispatchToProps = {
     tokenRefresh
@@ -32,7 +32,7 @@ class ReactApp extends React.Component {
             <BrowserRouter>
                 <NavBar/>
 
-                <Container id='app-body' fluid='md'> {/*fluid-md = container takes 100% width until md (xd-sm)*/}
+                <Container id='app-body' fluid='lg' > {/*fluid-lg = container takes 100% width until lg (on xd sm md, but not lg)*/}
                     <Row className='justify-content-center'>
                         <Col><br/>
 
@@ -40,8 +40,8 @@ class ReactApp extends React.Component {
                                 <Route exact path={UrlBuilder.Home()}>
                                     <Homepage/>
                                 </Route>
-                                <Route path={UrlBuilder.Threads.List()}>
-                                    <ThreadPage />
+                                <Route path={UrlBuilder.Threads.Index()}>
+                                    <ThreadRouter />
                                 </Route>
 
                                 <Route exact path={UrlBuilder.Login()}>
@@ -62,7 +62,7 @@ class ReactApp extends React.Component {
                         </Col>
                     </Row>
                 </Container>
-
+                <br/>
             </BrowserRouter>
         );
     }

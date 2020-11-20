@@ -66,9 +66,10 @@ class UrlBuilder {
 }
 
 UrlBuilder.Threads = class Threads {
-    static List() { return '/threads'; } /*TODO change to /*/
-    static Single(id) { return `${Threads.List()}/${id}`; }
-    static Create() { return `${Threads.List()}/create`; }
+    static Index() { return '/threads'; }
+    static Single(id) { return `${Threads.Index()}/${id}`; }
+    // static SingleMatchPath() { return `${Threads.Index()}/:id`; }
+    static Create() { return `${Threads.Index()}/create`; }
 }
 
 UrlBuilder.Users = class Users {

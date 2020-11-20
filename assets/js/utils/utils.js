@@ -50,3 +50,6 @@ window.roboHash = (hash, bg=null, size=null) => {
     return `https://robohash.org/${hash}?${bg ?
         'bgset=bg'+bg : ''}&${size ? `size=${size}x${size}` : ''}`;
 }
+
+// Defined in webpack.config.js, using dotenv module
+window.APP_ENV = process.env.APP_ENV;

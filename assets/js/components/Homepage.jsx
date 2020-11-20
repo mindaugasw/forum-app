@@ -17,16 +17,19 @@ class Homepage extends Component {
         return (
             <div>
                 <h1>Welcome!</h1>
+                This is a general-purpose discussion forum. Find more info in{' '}
+                <Link to={UrlBuilder.About()}>About</Link> section.
 
                 {authLoaded && !isLoggedIn ?
                 <>
-                This is a general-purpose discussion forum.{' '}
+                <br/>
                 <Link to={UrlBuilder.Login()}>Login</Link> or{' '}
                 <Link to={UrlBuilder.Register()}>Register</Link> to access all features.
                 </>
                 : ''}
 
                 <hr/>
+                
                 <ThreadList />
             </div>
         );

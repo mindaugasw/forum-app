@@ -23,5 +23,6 @@ module.exports = {
         "store": true,
         "LoadState": true,
         "roboHash": true,
+        "APP_ENV": true,
     }
 };
