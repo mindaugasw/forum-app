@@ -1,4 +1,5 @@
 var Encore = require('@symfony/webpack-encore');
+var dotenv = require('dotenv');
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -21,7 +22,7 @@ Encore
      * (including one that's included on every page - e.g. "app")
      *
      * Each entry will result in one JavaScript file (e.g. app.js)
-     * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
+     * and one CSS file (e.g. app.scss) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/app.js')
     // .addEntry('react_app', './assets/js/test.js')
@@ -55,7 +56,7 @@ Encore
     })
 
     // enables Sass/SCSS support
-    // .enableSassLoader()
+    .enableSassLoader()
 
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()
@@ -70,6 +71,16 @@ Encore
     // uncomment if you use API Platform Admin (composer req api-admin)
     .enableReactPreset()
     //.addEntry('admin', './assets/admin.js')
+
+
+    .configureDefinePlugin(options => { // Define env: 'dev' | 'prod'
+        const env = dotenv.config();
+        if (env.error) {
+            throw env.error;
+        }
+
+        options['process.env'].APP_ENV = JSON.stringify(env.parsed.APP_ENV);
+    })
 ;
 
 module.exports = Encore.getWebpackConfig();

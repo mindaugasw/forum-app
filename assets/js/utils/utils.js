@@ -39,3 +39,17 @@ window.LoadState = {
     Loading: 1,
     Done: 2,
 }
+
+/**
+ * Generate avatar link from robohash.org
+ * @param hash
+ * @param bg Background set: 1 or 2. Will be skipped if falsy value passed
+ * @param size Image size (square). Will be skipped if falsy value passed
+ */
+window.roboHash = (hash, bg=null, size=null) => {
+    return `https://robohash.org/${hash}?${bg ?
+        'bgset=bg'+bg : ''}&${size ? `size=${size}x${size}` : ''}`;
+}
+
+// Defined in webpack.config.js, using dotenv module
+window.APP_ENV = process.env.APP_ENV;

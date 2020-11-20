@@ -36,7 +36,7 @@ class AuthForm extends React.Component {
     }
 
     componentDidMount() {
-        this.props.tokenRefresh();
+        // this.props.tokenRefresh();
     }
 
     handleFormSubmit(event) {

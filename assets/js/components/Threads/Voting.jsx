@@ -46,6 +46,7 @@ class Voting extends Component {
         // TODO disable voting links if not logged in
         // TODO disable voting links on your own posts
 
+        // TODO remove component
         return (
             <span>
                 Score: {post.votesCount},{' '}

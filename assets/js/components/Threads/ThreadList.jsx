@@ -6,6 +6,16 @@ import {Link} from "react-router-dom";
 import Paginator from "../Paginator";
 import UrlBuilder from "../../utils/UrlBuilder";
 import Voting from "./Voting";
+import {Row, Button, Card, Col, Container, Spinner} from "react-bootstrap";
+import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
+import {
+    faArrowAltCircleDown,
+    faArrowAltCircleUp,
+    faCaretDown, faChevronDown,
+    faChevronUp,
+    faPlus
+} from "@fortawesome/free-solid-svg-icons";
+import ThreadListItem from "./ThreadListItem";
 
 const mapDispatchToProps = {
     getThreads
@@ -60,7 +70,7 @@ class ThreadList extends React.Component {
      */
     getListUrl(page = 1) {
         return UrlBuilder.ReadParamsWithDefaults({
-                page: page, perpage: 20, orderby: 'id', orderdir: 'DESC'}).GetUrl();
+                page: page, perpage: 10, orderby: 'id', orderdir: 'DESC'}).GetUrl();
     }
 
     /**
@@ -69,7 +79,7 @@ class ThreadList extends React.Component {
     getPaginationListUrl(page) {
         return UrlBuilder.ReadParamsWithReplace(
                 {page: page},
-                {perpage: 20, orderby: 'id', orderdir: 'DESC'}).GetUrl();
+                {perpage: 10, orderby: 'id', orderdir: 'DESC'}).GetUrl();
     }
 
     /**
@@ -85,25 +95,12 @@ class ThreadList extends React.Component {
 
     render() {
         if (this.props.threads.loaded !== LoadState.Done) {
-            return <Loading />
+            return <div className='text-center mt-5 pt-5'><Spinner animation="border" /></div>;
         }
 
-        const list = this.props.threads.items.map(t => {
-            const createdAt = new Date(t.createdAt).formatDefault();
-
-            return (
-                <li key={t.id}>
-                    <Link to={`/threads/${t.id}`}>
-                        {t.id}: {t.title}
-                    </Link><br/>
-                    By <a href="#">{t.author.username}</a> @ {createdAt}
-                    . {t.commentsCount} comments.
-                    {' '}
-                    {/*Vote: {t.userVote === 1 ? '🔼' : t.userVote === -1 ? '🔻' : '-'}*/}
-                    <Voting post={t} isThread={true} />
-                </li>
-            );
-        });
+        const threadListItems = this.props.threads.items.map(t =>
+            <ThreadListItem key={t.id} thread={t} />
+        );
 
         const paginator = <Paginator pagination={this.props.threads.pagination}
                                      linkGenerator={this.getPaginationListUrl}
@@ -111,15 +108,39 @@ class ThreadList extends React.Component {
 
         return (
             <div>
-                <hr/>
-                <b>ThreadListRedux.jsx</b><br/>
+                {/* --- Title, Create new button --- */}
+                <h2 style={{display: "inline-block"}}>Topics list</h2>
+                <Link to={UrlBuilder.Threads.Create()}>
+                    <Button style={{float: "right"}}><FA icon={faPlus}/> Create new</Button>
+                </Link>
 
+                <Container fluid className='thread-list-container'>
+                    <Card>
+
+                        {/* -- Card header -- */}
+                        <Card.Header className='py-2'>
+                            <Container fluid className='p-0'>
+                                <Row className='no-gutters'>
+                                    <Col>
+                                        Title
+                                    </Col>
+                                    <Col sm={2} className={'d-none d-sm-block text-center'}> {/*Visible on sm and up*/}
+                                        Replies
+                                    </Col>
+                                    <Col xs={2} sm={1} className='text-center'>
+                                        Vote
+                                    </Col>
+                                </Row>
+                            </Container>
+                        </Card.Header>
+
+                        {/* --- Items list --- */}
+                        {threadListItems}
+
+                    </Card>
+                </Container>
+                <br/>
                 {paginator}
-                <ul>
-                    {list}
-                </ul>
-                {paginator}
-                <hr/>
             </div>
         );
     }

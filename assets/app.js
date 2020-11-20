@@ -5,21 +5,24 @@
  * (and its CSS file) in your base layout (base.html.twig).
  */
 
-// any CSS you import will output into a single css file (app.css in this case)
-import './styles/app.css';
+// any CSS you import will output into a single css file (app.scss in this case)
+import './styles/app.scss';
+// import 'bootstrap/ /css/bootstrap.min.';
+// import 'bootstrap/scss/bootstrap.scss';
 
 import React from 'react';
 import { render } from 'react-dom';
-// import '@fortawesome/fontawesome-free/js/all';
-import { Provider } from "react-redux";
-import "./js/utils/utils";
-
-import store from "./js/store";
 import ReactApp from "./js/components/ReactApp";
 
+import { Provider } from "react-redux";
+import store from "./js/store";
+
+import "./js/utils/utils";
+
+// import '@fortawesome/fontawesome-free/js/all';
 
 render(
     <Provider store={store}>
         <ReactApp />
-    </Provider>, document.getElementById('sample-div')
+    </Provider>, document.getElementById('root')
 );

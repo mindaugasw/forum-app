@@ -1,0 +1,47 @@
+/*@import "~@fortawesome/fontawesome-free/css/all.min.css"; !*TODO is ALL FA needed? Maybe smaller subset is enough? *!*/
+@import "~bootstrap";
+
+// --- Colors ---
+:root {
+    // Reddit colors:
+    /*--color-upvote: #FF8B60;
+    --color-downvote: #9494FF;
+    --color-vote: #C6C6C6;*/
+
+    --color-upvote: #fd7e14;
+    --color-downvote: #9056fb;
+    --color-vote: #717171;
+}
+.color-upvote {
+    color: var(--color-upvote);
+}
+.color-downvote {
+    color: var(--color-downvote);
+}
+.color-vote {
+    color: var(--color-vote);
+}
+
+.lh-1 {
+    line-height: 1em;
+}
+
+
+.thread-list-container {
+    padding: 0;
+}
+
+@include media-breakpoint-down(md) {
+    .thread-list-container {
+        margin: 0 -15px;
+        width: auto;
+    }
+}
+
+// dev styles // TODO remove
+.bsr {
+    //border: 1px solid red;
+}
+.bsg {
+    //border: 1px solid green;
+}

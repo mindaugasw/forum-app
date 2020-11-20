@@ -1,47 +1,52 @@
 import React, {Component} from 'react';
 import PropTypes from "prop-types";
 import {Link} from "react-router-dom";
+import {Pagination} from "react-bootstrap";
+
+// Not using React Bootstrap (<Pagination.Item/>) because it's incompatible with React Router
+function MyPage(props) {
+    const {text, url, active, disabled, onClick} = props;
+    return (
+        <li className={`page-item ${active ? 'active' : ''} ${disabled ? 'disabled' : ''}`}>
+            <Link to={url} onClick={onClick} className='page-link'>
+                {text}
+            </Link>
+        </li>
+    );
+}
+MyPage.propTypes = {
+    text: PropTypes.node.isRequired,
+    url: PropTypes.string.isRequired,
+    active: PropTypes.bool.isRequired,
+    disabled: PropTypes.bool.isRequired,
+    onClick: PropTypes.func.isRequired,
+}
 
 class Paginator extends Component {
-    getLink(page, text = null, key = null) {
-        if (!key)
-            return (
-                <Link to={this.props.linkGenerator(page)}
-                      onClick={this.props.onClick}>
-                    {text !== null ? text : page}
-                </Link>
-            );
-        else
-            return (
-                <Link key={key}
-                      to={this.props.linkGenerator(page)}
-                      onClick={this.props.onClick}>
-                    {text !== null ? text : page}
-                </Link>
-            );
-    }
-
     render() {
-        const p = this.props.pagination;
+        const p = this.props.pagination,
+            lg = this.props.linkGenerator,
+            oc = this.props.onClick;
+
+        const first = <MyPage text='«' url={lg(p.first)} active={false} disabled={p.first === p.current} onClick={oc} />;
+        const last = <MyPage text='»' url={lg(p.last)} active={false} disabled={p.last === p.current} onClick={oc} />;
+        const prev = <MyPage text='‹' url={lg(p.previous || -1)} active={false} disabled={!('previous' in p)} onClick={oc} />;
+        const next = <MyPage text='›' url={lg(p.next || -1)} active={false} disabled={!('next' in p)} onClick={oc} />;
 
         const pageRange = p.pagesInRange.map(page => {
-            let link = this.getLink(page, page, page);
-            if (page === p.current)
-                return <b key={page}><i>{link}</i></b>;
-            return link;
-        }).reduce((prev, curr) => [prev, ' ', curr]);
-
-        const first = p.first === p.current ? '' : this.getLink(p.first, 'First');
-        const last = p.last === p.current ? '' : this.getLink(p.last, 'Last');
+            return <MyPage key={page} text={page} url={lg(page)} active={page === p.current} disabled={false} onClick={oc} />
+        });
 
         return (
-            // TODO hide pagination if there's no elements
-            <div>
-                Pagination:
-                {first}{' '}
-                {pageRange}{' '}
-                {last}
-            </div>
+            <nav aria-label="Page navigation example">
+                <ul className="pagination">
+                    {first}
+                    {prev}
+                    {pageRange}
+                    {next}
+                    {last}
+                </ul>
+            </nav>
         );
     }
 

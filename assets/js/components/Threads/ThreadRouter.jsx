@@ -4,16 +4,16 @@ import {
     Route,
     Link,
     useRouteMatch,
-    useParams
+    useParams,
+    Redirect
 } from "react-router-dom";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router";
 import SingleThreadRedux from "./SingleThread";
-import ThreadList from "./ThreadList";
 import ThreadForm from "./ThreadForm";
+import UrlBuilder from "../../utils/UrlBuilder";
 
-
-class ThreadPage extends React.Component {
+class ThreadRouter extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -24,17 +24,17 @@ class ThreadPage extends React.Component {
 
         return (
             <div>
-                Thread parent page<br/>
-                <Link to={`${match.path}/create`}>Create new thread</Link><br/>
                 <Switch>
                     <Route exact path={match.path}>
-                        Threads list - index
-                        <ThreadList />
+                        {/*<ThreadList />*/}
+                        <Redirect to={UrlBuilder.Home()} />
                     </Route>
-                    <Route path={`${match.path}/create`} >
+                    <Route path={UrlBuilder.Threads.Create()} >
                         <ThreadForm editMode={false} />
                     </Route>
+                    {/*<Route path={UrlBuilder.Threads.SingleMatchPath()} >*/}
                     <Route path={`${match.path}/:id`} >
+                    {/*<Route path={`/threads/:id`} >*/}
                         <SingleThreadRedux />
                     </Route>
                     <Route>
@@ -53,4 +53,4 @@ class ThreadPage extends React.Component {
     }
 }
 
-export default withRouter(ThreadPage);
+export default withRouter(ThreadRouter);
