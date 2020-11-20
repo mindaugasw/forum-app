@@ -22,7 +22,6 @@ module.exports = {
         "getSafe": true,
         "store": true,
         "LoadState": true,
-        "roboHash": true,
         "APP_ENV": true,
     }
 };

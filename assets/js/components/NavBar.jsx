@@ -29,11 +29,12 @@ class NavBar extends Component {
                     {auth.user.username+' '}
                     <Image
                         style={{height: '25px'}}
-                        src={roboHash(auth.user.username, 2, 100)}
+                        src={UrlBuilder.RoboHash(auth.user.username, 2, 100)}
                         roundedCircle />
                     </>} alignRight id="basic-nav-dropdown">
 
                     <NavDropdown.Item as={NavLink} to={UrlBuilder.Users.Single(auth.user.id)} disabled>My profile</NavDropdown.Item>
+                    <NavDropdown.Item as={NavLink} to={UrlBuilder.Users.Edit(auth.user.id)} disabled>Edit profile</NavDropdown.Item>
                     <NavDropdown.Item as={NavLink} to={UrlBuilder.Logout()} disabled>Logout</NavDropdown.Item>
                 </NavDropdown>
                 </>;

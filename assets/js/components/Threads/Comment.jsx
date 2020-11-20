@@ -5,6 +5,11 @@ import {connect} from "react-redux";
 import {canUserManagePost} from "../../redux/auth";
 import {deleteComment} from "../../redux/postsCRUD";
 import CommentForm from "./CommentForm";
+import {Col, Row, Card, CardGroup, Container, Image, NavDropdown} from "react-bootstrap";
+import UrlBuilder from "../../utils/UrlBuilder";
+import {Link} from "react-router-dom";
+import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
+import {faEdit, faMinusCircle, faPlusCircle, faTrash} from "@fortawesome/free-solid-svg-icons";
 
 const mapStateToProps = state => {
     return {
@@ -50,7 +55,9 @@ class Comment extends Component {
         this.setState({editMode: false});
     }
 
-    render() {
+    /*render() {
+        return this.render_new();
+
         const c = this.props.comment;
 
         if (this.state.editMode) {
@@ -73,12 +80,76 @@ class Comment extends Component {
         }
 
         return (
-            <li>
+            <li className='bsr'>
                 {c.content}<br/>
                 #{c.id} by {c.author.username} at {c.createdAt},{' '}
                 <Voting post={c} isThread={false} />. {editDeleteJsx}
             </li>
         );
+    }*/
+
+    render() {
+        const c = this.props.comment;
+        const u = this.props.user;
+        const a = c.author;
+
+        return (
+            <>
+            <Card border={u && u.id === c.author.id ? 'primary' : null}>
+                <Card.Header className='py-2'>
+
+                    {/* -- Author -- */}
+                    <div className='d-inline-block'>
+                        <Link to={UrlBuilder.Users.Single(a.id)}>
+                            <Image
+                                style={{height: '25px'}}
+                                src={UrlBuilder.RoboHash(a.username, 2, 100)}
+                                roundedCircle />
+
+                            <span className='ml-2'>{c.author.username}</span>
+                        </Link>
+                        <span className='text-muted'>
+                            <span className='small'>
+                            {' '}&nbsp;·&nbsp;{' '}
+                                {(new Date(c.createdAt)).timeAgo()}
+                            </span>
+                        </span>
+                    </div>
+
+                    {/* -- Edit, Delete, Voting -- */}
+                    <div className='d-inline-block float-right'>
+                        {canUserManagePost(u, c) ?
+                        <div className='d-inline-block'>
+                            <span className='mr-4'>
+                                <a href='#' className='color-vote'>
+                                    <FA icon={faEdit} size={'lg'} /> Edit
+                                </a>
+                            </span>
+                            <span className='mr-4'>
+                                <a href='#' className='color-vote'>
+                                    <FA icon={faTrash} size={'lg'} /> Delete
+                                </a>
+                            </span>
+                        </div>
+                        : null}
+
+                        <div className='d-inline-block color-vote'>
+                            <FA icon={faMinusCircle} size={'lg'} />
+                            {' '}<b>1234</b>{' '}
+                            <FA icon={faPlusCircle} size={'lg'} />
+                        </div>
+                    </div>
+
+                </Card.Header>
+
+                <Card.Body className='py-2'>
+                    {c.content}
+                </Card.Body>
+            </Card>
+            <br/>
+            </>
+        );
+        /* TODO highlight current user's comments + threads with colored card border */
     }
 }
 

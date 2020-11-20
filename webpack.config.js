@@ -79,6 +79,7 @@ Encore
             throw env.error;
         }
 
+        // TODO not working: sees heroku also as dev env
         options['process.env'].APP_ENV = JSON.stringify(env.parsed.APP_ENV);
     })
 ;
