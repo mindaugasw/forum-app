@@ -3,6 +3,7 @@ import ThreadList from "./Threads/ThreadList";
 import {Link} from "react-router-dom";
 import UrlBuilder from "../utils/UrlBuilder";
 import {connect} from "react-redux";
+import UnderConstructionNotice from "./UnderConstructionNotice";
 
 const mapStateToProps = state => {
     return {
@@ -16,6 +17,14 @@ class Homepage extends Component {
         const {authLoaded, isLoggedIn} = this.props;
         return (
             <div>
+                {APP_ENV === 'prod' ?
+                <>
+                    <UnderConstructionNotice />
+                    <hr/>
+                    <br/>
+                </>
+                : null}
+
                 <h1>Welcome!</h1>
                 This is a general-purpose discussion forum. Find more info in{' '}
                 <Link to={UrlBuilder.About()}>About</Link> section.
@@ -29,7 +38,7 @@ class Homepage extends Component {
                 : ''}
 
                 <hr/>
-                
+
                 <ThreadList />
             </div>
         );

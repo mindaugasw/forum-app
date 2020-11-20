@@ -3,9 +3,14 @@
 
 // --- Colors ---
 :root {
-    --color-upvote: #ffa500;
-    --color-downvote: #747cdc;
-    --color-vote: #7d7d7d;
+    // Reddit colors:
+    /*--color-upvote: #FF8B60;
+    --color-downvote: #9494FF;
+    --color-vote: #C6C6C6;*/
+
+    --color-upvote: #fd7e14;
+    --color-downvote: #9056fb;
+    --color-vote: #717171;
 }
 .color-upvote {
     color: var(--color-upvote);
@@ -33,7 +38,7 @@
     }
 }
 
-// dev styles
+// dev styles // TODO remove
 .bsr {
     //border: 1px solid red;
 }

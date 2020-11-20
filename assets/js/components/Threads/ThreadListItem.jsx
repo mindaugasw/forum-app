@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import {Card, Col, Container, Row} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import UrlBuilder from "../../utils/UrlBuilder";
-import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
-import {faChevronDown, faChevronUp} from "@fortawesome/free-solid-svg-icons";
+import NewVoting from "./NewVoting";
 
 class ThreadListItem extends Component {
     render() {
@@ -39,19 +38,8 @@ class ThreadListItem extends Component {
                             {t.commentsCount}
                         </Col>
 
-                        {/* TODO Voting needs vertical centering */}
-                        {/* - Voting - */}
-                        <Col xs={2} sm={1} className='' style={{margin: '-5px 0 -5px 0'}}>
-                            <Col xs={12} className='lh-1 p-0 text-center bsg'>
-                                <FA icon={faChevronUp} size={'lg'} className='color-upvote bsr' />
-                            </Col>
-                            <Col xs={12} className='lh-1 p-0 text-center bsg color-upvote' style={{fontWeight: 'bold'}}>
-                                {t.votesCount}
-                            </Col>
-                            <Col xs={12} className='lh-1 p-0 text-center bsg'>
-                                <FA icon={faChevronDown} size={'lg'} className='bsr' />
-                            </Col>
-                        </Col>
+                        <NewVoting post={t} isThread={true} />
+
                     </Row>
                 </Container>
             </Card.Body>
