@@ -58,13 +58,13 @@ class NewVoting extends Component {
             <Col xs={2} sm={1} style={{margin: 'auto 0px'}}> {/* margin: '-5px 0 -5px 0' - more compact, but can't vertical align*/}
 
                 {/* Upvote */}
-                {p.author.id !== u.id ?
-                <a href='#' onClick={event => this.handleClick(event, 1)}>
-                    <Col xs={12} className='lh-1 p-0 text-center'>
-                        <FA icon={faPlusCircle} size={'lg'} className={puv === 1 ? 'color-upvote' : 'color-vote'} />
-                    </Col>
-                </a>
-                : null}
+                {u && u.id === p.author.id ? null :
+                    <a href='#' onClick={event => this.handleClick(event, 1)}>
+                        <Col xs={12} className='lh-1 p-0 text-center'>
+                            <FA icon={faPlusCircle} size={'lg'} className={puv === 1 ? 'color-upvote' : 'color-vote'} />
+                        </Col>
+                    </a>
+                }
 
                 {/* Score */}
                 <Col xs={12} className={`lh-1 p-0 text-center ${
@@ -75,13 +75,13 @@ class NewVoting extends Component {
                 </Col>
 
                 {/* Downvote */}
-                {p.author.id !== u.id ?
-                <a href='#' onClick={event => this.handleClick(event, -1)}>
-                    <Col xs={12} className='lh-1 p-0 text-center'>
-                        <FA icon={faMinusCircle} size={'lg'} className={puv === -1 ? 'color-downvote' : 'color-vote'} />
-                    </Col>
-                </a>
-                : null}
+                {u && u.id === p.author.id ? null :
+                    <a href='#' onClick={event => this.handleClick(event, -1)}>
+                        <Col xs={12} className='lh-1 p-0 text-center'>
+                            <FA icon={faMinusCircle} size={'lg'} className={puv === -1 ? 'color-downvote' : 'color-vote'} />
+                        </Col>
+                    </a>
+                }
 
             </Col>
         );
