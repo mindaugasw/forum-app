@@ -77,12 +77,19 @@ Encore
 
 
     .configureDefinePlugin(options => { // dotenv plugin, used to define frontend env: 'dev' | 'prod'
-        const env = dotenv.config();
-        if (env.error) {
-            throw env.error;
-        }
+        // const env = dotenv.config();
+        // if (env.error) {
+        //     throw env.error;
+        // }
+        //
+        // options['process.env'].APP_ENV = JSON.stringify(env.parsed.FRONTEND_ENV || 'dev');
+        options['process.env'].APP_ENV = JSON.stringify(Encore.isProduction() ? 'prod' : 'dev');
 
-        options['process.env'].APP_ENV = JSON.stringify(env.parsed.FRONTEND_ENV);
+        // options.__DEV__ = JSON.stringify(Encore.isProduction());
+
+        // console.log('1', Encore.isProduction().toString());
+        // options.TEST_1 = 's';
+        // options['process.env'].TEST_2 = 'x';
     })
 ;
 
