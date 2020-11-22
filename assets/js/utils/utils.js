@@ -43,3 +43,11 @@ window.LoadState = {
 
 // Defined in webpack.config.js, using dotenv module
 window.APP_ENV = process.env.APP_ENV;
+
+window.importZxcvbn = () => {
+    if (!window.zxcvbn) {
+        import('zxcvbn').then(zxcvbn => {
+            window.zxcvbn = zxcvbn;
+        });
+    }
+}

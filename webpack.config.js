@@ -54,6 +54,9 @@ Encore
         config.useBuiltIns = 'usage';
         config.corejs = 3;
     })
+    .configureBabel(babelConfig => {
+        babelConfig.plugins.push('@babel/plugin-proposal-class-properties');
+    })
 
     // enables Sass/SCSS support
     .enableSassLoader()
@@ -73,14 +76,13 @@ Encore
     //.addEntry('admin', './assets/admin.js')
 
 
-    .configureDefinePlugin(options => { // Define env: 'dev' | 'prod'
+    .configureDefinePlugin(options => { // dotenv plugin, used to define frontend env: 'dev' | 'prod'
         const env = dotenv.config();
         if (env.error) {
             throw env.error;
         }
 
-        // TODO not working: sees heroku also as dev env
-        options['process.env'].APP_ENV = JSON.stringify(env.parsed.APP_ENV);
+        options['process.env'].APP_ENV = JSON.stringify(env.parsed.FRONTEND_ENV);
     })
 ;
 

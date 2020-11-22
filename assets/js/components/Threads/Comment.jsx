@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import Voting from "./Voting";
+import Voting from "../__old/Voting";
 import {connect} from "react-redux";
 import {canUserManagePost} from "../../redux/auth";
 import {deleteComment} from "../../redux/postsCRUD";
 import CommentForm from "./CommentForm";
-import {Col, Row, Card, CardGroup, Container, Image, NavDropdown} from "react-bootstrap";
+import {Col, Row, Card, CardGroup, Container, Image, NavDropdown, Tooltip, OverlayTrigger} from "react-bootstrap";
 import UrlBuilder from "../../utils/UrlBuilder";
 import {Link} from "react-router-dom";
 import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
@@ -42,7 +42,13 @@ class Comment extends Component {
             return;
         }
 
-        this.props.deleteComment({threadId: this.props.thread.id, commentId: this.props.comment.id})
+        const u = this.props.user;
+        const message = `Delete this comment?${u && u.id !== this.props.comment.author.id ?
+            `\n\nWARNING: you are deleting someone else's comment as an admin!` : ``}`
+        let answer = confirm(message);
+
+        if (answer)
+            this.props.deleteComment({threadId: this.props.thread.id, commentId: this.props.comment.id})
     }
     
     handleEditClick(event) {
@@ -93,12 +99,24 @@ class Comment extends Component {
         const u = this.props.user;
         const a = c.author;
 
+
+        if (this.state.editMode) {
+            return (
+                // <li>
+                <CommentForm editMode={true} threadId={this.props.thread.id}
+                             comment={c} cancelCallback={this.handleCancelEditClick} />
+                // </li>
+            );
+        }
+
+        const submittedTimeAgoJsx = <>{(new Date(c.createdAt)).timeAgo()}{c.edited ? '*' : null}</>;
+
         return (
             <>
             <Card border={u && u.id === c.author.id ? 'primary' : null}>
                 <Card.Header className='py-2'>
 
-                    {/* -- Author -- */}
+                    {/* -- Author, Date -- */}
                     <div className='d-inline-block'>
                         <Link to={UrlBuilder.Users.Single(a.id)}>
                             <Image
@@ -108,12 +126,26 @@ class Comment extends Component {
 
                             <span className='ml-2'>{c.author.username}</span>
                         </Link>
-                        <span className='text-muted'>
-                            <span className='small'>
+
+                        {/* - Date - */}
+                        <span className='text-muted d-none d-sm-inline small'>
                             {' '}&nbsp;·&nbsp;{' '}
-                                {(new Date(c.createdAt)).timeAgo()}
-                            </span>
+
+                            {/* TODO check if edited ago works */}
+                            {c.edited ?
+                                <OverlayTrigger overlay={
+                                    <Tooltip id={'commed-edited-'+c.id}>
+                                        Submitted {(new Date(c.createdAt)).timeAgo()}<br/>
+                                        Last edit {(new Date(c.updatedAt)).timeAgo()}
+                                    </Tooltip>
+                                }>
+                                    <span className='d-inline-block'>
+                                        {submittedTimeAgoJsx}
+                                    </span>
+                                </OverlayTrigger>
+                                : submittedTimeAgoJsx}
                         </span>
+
                     </div>
 
                     {/* -- Edit, Delete, Voting -- */}
@@ -121,13 +153,19 @@ class Comment extends Component {
                         {canUserManagePost(u, c) ?
                         <div className='d-inline-block'>
                             <span className='mr-4'>
-                                <a href='#' className='color-vote'>
-                                    <FA icon={faEdit} size={'lg'} /> Edit
+                                <a href='#' className='color-vote text-muted' onClick={this.handleEditClick}>
+                                    <FA icon={faEdit} size={'lg'} />
+                                    <span className='d-none d-sm-inline ml-1'>
+                                        Edit
+                                    </span>
                                 </a>
                             </span>
                             <span className='mr-4'>
-                                <a href='#' className='color-vote'>
-                                    <FA icon={faTrash} size={'lg'} /> Delete
+                                <a href='#' className='color-vote text-muted' onClick={this.handleDeleteClick}>
+                                    <FA icon={faTrash} size={'lg'} />
+                                    <span className='d-none d-sm-inline ml-1'>
+                                        Delete
+                                    </span>
                                 </a>
                             </span>
                         </div>

@@ -17,13 +17,7 @@ class Homepage extends Component {
         const {authLoaded, isLoggedIn} = this.props;
         return (
             <div>
-                {APP_ENV === 'prod' ?
-                <>
-                    <UnderConstructionNotice />
-                    <hr/>
-                    <br/>
-                </>
-                : null}
+                {APP_ENV === 'prod' ? <UnderConstructionNotice /> : null}
 
                 <h1>Welcome!</h1>
                 This is a general-purpose discussion forum. Find more info in{' '}

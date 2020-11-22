@@ -8,7 +8,7 @@ import {editThread, deleteThread} from "../../redux/postsCRUD";
 import PropTypes from "prop-types";
 import Loading from "../Loading";
 import Paginator from "../Paginator";
-import Voting from "./Voting";
+import Voting from "../__old/Voting";
 import CommentForm from "./CommentForm";
 import Comment from "./Comment";
 import {canUserManagePost} from "../../redux/auth";
@@ -16,6 +16,7 @@ import ThreadForm from "./ThreadForm";
 import {Button, Card, Col, Container, Row, Spinner} from "react-bootstrap";
 import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import PostFrame from "./PostFrame";
 
 const mapDispatchToProps = {
     getSingleThread,
@@ -67,7 +68,13 @@ class SingleThread extends React.Component {
             return;
         }
 
-        this.props.deleteThread({threadId: this.props.thread.id});
+        const u = this.props.user;
+        const message = `Delete this thread?${u && u.id !== this.props.thread.author.id ?
+        `\n\nWARNING: you are deleting someone else's thread as an admin!` : ``}`
+        let answer = confirm(message);
+
+        if (answer)
+            this.props.deleteThread({threadId: this.props.thread.id});
     }
 
     handleEditClick(event) {
@@ -212,8 +219,11 @@ class SingleThread extends React.Component {
     }
 
     render_new() {
+        /** This thread (not thread item!) */
         const t = this.props.thread;
+        /** Thread item or null */
         const ti = t.item || null;
+        /** Comments object from state */
         const c = this.props.thread.comments;
         const ci = c.items || null;
 
@@ -257,14 +267,17 @@ class SingleThread extends React.Component {
         return (
             <div>
                 {/* --- Thread --- */}
-                <h2 style={{display: "inline-block"}}>Thread view</h2>
+                <h2>Thread view</h2>
+                {t.loaded === LoadState.Done ?
+                <PostFrame post={t.item} formMode={false} />
+                : null}
                 <br/><br/>
 
 
                 {/* --- Comments, Create new button --- */}
                 <h2 style={{display: "inline-block"}}>Comments (420)</h2>
                 <Link to={UrlBuilder.Threads.Create()}>
-                    <Button style={{float: "right"}}><FA icon={faPlus}/> Create new</Button>
+                    <Button style={{float: "right"}}><FA icon={faPlus}/> Add new</Button>
                 </Link>
 
 

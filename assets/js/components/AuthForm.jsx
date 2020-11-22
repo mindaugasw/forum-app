@@ -62,7 +62,7 @@ class AuthForm extends React.Component {
         return (
             <div>
                 <hr />
-                <b>Authentication</b>
+                <b>Authentication - Currently working form</b>
 
                 <form onSubmit={ this.handleFormSubmit }>
                     Username: <input name='username' type='text' /><br />

@@ -53,9 +53,10 @@ const initialState = {
             id, username, roles: [], iat, exp
         },*/
     loaded: false,  // Is the initial TOKEN_REFRESH request finished?
-    isLoggedIn: false,
+    isLoggedIn: false, // TODO remove isLoggedIn. Check authentication by whether user is null or not
     jwt: null,      // Full encoded token
     timer: null,    // Timer used for automatic token refresh
+    // TODO add property: admin: bool
 }
 
 

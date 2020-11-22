@@ -13,6 +13,8 @@ import UrlBuilder from "../utils/UrlBuilder";
 import Homepage from "./Homepage";
 import {Container, Row, Col} from "react-bootstrap";
 import ThreadRouter from "./Threads/ThreadRouter";
+import RegistrationPage from "./Users/RegistrationPage";
+import UserForm from "./Users/UserForm";
 
 const mapDispatchToProps = {
     tokenRefresh
@@ -45,13 +47,21 @@ class ReactApp extends React.Component {
                                 </Route>
 
                                 <Route exact path={UrlBuilder.Login()}>
+                                    {/*<Row className="justify-content-center">
+                                        <Col sm={8} md={6} xl={5}>
+                                            <h2>Login</h2>
+                                            <UserForm variant='login' />
+                                        </Col>
+                                    </Row>*/}
+
+                                    <br/><br/><br/><br/>
                                     <AuthForm />
                                 </Route>
                                 <Route exact path={UrlBuilder.Logout()}>
                                     Not implemented {/* TODO */}
                                 </Route>
                                 <Route exact path={UrlBuilder.Register()}>
-                                    Not implemented {/* TODO */}
+                                    <RegistrationPage />
                                 </Route>
 
                                 <Route>

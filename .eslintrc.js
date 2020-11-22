@@ -23,5 +23,8 @@ module.exports = {
         "store": true,
         "LoadState": true,
         "APP_ENV": true,
-    }
+        "importZxcvbn": true,
+        "zxcvbn": true,
+    },
+    "parser": "babel-eslint"
 };
