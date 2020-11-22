@@ -1,21 +1,25 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {Button, Form, ProgressBar, Spinner} from "react-bootstrap";
+import {Alert, Button, Form, ProgressBar, Spinner} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import UrlBuilder from "../../utils/UrlBuilder";
-import {UserForm_Register} from "./UserFormVariants";
+import {UserForm_Login, UserForm_Register} from "./UserFormVariants";
+import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
+import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
 
 const mapDispatchToProps = {}
 
 const mapStateToProps = state => {
     return {
         // user: state.auth.user,
-        formLoading: state.users.formLoading,
+        // formLoading: state.users.formLoading,
     };
 } // TODO remove?
 
 class UserForm extends Component {
+    // _isMounted = false;
+
     constructor(props) {
         super(props);
 
@@ -40,14 +44,31 @@ class UserForm extends Component {
                 pswStrNumber: false,
                 pswStrFlavor: false,
                 pswStrText: false,
-                pswStrFeedback: false,
-            }
+                pswStrFeedbackWarning: false,
+                pswStrFeedbackSuggestions: false,
+
+                alert: {
+                    show: false,
+                    type: false,
+                    message: false,
+                }
+            },
+
+            ...v, // Overwrite state with any additional values passed
         }
     }
 
+    /*componentDidMount() {
+        this._isMounted = true;
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
+    }*/
+
     // Form variants shortcuts
     static Register = UserForm_Register;
-    // static Login = UserForm_Login;
+    static Login = UserForm_Login;
     // static Edit = UserForm_Edit;
 
     handleFormChange(event) {
@@ -58,11 +79,14 @@ class UserForm extends Component {
         if (this.props.onChange)
             newStateData = this.props.onChange(event, this.state);
 
+        // console.log('v1', newStateData);
+
         this.setState(state => {
             return {
+                ...mergeDeep(state, newStateData),
                 [target.id]: target.value,
                 // ...this.props.onChange(event, state) // doesn't work? Throws up in the console
-                ...newStateData
+                // ...newStateData
             };
         });
     }
@@ -84,7 +108,22 @@ class UserForm extends Component {
         });*/
 
         this.props.onSubmit(event, this.state).then(newState => {
-            console.log('@ UserForm', 's4 quit', newState);
+            // console.log('@ UserForm', 's4 quit', newState);
+
+            console.log('c1', newState);
+            if (newState)
+                console.log('c2');
+                this.setState(state => {
+                    // console.log('c3', state, newState);
+                    // const newObj = mergeDeep(state, newState);
+                    // const newObj = mergeDeep_2(state, newState);
+                    // console.log('c4', newObj)
+                    return {
+                        ...mergeDeep(state, newState),
+                        // ...newObj
+                    };
+                })
+
             /*this.setState({
 
 
@@ -112,6 +151,15 @@ class UserForm extends Component {
             <Form onSubmit={this.handleFormSubmit}>
                 <Form.Group>
                     <fieldset disabled={formLoading}>
+
+                        {/* --- Alert --- */}
+                        {v.alert.show ?
+                            <Alert variant={v.alert.type}>
+                                <FA icon={faExclamationCircle} /> {v.alert.message}
+                            </Alert>
+                        : null}
+
+
                         {/* --- Username --- */}
                         <Form.Group controlId='username'>
                             <Form.Label>Username</Form.Label>
@@ -127,6 +175,9 @@ class UserForm extends Component {
 
                             {v.username ?
                             <Form.Control.Feedback type='invalid' className='d-block'>{v.username}</Form.Control.Feedback>
+                            : null}
+                            {v.usernameValidServer ?
+                            <Form.Control.Feedback type='invalid' className='d-block'>{v.usernameValidServer}</Form.Control.Feedback>
                             : null}
 
                         </Form.Group>
@@ -161,7 +212,10 @@ class UserForm extends Component {
                                     <Form.Text className={`d-block ${v.pswStrFlavor === 'danger' ? 'invalid-feedback' : 'text-muted'}`}>
                                         {v.pswStrText}
                                     </Form.Text>
-                                    <Form.Text className='text-muted mt-0'>{v.pswStrFeedback}</Form.Text>
+                                    <Form.Text className='text-muted mt-0'>
+                                        {v.pswStrFeedbackWarning ? <>{v.pswStrFeedbackWarning}<br/></> : null}
+                                        {v.pswStrFeedbackSuggestions ? v.pswStrFeedbackSuggestions : null}
+                                    </Form.Text>
                                 </Form.Group>
                             : null}
                             </>
@@ -169,10 +223,16 @@ class UserForm extends Component {
 
                         {/* --- Submit --- */}
                         <Button variant='primary' type='submit' className='mr-2' disabled={!v.valid}>
-                            {formLoading ?
+                            {/*{formLoading ?
                                 <Spinner animation='border' size='sm' /> :
                                 register ? 'Register' :
                                     login ? 'Login' : 'Save'
+                            }*/}
+
+                            {formLoading ? <><Spinner animation='border' size='sm' /> </> : ''}
+
+                            {register ? 'Register' :
+                                login ? 'Login' : 'Save'
                             }
                         </Button>
 
@@ -199,12 +259,12 @@ UserForm.propTypes = {
     // userSubject: PropTypes.object, // User object that is being edited
 
     // Event callbacks. Both can return updated state data, e.g. validation data
-    onSubmit: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired, // On successful submit should not return anything
     onChange: PropTypes.func,
+    formLoading: PropTypes.bool, // adjusts form style. Can be set to true e.g. after submitting
 
     // Redux state:
     // user: PropTypes.object, // Currently logged in user
-    // formLoading: PropTypes.bool, // adjusts form style. Can be set to true e.g. after submitting
 
 }
 

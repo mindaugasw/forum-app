@@ -27,6 +27,7 @@ module.exports = {
         "zxcvbn": true,
         "isObject": true,
         "mergeDeep": true,
+        "redirect": true,
     },
     "parser": "babel-eslint"
 };

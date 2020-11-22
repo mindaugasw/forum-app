@@ -28,7 +28,6 @@ class NavBar extends Component {
                     <>
                     {auth.user.username+' '}
                     <Image
-                        // style={{height: '25px'}}
                         className='avatar-image-small'
                         src={UrlBuilder.RoboHash(auth.user.username, 2, 100)}
                         roundedCircle />
@@ -36,7 +35,7 @@ class NavBar extends Component {
 
                     <NavDropdown.Item as={NavLink} to={UrlBuilder.Users.Single(auth.user.id)} disabled>My profile</NavDropdown.Item>
                     <NavDropdown.Item as={NavLink} to={UrlBuilder.Users.Edit(auth.user.id)} disabled>Edit profile</NavDropdown.Item>
-                    <NavDropdown.Item as={NavLink} to={UrlBuilder.Logout()} disabled>Logout</NavDropdown.Item>
+                    <NavDropdown.Item as={NavLink} to={UrlBuilder.Logout()}>Logout</NavDropdown.Item>
                 </NavDropdown>
                 </>;
         } else {

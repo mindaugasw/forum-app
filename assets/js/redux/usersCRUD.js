@@ -20,7 +20,7 @@ export const register = createAsyncThunk(REGISTER, (credentials, thunkAPI) => {
     return API.Users.Register(credentials.username, credentials.password)
         .then(response => {
             if (response.ok) {
-                return response.json().then;
+                return response.json().then();
             }
             else {
                 return response.json().then(r => thunkAPI.rejectWithValue(r));
@@ -31,7 +31,7 @@ export const register = createAsyncThunk(REGISTER, (credentials, thunkAPI) => {
 
 // --- State ---
 const initialState = {
-    formLoading: false,
+    // formLoading: false,
 }
 
 
@@ -42,20 +42,29 @@ export const usersCRUDSlice = createSlice({
     reducers: {
 
     },
-    extraReducers: {
-        [register.pending]: (state, action) => {
-            state.formLoading = true;
-            console.log('@ reducer', action.type, action.meta.arg);
-        },
-        [register.fulfilled]: (state, action) => {
-            state.formLoading = false;
-            console.log('@ reducer', action.type, action.payload);
-        },
-        [register.rejected]: (state, action) => {
-            state.formLoading = false;
-            console.error('@ reducer', action.type, action.payload);
-        },
-    }
+    extraReducers:  builder => {
+    builder
+        .addCase(register.pending, (state, action) => {
+            // state.formLoading = true;
+            // console.log('@ reducer', action.type, action.meta.arg);
+        })
+        .addCase(register.fulfilled, (state, action) => {
+            // state.formLoading = false;
+            // console.log('@ reducer', action);
+        })
+        .addCase(register.rejected, (state, action) => {
+            // state.formLoading = false;
+            // console.error('@ reducer', action.type, action.payload);
+        })
+
+        // Catch all failed requests
+        .addMatcher(
+            action => action.type.startsWith(BASE) && action.type.endsWith('rejected'), (state, action) => {
+                console.error(`Error in action ${action.type}, ${
+                    getSafe(() => action.payload.error.status, 'unknown status code')}, ${
+                    getSafe(() => action.payload.error.message, 'unknown error message')}`);
+            })
+    },
 });
 
 

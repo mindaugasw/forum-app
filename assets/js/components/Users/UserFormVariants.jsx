@@ -2,24 +2,45 @@ import React, {Component} from "react";
 import UserForm from "./UserForm";
 import {connect} from "react-redux";
 import {register, REGISTER, FULFILLED, REJECTED} from "../../redux/usersCRUD";
+import {login, LOG_IN_MANUAL} from "../../redux/auth";
+import UrlBuilder from "../../utils/UrlBuilder";
 
 
-function handleFormChange(event, state) {
+function handleFormChange_Register_Edit(event, state) {
     const target = event.target;
-
-    // TODO validate all fields as they're being typed
 
     const updatedState = { // Manual state update, as passed state is late by 1 onChange event
         ...state,
         [target.id]: target.value
     }
 
-    return  {
+    // Validate only edited field (to not show errors on still untouched fields)
+    let validationData = null;
+    if (target.id === 'username')
+        validationData = {...validateNewUsername(updatedState)};
+
+    if (target.id === 'password' || target.id === 'passwordRepeat')
+        validationData = {...validateNewPassword(updatedState)};
+
+    // Join all validation data to check full form validity
+    validationData = mergeDeep(state.validation, validationData);
+
+    if (validationData.usernameValid && validationData.passwordValid)
+        validationData.valid = true;
+
+    return {
         validation: {
-            valid: false,
-            ...validateRegistrationForm(updatedState),
+            ...validationData
         }
     };
+
+    /*return  {
+        validation: {
+            // valid: false, // if form is valid, value will overwritten from method result
+            // ...validateRegistrationForm(updatedState),
+            ...validationData
+        }
+    };*/
 
     // console.log('Form change, valid: '+res.valid);
     // res.validation = {
@@ -39,7 +60,7 @@ function handleFormChange(event, state) {
     }*/
 }
 
-function validatePassword(state, allowEmpty = false) {
+function validateNewPassword(state, allowEmpty = false) {
     const s = state;
     let res = {
         passwordValid: false,
@@ -86,18 +107,15 @@ function validatePassword(state, allowEmpty = false) {
     }
 
     res.pswStrText = 'Password strength: '+res.pswStrText;
-    res.pswStrFeedback =
-        <>
-            {z.feedback.warning ? <>{z.feedback.warning}<br/></> : null}
-            {z.feedback.suggestions ? <>{z.feedback.suggestions}</> : null }
-        </>;
+    res.pswStrFeedbackWarning = z.feedback.warning || false;
+    res.pswStrFeedbackSuggestions = z.feedback.suggestions || false;
 
     if (z.score > 1 || APP_ENV === 'dev')
         res.passwordValid = !res.passwordRepeat; // Only valid if there's no password repeat message (ie passwords match)
 
     return res;
 }
-function validateUsername(state) {
+function validateNewUsername(state) {
     const s = state;
     let res = {
         usernameValid: false,
@@ -139,8 +157,8 @@ function validateRegistrationForm(state) {
 
     let res = {
         valid: false,
-        ...validateUsername(state),
-        ...validatePassword(state, false),
+        ...validateNewUsername(state),
+        ...validateNewPassword(state, false),
     }
 
     if (res.usernameValid && res.passwordValid)
@@ -150,22 +168,23 @@ function validateRegistrationForm(state) {
 }
 
 
-const mapDispatchToProps = {
-    register
-}
-
 class UserForm_Register_unconnected extends Component {
     constructor(props) {
         super(props);
 
         this.handleRegistrationSubmit = this.handleRegistrationSubmit.bind(this);
+
+        this.state = {
+            formLoading: false
+        };
     }
 
     handleRegistrationSubmit(event, state) {
         if (!state.validation.valid) {
-            console.error('@ UserFormVariants', 'a1 Tried submitting invalid form');
+            console.error('Tried submitting invalid form');
             return;
         }
+        this.setState({formLoading: true});
 
         /*return this.props.register({username: state.username, password: state.password})
             .then(action => {
@@ -194,19 +213,41 @@ class UserForm_Register_unconnected extends Component {
         // return response;
 
         return response.then(action => {
-            console.log('a9', action);
+            this.setState({formLoading: false});
+            // console.log('a9', action);
 
             if (action.type === REGISTER+REJECTED) {
-                console.log('a10', 'An error occurred');
-            } else {
-                console.log('a11', 'Registration success');
-            }
+                // console.log('a10', 'An error occurred');
+                const p = action.payload;
+                const e = p.error;
 
-            return action;
+                if (e) {
+                    if (e.message.includes('username is already in use')) {
+                        return {
+                            validation: {
+                                usernameValidServer: e.message,
+                            }
+                        };
+                    }
+                }
+                // else {
+                    console.error('Unknown error in form');
+                    // TODO show notification
+                    return;
+                // }
+
+            } else {
+                console.log('Registration success');
+                // this.props.history.push(UrlBuilder.Login());
+                // history.push(UrlBuilder.Login());
+                redirect(UrlBuilder.Login());
+
+                // TODO show notification
+                return;
+            }
         });
 
     }
-
 
     render() {
         // const {username, password, passwordRepeat} = {};
@@ -215,10 +256,144 @@ class UserForm_Register_unconnected extends Component {
         return <UserForm
             variant='register'
             initialValues={{}}
+            formLoading={this.state.formLoading}
             onSubmit={this.handleRegistrationSubmit}
-            onChange={handleFormChange}
+            onChange={handleFormChange_Register_Edit}
         />;
     }
 }
 
-export const UserForm_Register = connect(null, mapDispatchToProps)(UserForm_Register_unconnected);
+class UserForm_Login_unconnected extends Component {
+    constructor(props) {
+        super(props);
+
+        this.validateFieldNotEmpty = this.validateFieldNotEmpty.bind(this);
+        this.handleLoginChange = this.handleLoginChange.bind(this);
+        this.handleLoginSubmit = this.handleLoginSubmit.bind(this);
+
+        this.state = {
+            formLoading: false,
+        };
+    }
+
+    handleLoginChange(event, state) {
+        const target = event.target;
+
+        const updatedState = { // Manual state update, as passed state is late by 1 onChange event
+            ...state,
+            [target.id]: target.value
+        }
+
+        // Validate only edited field (to not show errors on still untouched fields)
+        let validationData = null;
+        if (target.id === 'username')
+            validationData = {...this.validateFieldNotEmpty(updatedState, 'username')};
+
+        if (target.id === 'password')
+            validationData = {...this.validateFieldNotEmpty(updatedState, 'password')};
+
+        // Join all validation data to check full form validity
+        validationData = mergeDeep(state.validation, validationData);
+
+        // console.log(validationData);
+        // if (validationData.usernameValid && validationData.passwordValid)
+        //     validationData.valid = true;
+        validationData.valid = validationData.usernameValid && validationData.passwordValid;
+
+        return {
+            validation: {
+                ...validationData
+            }
+        };
+    }
+
+    validateFieldNotEmpty(state, fieldName) {
+        let res = {
+            [[fieldName]+'Valid']: false,
+            [fieldName]: false,
+        }
+
+        if (!state[fieldName] || state[fieldName].length < 1) {
+            res[fieldName] = [fieldName].toString().capitalizeFirstLetter()+' should not be empty.';
+            return res;
+        }
+
+        res[[fieldName]+'Valid'] = true;
+        return res;
+    }
+
+    /*validateUsername(state) {
+        let res = {
+            usernameValid: false,
+            username: false,
+        }
+
+        if (!state.username || state.username.length < 1) {
+            res.username = 'Username should not be empty.';
+            return res;
+        }
+
+        res.usernameValid = true;
+        return res;
+    }*/
+
+    handleLoginSubmit(event, state) {
+        if (!state.validation.valid) {
+            console.error('Tried submitting invalid form');
+            return;
+        }
+
+        this.setState({formLoading: true});
+        let response = this.props.login({username: state.username, password: state.password});
+
+        return response.then(action => {
+            this.setState({formLoading: false});
+
+            if (action.type === LOG_IN_MANUAL+REJECTED) {
+                // console.log('a10', 'An error occurred');
+                const p = action.payload;
+                // const e = p.error;
+
+                // console.log('z0', p, e);
+
+                if (p && p.code === 401) {
+                    return {
+                        validation: {
+                            alert: {
+                                show: true,
+                                type: 'danger',
+                                message: p.message,
+                            }
+                        }
+                    };
+                }
+
+                console.error('Unknown error in form');
+                // TODO show notification
+                return;
+
+            } else {
+                console.log('Login success');
+                // this.props.history.push(UrlBuilder.Login());
+                // history.push(UrlBuilder.Login());
+                redirect(UrlBuilder.Home());
+
+                // TODO show notification
+                return;
+            }
+        });
+    }
+
+    render() {
+        return <UserForm
+            variant='login'
+            initialValues={{}}
+            formLoading={this.state.formLoading}
+            onSubmit={this.handleLoginSubmit}
+            onChange={this.handleLoginChange}
+        />
+    }
+}
+
+export const UserForm_Register = connect(null, {register})(UserForm_Register_unconnected);
+export const UserForm_Login = connect(null, {login})(UserForm_Login_unconnected);
