@@ -1,6 +1,7 @@
 import "./dateFormat";
 import {history} from "../components/ReactApp";
 import UrlBuilder from "./UrlBuilder";
+import Notifications from "./Notifications";
 
 /*
  * Random small functions that do not fit anywhere else
@@ -86,34 +87,14 @@ window.isObject = item => {
     return (item && typeof item === 'object' && !Array.isArray(item));
 }
 
-window.mergeDeep_2 = function (...objects) {
-    const isObject = obj => obj && typeof obj === 'object';
-
-    return objects.reduce((prev, obj) => {
-        Object.keys(obj).forEach(key => {
-            const pVal = prev[key];
-            const oVal = obj[key];
-
-            if (Array.isArray(pVal) && Array.isArray(oVal)) {
-                prev[key] = pVal.concat(...oVal);
-            }
-            else if (isObject(pVal) && isObject(oVal)) {
-                prev[key] = mergeDeep(pVal, oVal);
-            }
-            else {
-                prev[key] = oVal;
-            }
-        });
-
-        return prev;
-    }, {});
-}
-
-
 window.redirect = (path) => {
     history.push(path);
 }
 
 String.prototype.capitalizeFirstLetter = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
+}
+
+Array.prototype.randomItem = function () {
+    return this[Math.floor((Math.random()*this.length))];
 }

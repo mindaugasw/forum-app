@@ -17,6 +17,7 @@ import ThreadRouter from "./Threads/ThreadRouter";
 import RegistrationPage from "./Users/RegistrationPage";
 import UserForm from "./Users/UserForm";
 import LogoutPage from "./Users/Logout";
+import NotificationGenerator from "./NotificationGenerator";
 
 export let history;
 
@@ -41,7 +42,9 @@ class ReactApp extends React.Component {
         return (
             <>
             {/*<BrowserRouter>*/}
-                <NavBar/>
+                <NavBar />
+
+                <NotificationGenerator />
 
                 <Container id='app-body' fluid='lg' > {/*fluid-lg = container takes 100% width until lg (on xd sm md, but not lg)*/}
                     <Row className='justify-content-center'>
@@ -77,6 +80,17 @@ class ReactApp extends React.Component {
 
                                 <Route>
                                     No route found - 404 {/* TODO */}
+
+                                    {/*<NotificationComponent />*/}
+                                    {/*<NotificationFunctionalComponent />*/}
+
+
+
+                                    {/*<AlertList alerts={[{id: 1, type: 'info', message: 'heelow' }]} />*/}
+
+                                    {/*<Alert type='danger' headline='x'>*/}
+                                    {/*    wtf*/}
+                                    {/*</Alert>*/}
                                 </Route>
                             </Switch>
 
