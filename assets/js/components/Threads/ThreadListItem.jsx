@@ -4,6 +4,7 @@ import {Card, Col, Container, Row} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import UrlBuilder from "../../utils/UrlBuilder";
 import NewVoting from "./NewVoting";
+import VotingGeneral from "./VotingGeneral";
 
 class ThreadListItem extends Component {
     render() {
@@ -30,6 +31,7 @@ class ThreadListItem extends Component {
                             {/* - CreatedAt, author -*/}
                             <div className='text-muted small' >Started {(new Date(t.createdAt)).timeAgo()} &nbsp;·&nbsp;{' '}
                                 <Link to={UrlBuilder.Users.Single(t.author.id)} className='text-muted'>{t.author.username}</Link>
+                                {APP_ENV === 'dev' ? <> &nbsp;·&nbsp; #{t.id}</> : ''}
                             </div>
                         </Col>
 
@@ -38,7 +40,8 @@ class ThreadListItem extends Component {
                             {t.commentsCount}
                         </Col>
 
-                        <NewVoting post={t} isThread={true} />
+                        {/*<NewVoting post={t} isThread={true} />*/}
+                        <VotingGeneral post={t} isThread={true} isVertical={true} />
 
                     </Row>
                 </Container>

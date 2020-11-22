@@ -1,20 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { getThreads } from "../../redux/threads";
-import Loading from "../Loading";
 import {Link} from "react-router-dom";
 import Paginator from "../Paginator";
 import UrlBuilder from "../../utils/UrlBuilder";
-import Voting from "./Voting";
 import {Row, Button, Card, Col, Container, Spinner} from "react-bootstrap";
 import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
-import {
-    faArrowAltCircleDown,
-    faArrowAltCircleUp,
-    faCaretDown, faChevronDown,
-    faChevronUp,
-    faPlus
-} from "@fortawesome/free-solid-svg-icons";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import ThreadListItem from "./ThreadListItem";
 
 const mapDispatchToProps = {

@@ -12,6 +12,7 @@ import { withRouter } from "react-router";
 import SingleThreadRedux from "./SingleThread";
 import ThreadForm from "./ThreadForm";
 import UrlBuilder from "../../utils/UrlBuilder";
+import PostFrame from "./PostFrame";
 
 class ThreadRouter extends React.Component {
     constructor(props) {
@@ -30,7 +31,9 @@ class ThreadRouter extends React.Component {
                         <Redirect to={UrlBuilder.Home()} />
                     </Route>
                     <Route path={UrlBuilder.Threads.Create()} >
-                        <ThreadForm editMode={false} />
+                        {/*<ThreadForm editMode={false} />*/}
+                        <h2>Create a new topic</h2>
+                        <PostFrame post={null} formMode={true} />
                     </Route>
                     {/*<Route path={UrlBuilder.Threads.SingleMatchPath()} >*/}
                     <Route path={`${match.path}/:id`} >

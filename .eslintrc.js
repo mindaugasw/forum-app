@@ -22,7 +22,9 @@ module.exports = {
         "getSafe": true,
         "store": true,
         "LoadState": true,
-        "roboHash": true,
         "APP_ENV": true,
-    }
+        "importZxcvbn": true,
+        "zxcvbn": true,
+    },
+    "parser": "babel-eslint"
 };

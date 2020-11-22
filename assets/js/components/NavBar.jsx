@@ -28,12 +28,14 @@ class NavBar extends Component {
                     <>
                     {auth.user.username+' '}
                     <Image
-                        style={{height: '25px'}}
-                        src={roboHash(auth.user.username, 2, 100)}
+                        // style={{height: '25px'}}
+                        className='avatar-image-small'
+                        src={UrlBuilder.RoboHash(auth.user.username, 2, 100)}
                         roundedCircle />
                     </>} alignRight id="basic-nav-dropdown">
 
                     <NavDropdown.Item as={NavLink} to={UrlBuilder.Users.Single(auth.user.id)} disabled>My profile</NavDropdown.Item>
+                    <NavDropdown.Item as={NavLink} to={UrlBuilder.Users.Edit(auth.user.id)} disabled>Edit profile</NavDropdown.Item>
                     <NavDropdown.Item as={NavLink} to={UrlBuilder.Logout()} disabled>Logout</NavDropdown.Item>
                 </NavDropdown>
                 </>;
@@ -44,7 +46,7 @@ class NavBar extends Component {
                     <Nav.Link as={NavLink} to={UrlBuilder.Login()}>Login</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                    <Nav.Link as={NavLink} to={UrlBuilder.Register()} disabled>Register</Nav.Link>
+                    <Nav.Link as={NavLink} to={UrlBuilder.Register()}>Register</Nav.Link>
                 </Nav.Item>
                 </>;
         }
@@ -61,7 +63,7 @@ class NavBar extends Component {
                             <Nav.Link as={NavLink} to={UrlBuilder.Threads.Index()}>Topics list</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
-                            <Nav.Link as={NavLink} to={UrlBuilder.Threads.Create()} disabled={!auth.isLoggedIn}>New topic</Nav.Link> {/*TODO add tooltip to login if not logged in*/}
+                            <Nav.Link as={NavLink} to={UrlBuilder.Threads.Create()}>New topic</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
                             <Nav.Link as={NavLink} to={UrlBuilder.Users.List()} disabled>Users</Nav.Link>

@@ -9,6 +9,18 @@ class UrlBuilder {
     static Register() { return '/register'; }
     static About() { return '/about'; }
 
+
+    /**
+     * Generate avatar link from robohash.org
+     * @param hash
+     * @param bg Background set: 1 or 2. Will be skipped if falsy value passed
+     * @param size Image size (square). Will be skipped if falsy value passed
+     */
+    static RoboHash(hash, bg=null, size=null) {
+        return `https://robohash.org/${hash}?${bg ?
+            'bgset=bg'+bg : ''}&${size ? `size=${size}x${size}` : ''}`;
+    }
+
     /**
      * Find GET parameter in the url and return its value or null, if not found.
      * @param name
@@ -75,6 +87,7 @@ UrlBuilder.Threads = class Threads {
 UrlBuilder.Users = class Users {
     static List() { return '/users'; }
     static Single(id) { return `${Users.List()}/${id}`; }
+    static Edit(id) { return `${Users.List()}/${id}/edit`; }
 }
 
 export class ListGetParams {
