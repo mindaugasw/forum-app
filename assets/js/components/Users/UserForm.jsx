@@ -10,9 +10,10 @@ const mapDispatchToProps = {}
 
 const mapStateToProps = state => {
     return {
-        user: state.auth.user,
+        // user: state.auth.user,
+        formLoading: state.users.formLoading,
     };
-}
+} // TODO remove?
 
 class UserForm extends Component {
     constructor(props) {
@@ -21,19 +22,30 @@ class UserForm extends Component {
         this.handleFormChange = this.handleFormChange.bind(this);
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
 
-        const v = this.props.values;
+        const v = this.props.initialValues;
         this.state = {
-            username: v.username || '',
+            username: v.username || '', // Input values
             password: v.password || '',
             passwordRepeat: v.passwordRepeat || '',
 
+            // formLoading: this.props.formLoading,
+
             validation: {
-                // valid: true | false,
-                // username: 'Username does not meet requirements.',
+                valid: false, // Is entire form valid?
+
+                username: false, // Can be replaced with validation error message. If empty, message won't be rendered
+                password: false,
+                passwordRepeat: false,
+
+                pswStrNumber: false,
+                pswStrFlavor: false,
+                pswStrText: false,
+                pswStrFeedback: false,
             }
         }
     }
 
+    // Form variants shortcuts
     static Register = UserForm_Register;
     // static Login = UserForm_Login;
     // static Edit = UserForm_Edit;
@@ -41,50 +53,59 @@ class UserForm extends Component {
     handleFormChange(event) {
         const target = event.target;
 
-
-
-
-        // let newValidationData = null;
-        // if (this.props.onChange)
-/*
-            this.setState(state => {
-                console.log(event);
-                return {
-                    ...this.props.onChange(event, state)
-                };
-            });
-*/
-
-        let newValidationData = null;
+        // Callback can return new state data, e.g. validation data
+        let newStateData = null;
         if (this.props.onChange)
-            newValidationData = this.props.onChange(event, this.state);
+            newStateData = this.props.onChange(event, this.state);
 
-        this.setState({
-            [target.id]: target.value,
-            ...newValidationData
+        this.setState(state => {
+            return {
+                [target.id]: target.value,
+                // ...this.props.onChange(event, state) // doesn't work? Throws up in the console
+                ...newStateData
+            };
         });
-
-        // this.setState({
-        //     ...newValidationData
-        // });
     }
 
     handleFormSubmit(event) {
         event.preventDefault();
-        this.setState({
-            validation: this.props.onSubmit(this.state)
+
+        /*console.log('@ UserForm', 's0', this.state);
+        this.setState(state => {
+            let x = this.props.onSubmit(event, state).then(x => {
+                console.log('@ UserForm', 's2', x);
+                return x;
+            });
+            console.log('@ UserForm', 's3', x);
+            return {
+                // ...this.props.onSubmit(event, state)
+                ...x,
+            };
+        });*/
+
+        this.props.onSubmit(event, this.state).then(newState => {
+            console.log('@ UserForm', 's4 quit', newState);
+            /*this.setState({
+
+
+                validation: {
+
+                    username: newState.payload.error.message
+                }
+                // ...newState,
+            });*/
         });
     }
 
     render() {
         // const u = this.props.user;
-        const us = this.props.userSubject;
+        // const us = this.props.userSubject;
         const {formLoading, variant} = this.props;
         const register = variant === 'register'; // form variant shortcuts
         const login = variant === 'login';
         const edit = variant === 'edit';
 
-        const {username, password, passwordRepeat} = this.state;
+        const {username, password, passwordRepeat/*, formLoading*/} = this.state;
         const v = this.state.validation;
 
         return (
@@ -137,14 +158,17 @@ class UserForm extends Component {
                             {v.pswStrNumber ?
                                 <Form.Group>
                                     <ProgressBar striped animated variant={v.pswStrFlavor} now={v.pswStrNumber} />
-                                    <Form.Text className='text-muted'>{v.pswStrText}</Form.Text>
+                                    <Form.Text className={`d-block ${v.pswStrFlavor === 'danger' ? 'invalid-feedback' : 'text-muted'}`}>
+                                        {v.pswStrText}
+                                    </Form.Text>
+                                    <Form.Text className='text-muted mt-0'>{v.pswStrFeedback}</Form.Text>
                                 </Form.Group>
                             : null}
                             </>
                             : null}
 
                         {/* --- Submit --- */}
-                        <Button variant='primary' type='submit' className='mr-2'>
+                        <Button variant='primary' type='submit' className='mr-2' disabled={!v.valid}>
                             {formLoading ?
                                 <Spinner animation='border' size='sm' /> :
                                 register ? 'Register' :
@@ -171,16 +195,16 @@ class UserForm extends Component {
 UserForm.propTypes = {
     variant: PropTypes.oneOf(['login', 'register', 'edit']).isRequired,
 
-    values: PropTypes.object.isRequired, // Form field values. Object must, values optional. Values: username, password, passwordRepeat
+    initialValues: PropTypes.object.isRequired, // Form field values. Object must, values optional. Values: username, password, passwordRepeat
     // userSubject: PropTypes.object, // User object that is being edited
-    formLoading: PropTypes.bool, // adjusts form style. Can be set to true e.g. after submitting
 
-    onSubmit: PropTypes.func.isRequired, // onSubmit callback, should return validation data if form was not submitted
-    onChange: PropTypes.func, // onChange callback, can be used to return validation data
-    // TODO zxcvbn tips
+    // Event callbacks. Both can return updated state data, e.g. validation data
+    onSubmit: PropTypes.func.isRequired,
+    onChange: PropTypes.func,
 
     // Redux state:
     // user: PropTypes.object, // Currently logged in user
+    // formLoading: PropTypes.bool, // adjusts form style. Can be set to true e.g. after submitting
 
 }
 

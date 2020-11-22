@@ -44,7 +44,8 @@ class ExceptionListener
 		if ($exception instanceof ClientFriendlyExceptionInterface || $this->app_env === 'dev')
 		{
 			$message = $exception->getMessage();
-			$type = get_class($exception);
+			//$type = get_class($exception);
+			$type = (new \ReflectionClass($exception))->getShortName();
 		}
 		else
 		{
