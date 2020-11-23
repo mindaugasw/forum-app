@@ -15,18 +15,6 @@ class NotificationGenerator extends Component {
         Notifications.ReactComponent = this;
     }
 
-    /*componentDidMount() {
-        Notifications.AddCustomStyle({type: 'success', headline: 'Whoa, success!', message: 'This is a test', timeout: 0});
-        Notifications.AddCustomStyle({type: 'info', headline: 'Whoa, success!', message: 'This is a test', timeout: 0});
-        Notifications.AddCustomStyle({type: 'warning', headline: 'Whoa, success!', message: 'This is a test d-inline-block mr-2 mb-0 d-inline-block mr-2 mb-0 d-inline-block mr-2 mb-0 d-inline-block mr-2 mb-0 d-inline-block mr-2 mb-0 d-inline-block mr-2 mb-0', timeout: 0});
-        Notifications.AddCustomStyle({type: 'danger', headline: 'Whoa, success!', message: 'This is a test', timeout: 0});
-
-        // Notifications.AddRegularRandom(0);
-        // Notifications.AddRegularRandom(0);
-        Notifications.AddRandom(0);
-        Notifications.AddRandom(0);
-    }*/
-
     addNew(alertObj) {
         this.setState(state => {
             return {

@@ -30,8 +30,6 @@ class ReactApp extends React.Component {
         super(props);
 
         history = this.props.history;
-        // window.history = history;
-        // window.history = this.props.history;
     }
 
     componentDidMount() {
@@ -80,17 +78,6 @@ class ReactApp extends React.Component {
 
                                 <Route>
                                     No route found - 404 {/* TODO */}
-
-                                    {/*<NotificationComponent />*/}
-                                    {/*<NotificationFunctionalComponent />*/}
-
-
-
-                                    {/*<AlertList alerts={[{id: 1, type: 'info', message: 'heelow' }]} />*/}
-
-                                    {/*<Alert type='danger' headline='x'>*/}
-                                    {/*    wtf*/}
-                                    {/*</Alert>*/}
                                 </Route>
                             </Switch>
 

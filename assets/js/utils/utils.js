@@ -1,7 +1,6 @@
 import "./dateFormat";
 import {history} from "../components/ReactApp";
 import UrlBuilder from "./UrlBuilder";
-import Notifications from "./Notifications";
 
 /*
  * Random small functions that do not fit anywhere else
@@ -93,8 +92,4 @@ window.redirect = (path) => {
 
 String.prototype.capitalizeFirstLetter = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
-}
-
-Array.prototype.randomItem = function () {
-    return this[Math.floor((Math.random()*this.length))];
 }

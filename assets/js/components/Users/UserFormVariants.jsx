@@ -4,7 +4,7 @@ import {connect} from "react-redux";
 import {register, REGISTER, FULFILLED, REJECTED} from "../../redux/usersCRUD";
 import {login, LOG_IN_MANUAL} from "../../redux/auth";
 import UrlBuilder from "../../utils/UrlBuilder";
-
+import Notifications from "../../utils/Notifications";
 
 function handleFormChange_Register_Edit(event, state) {
     const target = event.target;
@@ -230,23 +230,17 @@ class UserForm_Register_unconnected extends Component {
                         };
                     }
                 }
-                // else {
-                    console.error('Unknown error in form');
-                    // TODO show notification
-                    return;
-                // }
+
+                console.error('Unknown error in form', action);
+                Notifications.UnhandledError('Form error in UserForm_Register_unconnected');
+                return;
 
             } else {
-                console.log('Registration success');
-                // this.props.history.push(UrlBuilder.Login());
-                // history.push(UrlBuilder.Login());
                 redirect(UrlBuilder.Login());
-
-                // TODO show notification
+                Notifications.Add('success', 'Registration successful', 'You can now log in to your new account');
                 return;
             }
         });
-
     }
 
     render() {
@@ -368,17 +362,14 @@ class UserForm_Login_unconnected extends Component {
                     };
                 }
 
-                console.error('Unknown error in form');
-                // TODO show notification
+                console.error('Unknown error in form', action);
+                Notifications.UnhandledError('Form error in UserForm_Login_unconnected');
                 return;
 
             } else {
                 console.log('Login success');
-                // this.props.history.push(UrlBuilder.Login());
-                // history.push(UrlBuilder.Login());
                 redirect(UrlBuilder.Home());
-
-                // TODO show notification
+                Notifications.Add('success', 'Login successful', '');
                 return;
             }
         });
