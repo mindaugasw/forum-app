@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from "react-redux";
-import { login, logout, tokenRefresh } from "../redux/auth";
+import { login, logout, tokenRefresh } from "../../redux/auth";
 import PropTypes from "prop-types";
-import Loading from "./Loading";
+import Loading from "../Loading";
 
 const mapDispatchToProps = {
     login,

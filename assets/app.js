@@ -15,14 +15,17 @@ import { render } from 'react-dom';
 import ReactApp from "./js/components/ReactApp";
 
 import { Provider } from "react-redux";
-import store from "./js/store";
+import store from "./js/redux/store";
 
 import "./js/utils/utils";
+import {BrowserRouter} from "react-router-dom";
 
 // import '@fortawesome/fontawesome-free/js/all';
 
 render(
     <Provider store={store}>
-        <ReactApp />
+        <BrowserRouter>
+            <ReactApp />
+        </BrowserRouter>
     </Provider>, document.getElementById('root')
 );

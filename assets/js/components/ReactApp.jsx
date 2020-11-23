@@ -1,11 +1,9 @@
 import React from "react";
 import {
-    BrowserRouter,
+    withRouter,
     Switch,
     Route,
-    Link, NavLink
 } from "react-router-dom";
-import AuthForm from "./AuthForm";
 import NavBar from "./NavBar";
 import {tokenRefresh} from "../redux/auth";
 import { connect } from "react-redux";
@@ -15,6 +13,10 @@ import {Container, Row, Col} from "react-bootstrap";
 import ThreadRouter from "./Threads/ThreadRouter";
 import RegistrationPage from "./Users/RegistrationPage";
 import UserForm from "./Users/UserForm";
+import LogoutPage from "./Users/Logout";
+import NotificationGenerator from "./NotificationGenerator";
+
+export let history;
 
 const mapDispatchToProps = {
     tokenRefresh
@@ -23,6 +25,8 @@ const mapDispatchToProps = {
 class ReactApp extends React.Component {
     constructor(props) {
         super(props);
+
+        history = this.props.history;
     }
 
     componentDidMount() {
@@ -31,8 +35,10 @@ class ReactApp extends React.Component {
 
     render() {
         return (
-            <BrowserRouter>
-                <NavBar/>
+            <>
+                <NavBar />
+
+                <NotificationGenerator />
 
                 <Container id='app-body' fluid='lg' > {/*fluid-lg = container takes 100% width until lg (on xd sm md, but not lg)*/}
                     <Row className='justify-content-center'>
@@ -47,18 +53,17 @@ class ReactApp extends React.Component {
                                 </Route>
 
                                 <Route exact path={UrlBuilder.Login()}>
-                                    {/*<Row className="justify-content-center">
+                                    <Row className="justify-content-center">
                                         <Col sm={8} md={6} xl={5}>
                                             <h2>Login</h2>
-                                            <UserForm variant='login' />
+                                            {/*<UserForm variant='login' initialValues={{}} onSubmit={null} />*/}
+                                            <UserForm.Login />
                                         </Col>
-                                    </Row>*/}
-
-                                    <br/><br/><br/><br/>
-                                    <AuthForm />
+                                    </Row>
                                 </Route>
                                 <Route exact path={UrlBuilder.Logout()}>
-                                    Not implemented {/* TODO */}
+                                    {/*Not implemented*/}
+                                    <LogoutPage />
                                 </Route>
                                 <Route exact path={UrlBuilder.Register()}>
                                     <RegistrationPage />
@@ -73,9 +78,11 @@ class ReactApp extends React.Component {
                     </Row>
                 </Container>
                 <br/>
-            </BrowserRouter>
+            </>
         );
     }
 }
 
-export default connect(null, mapDispatchToProps)(ReactApp);
+export default withRouter(
+    connect(null, mapDispatchToProps)(ReactApp)
+);

@@ -4,7 +4,7 @@ import API from "../utils/API";
 
 // --- Actions ---
 const BASE = 'auth/';
-const LOG_IN_MANUAL = BASE + 'login'; // When user fills login form
+export const LOG_IN_MANUAL = BASE + 'login'; // When user fills login form
 const TOKEN_REFRESH = BASE + 'refresh'; // Automatic token refresh
 const LOG_OUT = BASE + 'logout';
 

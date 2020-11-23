@@ -25,6 +25,9 @@ module.exports = {
         "APP_ENV": true,
         "importZxcvbn": true,
         "zxcvbn": true,
+        "isObject": true,
+        "mergeDeep": true,
+        "redirect": true,
     },
     "parser": "babel-eslint"
 };

@@ -1,18 +1,20 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {Button, Form, ProgressBar, Spinner} from "react-bootstrap";
+import {Alert, Button, Form, ProgressBar, Spinner} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import UrlBuilder from "../../utils/UrlBuilder";
-import {UserForm_Register} from "./UserFormVariants";
+import {UserForm_Login, UserForm_Register} from "./UserFormVariants";
+import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
+import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
 
 const mapDispatchToProps = {}
 
 const mapStateToProps = state => {
     return {
-        user: state.auth.user,
+        // user: state.auth.user,
     };
-}
+} // TODO remove?
 
 class UserForm extends Component {
     constructor(props) {
@@ -21,64 +23,84 @@ class UserForm extends Component {
         this.handleFormChange = this.handleFormChange.bind(this);
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
 
-        const v = this.props.values;
+        const v = this.props.initialValues;
         this.state = {
-            username: v.username || '',
+            username: v.username || '', // Input values
             password: v.password || '',
             passwordRepeat: v.passwordRepeat || '',
 
             validation: {
-                // valid: true | false,
-                // username: 'Username does not meet requirements.',
-            }
+                valid: false, // Is entire form valid?
+
+                usernameValid: false, // Used only internally in UserFormVariants to determine full form validity
+                passwordValid: false,
+
+                username: false, // Can be replaced with validation error message. If empty, message won't be rendered
+                password: false,
+                passwordRepeat: false,
+
+                pswStrNumber: false,
+                pswStrFlavor: false,
+                pswStrText: false,
+                pswStrFeedbackWarning: false,
+                pswStrFeedbackSuggestions: false,
+
+                alert: {
+                    show: false,
+                    type: false,
+                    message: false,
+                }
+            },
+
+            ...v, // Overwrite state with any additional values passed
         }
     }
 
+    // Form variants shortcuts
     static Register = UserForm_Register;
-    // static Login = UserForm_Login;
+    static Login = UserForm_Login;
     // static Edit = UserForm_Edit;
 
     handleFormChange(event) {
         const target = event.target;
 
-
-
-
-        // let newValidationData = null;
-        // if (this.props.onChange)
-/*
-            this.setState(state => {
-                console.log(event);
-                return {
-                    ...this.props.onChange(event, state)
-                };
-            });
-*/
-
-        let newValidationData = null;
+        // Callback can return new state data, e.g. validation data
+        let newStateData = null;
         if (this.props.onChange)
-            newValidationData = this.props.onChange(event, this.state);
+            newStateData = this.props.onChange(event, this.state);
 
-        this.setState({
-            [target.id]: target.value,
-            ...newValidationData
+        // console.log('v1', newStateData);
+
+        this.setState(state => {
+            return {
+                ...mergeDeep(state, newStateData),
+                [target.id]: target.value,
+                // ...this.props.onChange(event, state) // doesn't work? Throws up in the console
+                // ...newStateData
+            };
         });
-
-        // this.setState({
-        //     ...newValidationData
-        // });
     }
 
     handleFormSubmit(event) {
         event.preventDefault();
-        this.setState({
-            validation: this.props.onSubmit(this.state)
+
+
+        this.props.onSubmit(event, this.state).then(newState => {
+
+            console.log('c1', newState);
+            if (newState)
+                console.log('c2');
+                this.setState(state => {
+                    return {
+                        ...mergeDeep(state, newState),
+                    };
+                })
         });
     }
 
     render() {
         // const u = this.props.user;
-        const us = this.props.userSubject;
+        // const us = this.props.userSubject;
         const {formLoading, variant} = this.props;
         const register = variant === 'register'; // form variant shortcuts
         const login = variant === 'login';
@@ -91,6 +113,15 @@ class UserForm extends Component {
             <Form onSubmit={this.handleFormSubmit}>
                 <Form.Group>
                     <fieldset disabled={formLoading}>
+
+                        {/* --- Alert --- */}
+                        {v.alert.show ?
+                            <Alert variant={v.alert.type}>
+                                <FA icon={faExclamationCircle} /> {v.alert.message}
+                            </Alert>
+                        : null}
+
+
                         {/* --- Username --- */}
                         <Form.Group controlId='username'>
                             <Form.Label>Username</Form.Label>
@@ -106,6 +137,9 @@ class UserForm extends Component {
 
                             {v.username ?
                             <Form.Control.Feedback type='invalid' className='d-block'>{v.username}</Form.Control.Feedback>
+                            : null}
+                            {v.usernameValidServer ?
+                            <Form.Control.Feedback type='invalid' className='d-block'>{v.usernameValidServer}</Form.Control.Feedback>
                             : null}
 
                         </Form.Group>
@@ -137,18 +171,24 @@ class UserForm extends Component {
                             {v.pswStrNumber ?
                                 <Form.Group>
                                     <ProgressBar striped animated variant={v.pswStrFlavor} now={v.pswStrNumber} />
-                                    <Form.Text className='text-muted'>{v.pswStrText}</Form.Text>
+                                    <Form.Text className={`d-block ${v.pswStrFlavor === 'danger' ? 'invalid-feedback' : 'text-muted'}`}>
+                                        {v.pswStrText}
+                                    </Form.Text>
+                                    <Form.Text className='text-muted mt-0'>
+                                        {v.pswStrFeedbackWarning ? <>{v.pswStrFeedbackWarning}<br/></> : null}
+                                        {v.pswStrFeedbackSuggestions ? v.pswStrFeedbackSuggestions : null}
+                                    </Form.Text>
                                 </Form.Group>
                             : null}
                             </>
                             : null}
 
                         {/* --- Submit --- */}
-                        <Button variant='primary' type='submit' className='mr-2'>
-                            {formLoading ?
-                                <Spinner animation='border' size='sm' /> :
-                                register ? 'Register' :
-                                    login ? 'Login' : 'Save'
+                        <Button variant='primary' type='submit' className='mr-2' disabled={!v.valid}>
+                            {formLoading ? <><Spinner animation='border' size='sm' /> </> : ''}
+
+                            {register ? 'Register' :
+                                login ? 'Login' : 'Save'
                             }
                         </Button>
 
@@ -171,18 +211,17 @@ class UserForm extends Component {
 UserForm.propTypes = {
     variant: PropTypes.oneOf(['login', 'register', 'edit']).isRequired,
 
-    values: PropTypes.object.isRequired, // Form field values. Object must, values optional. Values: username, password, passwordRepeat
+    initialValues: PropTypes.object.isRequired, // Form field values. Object must, values optional. Values: username, password, passwordRepeat
     // userSubject: PropTypes.object, // User object that is being edited
-    formLoading: PropTypes.bool, // adjusts form style. Can be set to true e.g. after submitting
 
-    onSubmit: PropTypes.func.isRequired, // onSubmit callback, should return validation data if form was not submitted
-    onChange: PropTypes.func, // onChange callback, can be used to return validation data
-    // TODO zxcvbn tips
+    // Event callbacks. Both can return updated state data, e.g. validation data
+    onSubmit: PropTypes.func.isRequired, // On successful submit should not return anything
+    onChange: PropTypes.func,
+    formLoading: PropTypes.bool, // adjusts form style. Can be set to true e.g. after submitting
 
     // Redux state:
     // user: PropTypes.object, // Currently logged in user
 
 }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserForm);
