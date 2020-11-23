@@ -1,12 +1,9 @@
 import React from "react";
 import {
     withRouter,
-    BrowserRouter,
     Switch,
     Route,
-    Link, NavLink
 } from "react-router-dom";
-import AuthForm from "./AuthForm";
 import NavBar from "./NavBar";
 import {tokenRefresh} from "../redux/auth";
 import { connect } from "react-redux";
@@ -39,7 +36,6 @@ class ReactApp extends React.Component {
     render() {
         return (
             <>
-            {/*<BrowserRouter>*/}
                 <NavBar />
 
                 <NotificationGenerator />
@@ -64,9 +60,6 @@ class ReactApp extends React.Component {
                                             <UserForm.Login />
                                         </Col>
                                     </Row>
-
-                                    {/*<br/><br/><br/><br/>
-                                    <AuthForm />*/}
                                 </Route>
                                 <Route exact path={UrlBuilder.Logout()}>
                                     {/*Not implemented*/}
@@ -85,7 +78,6 @@ class ReactApp extends React.Component {
                     </Row>
                 </Container>
                 <br/>
-            {/*</BrowserRouter>*/}
             </>
         );
     }

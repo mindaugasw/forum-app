@@ -13,13 +13,10 @@ const mapDispatchToProps = {}
 const mapStateToProps = state => {
     return {
         // user: state.auth.user,
-        // formLoading: state.users.formLoading,
     };
 } // TODO remove?
 
 class UserForm extends Component {
-    // _isMounted = false;
-
     constructor(props) {
         super(props);
 
@@ -32,10 +29,11 @@ class UserForm extends Component {
             password: v.password || '',
             passwordRepeat: v.passwordRepeat || '',
 
-            // formLoading: this.props.formLoading,
-
             validation: {
                 valid: false, // Is entire form valid?
+
+                usernameValid: false, // Used only internally in UserFormVariants to determine full form validity
+                passwordValid: false,
 
                 username: false, // Can be replaced with validation error message. If empty, message won't be rendered
                 password: false,
@@ -57,14 +55,6 @@ class UserForm extends Component {
             ...v, // Overwrite state with any additional values passed
         }
     }
-
-    /*componentDidMount() {
-        this._isMounted = true;
-    }
-
-    componentWillUnmount() {
-        this._isMounted = false;
-    }*/
 
     // Form variants shortcuts
     static Register = UserForm_Register;
@@ -94,45 +84,17 @@ class UserForm extends Component {
     handleFormSubmit(event) {
         event.preventDefault();
 
-        /*console.log('@ UserForm', 's0', this.state);
-        this.setState(state => {
-            let x = this.props.onSubmit(event, state).then(x => {
-                console.log('@ UserForm', 's2', x);
-                return x;
-            });
-            console.log('@ UserForm', 's3', x);
-            return {
-                // ...this.props.onSubmit(event, state)
-                ...x,
-            };
-        });*/
 
         this.props.onSubmit(event, this.state).then(newState => {
-            // console.log('@ UserForm', 's4 quit', newState);
 
             console.log('c1', newState);
             if (newState)
                 console.log('c2');
                 this.setState(state => {
-                    // console.log('c3', state, newState);
-                    // const newObj = mergeDeep(state, newState);
-                    // const newObj = mergeDeep_2(state, newState);
-                    // console.log('c4', newObj)
                     return {
                         ...mergeDeep(state, newState),
-                        // ...newObj
                     };
                 })
-
-            /*this.setState({
-
-
-                validation: {
-
-                    username: newState.payload.error.message
-                }
-                // ...newState,
-            });*/
         });
     }
 
@@ -144,7 +106,7 @@ class UserForm extends Component {
         const login = variant === 'login';
         const edit = variant === 'edit';
 
-        const {username, password, passwordRepeat/*, formLoading*/} = this.state;
+        const {username, password, passwordRepeat} = this.state;
         const v = this.state.validation;
 
         return (
@@ -223,12 +185,6 @@ class UserForm extends Component {
 
                         {/* --- Submit --- */}
                         <Button variant='primary' type='submit' className='mr-2' disabled={!v.valid}>
-                            {/*{formLoading ?
-                                <Spinner animation='border' size='sm' /> :
-                                register ? 'Register' :
-                                    login ? 'Login' : 'Save'
-                            }*/}
-
                             {formLoading ? <><Spinner animation='border' size='sm' /> </> : ''}
 
                             {register ? 'Register' :
@@ -267,6 +223,5 @@ UserForm.propTypes = {
     // user: PropTypes.object, // Currently logged in user
 
 }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserForm);
