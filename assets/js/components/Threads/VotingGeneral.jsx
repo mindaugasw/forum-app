@@ -17,6 +17,7 @@ const mapStateToProps = state => {
     };
 }
 
+// TODO add Voting variants
 class VotingGeneral extends Component {
     constructor(props) {
         super(props);
@@ -53,7 +54,7 @@ class VotingGeneral extends Component {
         const puv = p.userVote;
         const isVertical = this.props.isVertical;
 
-        // TODO add modal window if not logged in voting
+        // TODO add notification if not logged in voting
 
         // --- Colors ---
         let colorUpvote, colorDownvote, colorText;

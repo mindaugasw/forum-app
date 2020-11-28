@@ -269,7 +269,8 @@ class SingleThread extends React.Component {
                 {/* --- Thread --- */}
                 <h2>Thread view</h2>
                 {t.loaded === LoadState.Done ?
-                <PostFrame post={t.item} formMode={false} />
+                    <PostFrame post={t.item} formMode={false} />
+
                 : null}
                 <br/><br/>
 

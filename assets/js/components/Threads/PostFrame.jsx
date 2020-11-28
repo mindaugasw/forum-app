@@ -8,6 +8,7 @@ import {canUserManagePost} from "../../redux/auth";
 import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
 import {faEdit, faExclamationCircle, faMinusCircle, faPlusCircle, faTrash} from "@fortawesome/free-solid-svg-icons";
 import VotingGeneral from "./VotingGeneral";
+import {PostFrame_Thread_Create} from "./PostFrameVariants";
 
 const mapStateToProps = state => {
     return {
@@ -25,18 +26,273 @@ const mapDispatchToProps = {
  * See prop types for more info on config or use other wrapper components e.g. Post.Comment.View
  */
 class PostFrame extends Component {
+    constructor(props) {
+        super(props);
+
+        this.handleFormChange = this.handleFormChange.bind(this);
+        this.handleFormSubmit = this.handleFormSubmit.bind(this);
+        this.headerLeftJsx = this.headerLeftJsx.bind(this);
+        this.headerRightJsx = this.headerRightJsx.bind(this);
+        this.contentJsx = this.contentJsx.bind(this);
+
+        const p = this.props.post;
+        this.state = { // Set initial values to state (they may be edited if rendering a form)
+            post: p || {
+                title: '',
+                content: '',
+            },
+
+            validation: {
+                valid: false, // Is entire form valid?
+
+                title: false,
+                content: false,
+            }
+        };
+    }
+
+    // Component variants shortcuts
+    static ThreadCreate = PostFrame_Thread_Create;
+
+
+    handleFormChange(event) {
+        const target = event.target;
+
+        // Callback can return new state data, e.g. validation data
+        let newStateData = null;
+        if (this.props.onChange)
+            newStateData = this.props.onChange(event, this.state);
+
+        this.setState(state => {
+            return {
+                ...mergeDeep(state, newStateData),
+                post: {
+                    ...state.post,
+                    [target.id]: target.value,
+                },
+            };
+        });
+    }
+
+    handleFormSubmit(event) {
+        event.preventDefault();
+
+        this.props.onSubmit(event, this.state).then(newState => {
+            if (newState) // If any state was returned, it's likely updated validation data, and form was not submitted
+                this.setState(state => {
+                    return {
+                        ...mergeDeep(state, newState),
+                    };
+                })
+        });
+    }
+
+    /**
+     * User avatar (or placeholder), username, posted time ago
+     * @param p Post object | null
+     * @param u User object | null
+     * @param {boolean} isThread is this thread or comment?
+     * @param {boolean} newMode if render as form, is for new post or edit existing post?
+     */
+    headerLeftJsx(p, u, isThread, newMode) {
+        let headerLeftJsx; // Avatar, username, time ago
+
+        if (newMode) { // Creating new post. Render logged in user or placeholder
+            if (u) { // Render logged in user
+                headerLeftJsx =
+                    <Link to={UrlBuilder.Users.Single(u.id)}>
+                        <Image
+                            className='avatar-image-small'
+                            src={UrlBuilder.RoboHash(u.username, 2, 100)}
+                            roundedCircle />
+                        <span className='ml-2'>{u.username}</span>
+                    </Link>;
+            } else { // Render placeholder
+                headerLeftJsx =
+                    <span>
+                        <Image
+                            className='avatar-image-small'
+                            src={require('../../../images/avatar_placeholder.png').default}
+                            roundedCircle />
+                    </span>;
+            }
+
+        } else { // View or edit mode. Render post author's user
+            // (if editing by admin, post author's name/avatar will not match currently logged in user)
+            const submittedTimeAgoJsx = <> &nbsp;·&nbsp; {(new Date(p.createdAt)).timeAgo()}{p.edited ? '*' : null}</>;
+            headerLeftJsx =
+                <>
+                    <Link to={UrlBuilder.Users.Single(p.author.id)}>
+                        <Image
+                            className='avatar-image-small'
+                            src={UrlBuilder.RoboHash(p.author.username, 2, 100)}
+                            roundedCircle />
+                        <span className='ml-2'>{p.author.username}</span>
+                    </Link>
+                    <span className='text-muted d-none d-sm-inline small'> {/* Hide on xs */}
+                        {/* TODO check if edited ago works */}
+                        {p.edited ?
+                            <OverlayTrigger overlay={
+                                <Tooltip id={`${isThread ? 't' : 'c'}-edited-${p.id}`}>
+                                    Submitted {(new Date(p.createdAt)).timeAgo()}<br/>
+                                    Last edit {(new Date(p.updatedAt)).timeAgo()}
+                                </Tooltip>
+                            }>
+                            <span className='d-inline-block'>
+                                {submittedTimeAgoJsx}
+                            </span>
+                            </OverlayTrigger>
+                            : submittedTimeAgoJsx}
+                        {APP_ENV === 'dev' ? <> &nbsp;·&nbsp; #{p.id}</> : ''}
+                </span>
+                </>;
+        }
+        headerLeftJsx = <div className='d-inline-block'>{headerLeftJsx}</div>;
+
+        return headerLeftJsx;
+    }
+
+    /**
+     * Edit, Delete links, Voting buttons
+     * @param p Post object | null
+     * @param u User object | null
+     * @param {boolean} isThread is this thread or comment?
+     * @param {boolean} formMode Render as form for editing/creating post?
+     */
+    headerRightJsx(p, u, isThread, formMode) {
+        let headerRightJsx; // Edit, Delete, voting
+        if (formMode) { // Don't show anything in form mode
+            headerRightJsx = null;
+        } else { // View mode: show everything
+            headerRightJsx =
+                <div className='d-inline-block float-right'>
+                    {canUserManagePost(u, p) ?
+                        <div className='d-inline-block'>
+                            <span className='mr-4'>
+                                <a href='#' className='color-vote text-muted' > {/* TODO onClick={this.handleEditClick}*/}
+                                    <FA icon={faEdit} size={'lg'} />
+                                    <span className='d-none d-sm-inline ml-1'>Edit</span>
+                                </a>
+                            </span>
+                            <span className='mr-4'>
+                                <a href='#' className='color-vote text-muted' >{/* TODO onClick={this.handleDeleteClick}*/}
+                                    <FA icon={faTrash} size={'lg'} />
+                                    <span className='d-none d-sm-inline ml-1'>Delete</span>
+                                </a>
+                            </span>
+                        </div>
+                        : null}
+
+                    <VotingGeneral post={p} isThread={isThread} isVertical={false} />
+                </div>;
+        }
+
+        return headerRightJsx;
+    }
+
+    /**
+     * Main content: thread or comment text, or create/edit form
+     * @param p Post object
+     * @param u User object
+     * @param {boolean} isThread is this thread or comment?
+     * @param {boolean} formMode Render as form for editing/creating post?
+     * @param {boolean} newMode if render as form, is for new post or edit existing post?
+     * @param {boolean} editMode if render as form, is for new post or edit existing post?
+     *                  (same as negated newMode, added for convenience / readability)
+     * @param {boolean} formLoading if render as form, should form be rendered as loading? (disables inputs)
+     */
+    contentJsx(p, u, isThread, formMode, newMode, editMode, formLoading) {
+        let contentJsx;
+        if (!formMode)
+            contentJsx = p.content;
+        else {
+            p = this.state.post; // If in edit mode, get post from state (with updated input values), instead of props with initial values
+            const formLabels = isThread; // Show form labels only on thread form
+
+            contentJsx =
+                <Form onSubmit={this.handleFormSubmit}>
+                    <fieldset disabled={formLoading}>
+
+                        {/* --- Title --- */}
+                        {isThread ?
+                            <Form.Group controlId='title'>
+                                {formLabels ?
+                                    <Form.Label>Topic title</Form.Label>
+                                    : null
+                                }
+                                <Form.Control
+                                    type='text'
+                                    maxLength={255}
+                                    value={p.title}
+                                    onChange={this.handleFormChange}
+                                />
+                                <Form.Text className='text-muted'>
+                                    Should be between 10-255 characters.
+                                </Form.Text>
+                                <Form.Control.Feedback type='invalid' className='d-block'>Title does not meet requirements.</Form.Control.Feedback>
+                            </Form.Group>
+                            : null}
+
+                        {/* --- Content --- */}
+                        <Form.Group controlId='content'>
+                            {formLabels ?
+                                <Form.Label>{isThread ? 'Topic' : 'Comment'} content</Form.Label>
+                                : null
+                            }
+                            {/* TODO markdown formatting */}
+                            <Form.Control
+                                as='textarea'
+                                rows={5}
+                                maxLength={30000}
+                                style={{resize: 'vertical'}}
+                                value={p.content}
+                                onChange={this.handleFormChange}
+                            />
+                            <Form.Text className='text-muted'>
+                                Should not be empty and not exceed 30000 characters.
+                            </Form.Text>
+                            <Form.Control.Feedback type='invalid' className='d-block'>Content does not meet requirements.</Form.Control.Feedback>
+                        </Form.Group>
+
+                        {/* --- Buttons --- */}
+                        {editMode && u && u.id !== p.author.id ?
+                            <Alert variant='primary' className='mb-2'>
+                                <FA icon={faExclamationCircle} />
+                                {` You're editing someone else's ${isThread? 'thread' : 'comment'} as an admin!`}
+                            </Alert>
+                        : null }
+
+                        <Button variant='primary' type='submit' className='mr-2'>
+                            {formLoading ?
+                                <Spinner animation='border' size='sm' />
+                                : null
+                            }{' '}
+                            {editMode ? 'Save' : 'Submit'}
+                        </Button>
+                        {editMode ?
+                            <Button variant='secondary' onClick={this.props.onCancelClick}>Cancel</Button>
+                            : null}
+                    </fieldset>
+                </Form>;
+        }
+
+        return contentJsx;
+    }
+
     render() {
         /** This thread or comment */
         const p = this.props.post;
+        // const p = this.state.post; // Getting from state (instead of props), cuz values may be changed in form inputs
 
         /** Currently logged in user object (or null) */
         const u = this.props.user;
 
         /** Is this thread or comment? */
-        const isThread = !this.props.parentThread; // if parentThread not null, it is comment
+        // const isThread = !this.props.parentThread; // if parentThread not null, it is comment
+        const isThread = this.props.isThread; // if parentThread not null, it is comment
 
-        /** Thread that this comment belongs to. Null if rendering thread */
-        const parentThread = this.props.parentThread;
+        /* Thread that this comment belongs to. Null if rendering thread */
+        // const parentThread = this.props.parentThread;
 
         /** Render as form mode for editing/creating post (or view mode otherwise) */
         const formMode = this.props.formMode;
@@ -47,19 +303,21 @@ class PostFrame extends Component {
         /** Render as form for editing existing post */
         const editMode = formMode && !!this.props.post;
 
+        const formLoading = this.props.formLoading;
+
 
         return (
             <div>
                 <Card border={u && p && u.id === p.author.id ? 'primary' : null}> {/* Your posts are highlighted */}
                     <Card.Header className='py-2'>
                         <div>
-                            {headerLeftJsx(p, u, isThread, newMode)}
-                            {headerRightJsx(p, u, isThread, formMode)}
+                            {this.headerLeftJsx(p, u, isThread, newMode)}
+                            {this.headerRightJsx(p, u, isThread, formMode)}
                         </div>
                     </Card.Header>
 
                     <Card.Body className='py-2'>
-                        {contentJsx(p, u, isThread, formMode, newMode, editMode, true)}
+                        {this.contentJsx(p, u, isThread, formMode, newMode, editMode, formLoading)}
                     </Card.Body>
                 </Card>
             </div>
@@ -69,201 +327,18 @@ class PostFrame extends Component {
 
 PostFrame.propTypes = {
     post: PropTypes.object, // Thread or comment object. If null, will render form for new thread/comment
-    parentThread: PropTypes.object, // Thread object. Needed only when rendering as comment frame
+    // parentThread: PropTypes.object, // Thread object. Needed only when rendering as comment frame
     formMode: PropTypes.bool.isRequired, // Renders as form edit/create, if true
+    isThread: PropTypes.bool.isRequired,
 
     formLoading: PropTypes.bool, // adjusts form style. Can be set to true e.g. after submitting
+
+    onChange: PropTypes.func, // Form inputs change callback
+    onSubmit: PropTypes.func, // Form submit callback
+    onCancelClick: PropTypes.func, // Form button "Cancel" callback
+
     // Redux state:
     // user: PropTypes.object,
-}
-
-/**
- * User avatar (or placeholder), username, posted time ago
- * @param p Post object | null
- * @param u User object | null
- * @param {boolean} isThread is this thread or comment?
- * @param {boolean} newMode if render as form, is for new post or edit existing post?
- */
-function headerLeftJsx(p, u, isThread, newMode) {
-    let headerLeftJsx; // Avatar, username, time ago
-    if (newMode) { // Creating new post. Render logged in user or placeholder
-        if (u) { // Render logged in user
-            headerLeftJsx =
-                <Link to={UrlBuilder.Users.Single(u.id)}>
-                    <Image
-                        className='avatar-image-small'
-                        src={UrlBuilder.RoboHash(u.username, 2, 100)}
-                        roundedCircle />
-                    <span className='ml-2'>{u.username}</span>
-                </Link>;
-        } else { // Render placeholder
-            headerLeftJsx =
-                <span>
-                        <Image
-                            className='avatar-image-small'
-                            src={require('../../../images/avatar_placeholder.png').default}
-                            roundedCircle />
-                    </span>;
-        }
-
-    } else { // View or edit mode. Render post author's user
-        const submittedTimeAgoJsx = <> &nbsp;·&nbsp; {(new Date(p.createdAt)).timeAgo()}{p.edited ? '*' : null}</>;
-        headerLeftJsx =
-            <>
-                <Link to={UrlBuilder.Users.Single(p.author.id)}>
-                    <Image
-                        className='avatar-image-small'
-                        src={UrlBuilder.RoboHash(p.author.username, 2, 100)}
-                        roundedCircle />
-                    <span className='ml-2'>{p.author.username}</span>
-                </Link>
-                <span className='text-muted d-none d-sm-inline small'> {/* Hide on xs */}
-                    {/* TODO check if edited ago works */}
-                    {p.edited ?
-                        <OverlayTrigger overlay={
-                            <Tooltip id={`${isThread ? 't' : 'c'}-edited-${p.id}`}>
-                                Submitted {(new Date(p.createdAt)).timeAgo()}<br/>
-                                Last edit {(new Date(p.updatedAt)).timeAgo()}
-                            </Tooltip>
-                        }>
-                            <span className='d-inline-block'>
-                                {submittedTimeAgoJsx}
-                            </span>
-                        </OverlayTrigger>
-                        : submittedTimeAgoJsx}
-                    {APP_ENV === 'dev' ? <> &nbsp;·&nbsp; #{p.id}</> : ''}
-                </span>
-            </>;
-    }
-    headerLeftJsx = <div className='d-inline-block'>{headerLeftJsx}</div>;
-
-    return headerLeftJsx;
-}
-
-/**
- * Edit, Delete links, Voting buttons
- * @param p Post object | null
- * @param u User object | null
- * @param {boolean} isThread is this thread or comment?
- * @param formMode Render as form for editing/creating post?
- */
-function headerRightJsx(p, u, isThread, formMode) {
-    let headerRightJsx; // Edit, Delete, voting
-    if (formMode) { // Nothing in form mode
-        headerRightJsx = null;
-    } else { // View mode: all buttons
-        headerRightJsx =
-            <div className='d-inline-block float-right'>
-                {canUserManagePost(u, p) ?
-                    <div className='d-inline-block'>
-                            <span className='mr-4'>
-                                <a href='#' className='color-vote text-muted' > {/* TODO onClick={this.handleEditClick}*/}
-                                    <FA icon={faEdit} size={'lg'} />
-                                    <span className='d-none d-sm-inline ml-1'>Edit</span>
-                                </a>
-                            </span>
-                        <span className='mr-4'>
-                                <a href='#' className='color-vote text-muted' >{/* TODO onClick={this.handleDeleteClick}*/}
-                                    <FA icon={faTrash} size={'lg'} />
-                                    <span className='d-none d-sm-inline ml-1'>Delete</span>
-                                </a>
-                            </span>
-                    </div>
-                    : null}
-
-                {/*<div className='d-inline-block color-vote'>
-                        <FA icon={faMinusCircle} size={'lg'} />
-                        {' '}<b>1234</b>{' '}
-                        <FA icon={faPlusCircle} size={'lg'} />
-                    </div>*/}
-                <VotingGeneral post={p} isThread={isThread} isVertical={false} />
-            </div>;
-    }
-
-    return headerRightJsx;
-}
-
-function contentJsx(p, u, isThread, formMode, newMode, editMode, formLoading) {
-    const formLabels = isThread; // Show form labels only on thread form
-
-    let contentJsx;
-    if (!formMode)
-        contentJsx = p.content;
-    else {
-        contentJsx =
-            <Form>
-                <fieldset disabled={formLoading}>
-                {/* --- Title --- */}
-                {isThread ?
-                    <Form.Group controlId='form-title'>
-                        {formLabels ?
-                            <Form.Label>Topic title</Form.Label>
-                            : null
-                        }
-                        <Form.Control type='text' value={editMode ? p.title : ''} />
-                        <Form.Text className='text-muted'>
-                            Should be between 10-255 characters.
-                        </Form.Text>
-                    </Form.Group>
-                : null}
-
-                {/* --- Content --- */}
-                <Form.Group controlId='form-content'>
-                    {formLabels ?
-                        <Form.Label>{isThread ? 'Thread' : 'Comment'} content</Form.Label>
-                        : null
-                    }
-                    {/* TODO markdown formatting */}
-                    <Form.Control as='textarea' rows={5} style={{resize: 'vertical'}} /> {/*value={editMode ? p.title : ''}*/}
-                    <Form.Text className='text-muted'>
-                        Should not exceed 30000 characters.
-                    </Form.Text>
-                </Form.Group>
-
-                {/* --- Buttons --- */}
-                {editMode && u && u.id !== p.author.id ?
-                    <Alert variant='primary' className='mb-2'>
-                        <FA icon={faExclamationCircle} />
-                        {` You're editing someone else's ${isThread? 'thread' : 'comment'} as an admin!`}
-                    </Alert>
-                : null }
-
-                <Button variant='primary' type='submit' className='mr-2'>
-                    {formLoading ?
-                        <Spinner animation='border' size='sm' />
-                        : 'Submit'
-                    }
-                </Button>
-                {editMode ?
-                    <Button variant='secondary' >Cancel</Button>
-                : null}
-
-
-
-                {/*<Container fluid className='p-0'>
-                    <Row>
-                        <Col xs={12} className='mb-2'>
-                            <Col xs={6} className='d-inline-block p-0'>
-                                <Button variant='primary' type='submit' className='mr-1 w-100'>Submit</Button>
-                            </Col>
-                            <Col xs={6} className='d-inline-block p-0'>
-                                <Button variant='secondary' className='ml-1 w-100' >Cancel</Button>
-                            </Col>
-                        </Col>
-                        <Col xs={12}>
-                            <Alert variant='danger'>
-                                <FA icon={faExclamationCircle} />
-                                {` You're editing someone else's ${isThread? 'thread' : 'comment'} as an admin!`}
-                            </Alert>
-                        </Col>
-                    </Row>
-                </Container>*/}
-
-                </fieldset>
-            </Form>;
-    }
-
-    return contentJsx;
 }
 
 

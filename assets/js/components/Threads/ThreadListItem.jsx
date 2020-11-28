@@ -11,6 +11,7 @@ class ThreadListItem extends Component {
         const t = this.props.thread;
         return (
             <>
+            {/* TODO border highlight user's threads */}
             <Card.Body className='py-2'>
                 <Container fluid className='p-0'>
                     <Row className='no-gutters'>

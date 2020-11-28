@@ -1,8 +1,6 @@
 import React from "react";
 
 function UnderConstructionNotice() {
-    console.log('x');
-
     return (
         <div style={{color: '#f92626'}}>
             <b>App frontend is still under development, this is not a final version.</b><br/>

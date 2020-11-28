@@ -56,7 +56,7 @@ class UserForm extends Component {
         }
     }
 
-    // Form variants shortcuts
+    // Component variants shortcuts
     static Register = UserForm_Register;
     static Login = UserForm_Login;
     // static Edit = UserForm_Edit;
@@ -68,8 +68,6 @@ class UserForm extends Component {
         let newStateData = null;
         if (this.props.onChange)
             newStateData = this.props.onChange(event, this.state);
-
-        // console.log('v1', newStateData);
 
         this.setState(state => {
             return {
@@ -84,12 +82,8 @@ class UserForm extends Component {
     handleFormSubmit(event) {
         event.preventDefault();
 
-
         this.props.onSubmit(event, this.state).then(newState => {
-
-            console.log('c1', newState);
-            if (newState)
-                console.log('c2');
+            if (newState) // If any state was returned, it's likely updated validation data, and form was not submitted
                 this.setState(state => {
                     return {
                         ...mergeDeep(state, newState),

@@ -109,7 +109,7 @@ function validateNewUsername(state) {
     return res;
 }
 
-class UserForm_Register_unconnected extends Component {
+class UserForm_Register_connected extends Component {
     constructor(props) {
         super(props);
 
@@ -168,7 +168,7 @@ class UserForm_Register_unconnected extends Component {
     }
 }
 
-class UserForm_Login_unconnected extends Component {
+class UserForm_Login_connected extends Component {
     constructor(props) {
         super(props);
 
@@ -210,6 +210,7 @@ class UserForm_Login_unconnected extends Component {
     }
 
     validateFieldNotEmpty(state, fieldName) {
+        // TODO replace with FormUtils.ValidateTextField
         let res = {
             [[fieldName]+'Valid']: false,
             [fieldName]: false,
@@ -275,5 +276,5 @@ class UserForm_Login_unconnected extends Component {
     }
 }
 
-export const UserForm_Register = connect(null, {register})(UserForm_Register_unconnected);
-export const UserForm_Login = connect(null, {login})(UserForm_Login_unconnected);
+export const UserForm_Register = connect(null, {register})(UserForm_Register_connected);
+export const UserForm_Login = connect(null, {login})(UserForm_Login_connected);

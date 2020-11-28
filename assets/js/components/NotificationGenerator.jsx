@@ -33,7 +33,6 @@ class NotificationGenerator extends Component {
 
     render() {
         const alertsList = this.state.alerts.map(a => {
-            console.log(a);
             return <Alert
                 key={a.id}
                 type={a.type}
