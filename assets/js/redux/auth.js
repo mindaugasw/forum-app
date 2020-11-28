@@ -8,9 +8,6 @@ export const LOG_IN_MANUAL = BASE + 'login'; // When user fills login form
 const TOKEN_REFRESH = BASE + 'refresh'; // Automatic token refresh
 const LOG_OUT = BASE + 'logout';
 
-const FULFILLED = '/fulfilled'; // Used to combine async thunk name, e.g. TOKEN_REFRESH+FULFILLED
-const REJECTED = '/rejected';
-
 
 
 // --- Action creators ---

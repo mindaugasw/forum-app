@@ -18,14 +18,21 @@ const DELETE_COMMENT = BASE + 'delete_comment';
  */
 export const createThread = createAsyncThunk(CREATE_THREAD, (params, thunkAPI) => {
     return API.Threads.CreateThread(params.title, params.content)
-        .then(response => {
-            let payload = response.json();
+        .then(response => response.json().then(payload => { // TODO replace all thunks with this structure?
+            if (response.ok)
+                return payload;
+            else
+                return thunkAPI.rejectWithValue(payload);
+        }));
+        /*.then(response => {
+            let payload = response.json().then();
+
             if (response.ok) {
                 return payload;
             } else {
                 return thunkAPI.rejectWithValue(payload);
             }
-        });
+        });*/
 });
 /**
  * @param {threadId<number>, title<string>, content<string>} params
@@ -109,6 +116,15 @@ export const postsCRUDSlice = createSlice({
     reducers: {},
     extraReducers: builder => {
     builder
+        .addCase(CREATE_THREAD+PENDING, (state, action) => {
+            console.log(CREATE_THREAD+PENDING, action);
+        })
+        .addCase(CREATE_THREAD+FULFILLED, (state, action) => {
+            console.log(CREATE_THREAD+FULFILLED, action);
+        })
+        .addCase(CREATE_THREAD+REJECTED, (state, action) => {
+            console.log(CREATE_THREAD+REJECTED, action);
+        })
         // Catch all failed requests
         .addMatcher(
             action => action.type.startsWith(BASE) && action.type.endsWith('rejected'), (state, action) => {

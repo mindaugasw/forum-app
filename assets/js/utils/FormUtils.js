@@ -1,5 +1,4 @@
 class FormUtils {
-    // TODO replace state with single string variable?
     /**
      *
      * @param {string} input Input string

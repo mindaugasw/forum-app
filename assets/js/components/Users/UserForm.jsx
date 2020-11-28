@@ -49,7 +49,7 @@ class UserForm extends Component {
                     show: false,
                     type: false,
                     message: false,
-                }
+                },
             },
 
             ...v, // Overwrite state with any additional values passed

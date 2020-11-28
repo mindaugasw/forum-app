@@ -12,13 +12,12 @@ import './styles/app.scss';
 
 import React from 'react';
 import { render } from 'react-dom';
+import "./js/utils/utils"; // Must be imported before ReactApp?
 import ReactApp from "./js/components/ReactApp";
-
 import { Provider } from "react-redux";
 import store from "./js/redux/store";
-
-import "./js/utils/utils";
 import {BrowserRouter} from "react-router-dom";
+
 
 // import '@fortawesome/fontawesome-free/js/all';
 

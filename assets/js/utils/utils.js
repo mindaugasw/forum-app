@@ -1,3 +1,4 @@
+import "./constants";
 import "./dateFormat";
 import {history} from "../components/ReactApp";
 import UrlBuilder from "./UrlBuilder";
@@ -33,18 +34,6 @@ window.getSafe = (fn, defaultVal) => {
     });
 }*/
 
-/**
- * Defines loading states enum for when boolean value is not enough
- */
-window.LoadState = {
-    NotRequested: 0,
-    Loading: 1,
-    Done: 2,
-}
-
-
-// Defined in webpack.config.js
-window.APP_ENV = process.env.APP_ENV;
 
 /**
  * Dynamically imports zxcvbn library to global scope

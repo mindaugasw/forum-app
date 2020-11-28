@@ -28,6 +28,9 @@ module.exports = {
         "isObject": true,
         "mergeDeep": true,
         "redirect": true,
+        "FULFILLED": true,
+        "REJECTED": true,
+        "PENDING": true,
     },
     "parser": "babel-eslint"
 };

@@ -9,6 +9,7 @@ import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
 import {faEdit, faExclamationCircle, faMinusCircle, faPlusCircle, faTrash} from "@fortawesome/free-solid-svg-icons";
 import VotingGeneral from "./VotingGeneral";
 import {PostFrame_Thread_Create} from "./PostFrameVariants";
+import AlertWithIcon from "../AlertWithIcon";
 
 const mapStateToProps = state => {
     return {
@@ -47,6 +48,15 @@ class PostFrame extends Component {
 
                 title: false,
                 content: false,
+
+                titleValid: false, // Used only in PostFrameVariants
+                contentValid: false,
+
+                alert: {
+                    show: false,
+                    type: false,
+                    message: false,
+                },
             }
         };
     }
@@ -207,11 +217,16 @@ class PostFrame extends Component {
             contentJsx = p.content;
         else {
             p = this.state.post; // If in edit mode, get post from state (with updated input values), instead of props with initial values
+            const v = this.state.validation;
             const formLabels = isThread; // Show form labels only on thread form
 
             contentJsx =
                 <Form onSubmit={this.handleFormSubmit}>
                     <fieldset disabled={formLoading}>
+
+                        {v.alert.show ?
+                            <AlertWithIcon variant={v.alert.type}>{v.alert.message}</AlertWithIcon>
+                        : null}
 
                         {/* --- Title --- */}
                         {isThread ?
@@ -229,7 +244,9 @@ class PostFrame extends Component {
                                 <Form.Text className='text-muted'>
                                     Should be between 10-255 characters.
                                 </Form.Text>
-                                <Form.Control.Feedback type='invalid' className='d-block'>Title does not meet requirements.</Form.Control.Feedback>
+                                {v.title ?
+                                    <Form.Control.Feedback type='invalid' className='d-block'>{v.title}</Form.Control.Feedback>
+                                : null}
                             </Form.Group>
                             : null}
 
@@ -251,7 +268,9 @@ class PostFrame extends Component {
                             <Form.Text className='text-muted'>
                                 Should not be empty and not exceed 30000 characters.
                             </Form.Text>
-                            <Form.Control.Feedback type='invalid' className='d-block'>Content does not meet requirements.</Form.Control.Feedback>
+                            {v.content ?
+                                <Form.Control.Feedback type='invalid' className='d-block'>{v.content}</Form.Control.Feedback>
+                            : null}
                         </Form.Group>
 
                         {/* --- Buttons --- */}
@@ -262,7 +281,7 @@ class PostFrame extends Component {
                             </Alert>
                         : null }
 
-                        <Button variant='primary' type='submit' className='mr-2'>
+                        <Button variant='primary' type='submit' className='mr-2' disabled={!v.valid}>
                             {formLoading ?
                                 <Spinner animation='border' size='sm' />
                                 : null

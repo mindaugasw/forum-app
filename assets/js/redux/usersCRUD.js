@@ -6,8 +6,8 @@ import API from "../utils/API";
 const BASE = 'users/';
 export const REGISTER = BASE + 'register';
 
-export const FULFILLED = '/fulfilled'; // Used to combine async thunk name, e.g. TOKEN_REFRESH+FULFILLED
-export const REJECTED = '/rejected';
+// export const FULFILLED = '/fulfilled'; // Used to combine async thunk name, e.g. TOKEN_REFRESH+FULFILLED
+// export const REJECTED = '/rejected';
 
 
 
@@ -74,9 +74,9 @@ export const authMiddleware = ({ getState, dispatch }) => {
     return function (next) {
         return function (action) {
 
-            switch (action.type) {
+            /*switch (action.type) {
 
-            }
+            }*/
             return next(action);
 
         }

@@ -1,10 +1,11 @@
 import React, {Component} from "react";
 import UserForm from "./UserForm";
 import {connect} from "react-redux";
-import {register, REGISTER, FULFILLED, REJECTED} from "../../redux/usersCRUD";
+import {register, REGISTER} from "../../redux/usersCRUD";
 import {login, LOG_IN_MANUAL} from "../../redux/auth";
 import UrlBuilder from "../../utils/UrlBuilder";
 import Notifications from "../../utils/Notifications";
+// import {REJECTED} from "../../redux/store";
 
 function handleFormChange_Register_Edit(event, state) {
     // TODO method almost the same as login form change handler
@@ -187,7 +188,7 @@ class UserForm_Login_connected extends Component {
         const updatedState = { // Manual state update, as passed state is late by 1 onChange event
             ...state,
             [target.id]: target.value
-        }
+        };
 
         // Validate only edited field (to not show errors on still untouched fields)
         let validationData = null;
