@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import { Alert, AlertContainer } from "react-bs-notifier";
-import Notifications from "../utils/Notifications";
+import Notifications from "../../utils/Notifications";
 
 class NotificationRenderer extends Component {
     constructor(props) {

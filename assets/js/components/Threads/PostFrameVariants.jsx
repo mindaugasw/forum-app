@@ -171,7 +171,10 @@ class PostFrame_Thread_connected extends Component {
                         console.debug('Thread deleted successfully');
                         Notifications.Add({type:'success', headline:'Topic deleted'});
                         redirect(UrlBuilder.Home());
-                        // return;
+                        return;
+                        // TODO successful thread delete prints errors in console,  as
+                        //      SingleThreadPage attempts to load no-longer existing thread,
+                        //      before redirection happens
                     }
                 });
         }

@@ -2,7 +2,7 @@ import React, {Component, Fragment} from 'react';
 import {Navbar, Nav, NavDropdown, Image, Spinner, Button, OverlayTrigger, Tooltip} from 'react-bootstrap';
 import {Link, NavLink} from "react-router-dom";
 import { connect } from "react-redux";
-import UrlBuilder from "../utils/UrlBuilder";
+import UrlBuilder from "../../utils/UrlBuilder";
 
 const mapStateToProps = state => {
     return {
@@ -87,7 +87,13 @@ class NavBar extends Component {
                             <Nav.Link as={NavLink} to={UrlBuilder.Users.List()} onClick={this.closeNav} disabled>Users</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
-                            <Nav.Link as={NavLink} to={UrlBuilder.About()} onClick={this.closeNav} disabled>About</Nav.Link>
+                            <Nav.Link
+                                href={"https://github.com/mindaugasw/forum-app/blob/master/docs/README.md"} target='_blank' rel='noopener noreferrer'
+                                onClick={this.closeNav}
+                                active={false}
+                            >
+                                About
+                            </Nav.Link>
                         </Nav.Item>
 
                     </Nav>

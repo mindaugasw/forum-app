@@ -3,7 +3,7 @@ import ThreadList from "./Threads/ThreadList";
 import {Link} from "react-router-dom";
 import UrlBuilder from "../utils/UrlBuilder";
 import {connect} from "react-redux";
-import UnderConstructionNotice from "./UnderConstructionNotice";
+import UnderConstructionNotice from "./common/UnderConstructionNotice";
 
 const mapStateToProps = state => {
     return {
@@ -24,11 +24,11 @@ class Homepage extends Component {
                 <Link to={UrlBuilder.About()}>About</Link> section.
 
                 {authLoaded && !isLoggedIn ?
-                <>
-                <br/>
-                <Link to={UrlBuilder.Login()}>Login</Link> or{' '}
-                <Link to={UrlBuilder.Register()}>Register</Link> to access all features.
-                </>
+                    <>
+                        <br/>
+                        <Link to={UrlBuilder.Login()}>Login</Link> or{' '}
+                        <Link to={UrlBuilder.Register()}>Register</Link> to access all features.
+                    </>
                 : ''}
 
                 <hr/>

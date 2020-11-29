@@ -2,11 +2,6 @@
 
 // --- Colors ---
 :root {
-    // Reddit colors:
-    /*--color-upvote: #FF8B60;
-    --color-downvote: #9494FF;
-    --color-vote: #C6C6C6;*/
-
     --color-upvote: #fd7e14;
     --color-downvote: #9056fb;
     --color-vote: #717171;
@@ -47,12 +42,4 @@
 }
 .container-0-2-1 { // Show notifications below navbar and don't hide it
     margin-top: 2em;
-}
-
-// dev styles // TODO remove
-.bsr {
-    border: 1px solid red;
-}
-.bsg {
-    border: 1px solid green;
 }

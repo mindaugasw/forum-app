@@ -98,5 +98,5 @@ class ThreadController extends BaseApiController
 		return $this->ApiResponse(null, 204);
 	}
 	
-	// TODO add threads search
+	// TODO FEATURE add threads search
 }

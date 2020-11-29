@@ -2,7 +2,7 @@
 
 ### Introduction
 
-Goal of the project is to create an ordinary discussion forum, for learning purposes. The forum allows users to discuss any topics with other users, by browsing threads and creating their own, leaving comments on any existing threads. Users can vote on others' threads or comments and express their opinion about that content.
+Goal of the project is to create a general-purpose discussion forum, for learning purposes. The forum allows users to discuss any topics with other users, by browsing threads and creating their own, leaving comments on any existing threads. Users can vote on others' threads or comments and express their opinion about that content.
 
 **Note: frontend app is still under development. Backend API, however, is already mostly finished and fully functional.**
 
@@ -30,11 +30,11 @@ Frontend:
 - Bootstrap
 
 ### Requirements
-Required software to run the application.
-- XAMPP stack
+Required software to run backend server:
+- Apache/Nginx
 - PHP 7.4
+- MariaDB
 - Composer
-- Symfony CLI. Alternatively use `php bin/console ...` commands instead of `symfony console ...`
 
 For building frontend code:
 - Node.js
@@ -43,7 +43,7 @@ For building frontend code:
 
 
 ### Installation
-Below are instructions for installing app on **dev** environment.
+Below are instructions for installing app on **dev** environment.  
 
 ```
 git clone git@github.com:mindaugasw/forum-app.git
@@ -59,8 +59,8 @@ symfony console doctrine:migrations:migrate
 symfony console doctrine:fixtures:load
 ```
 
-Ensure HTTPS connection (needed for JWT authentication). Can be done using ` symfony server:ca:install`.  
+Ensure HTTPS connection (needed for JWT authentication). Can be done using `symfony server:ca:install`.  
 `yarn install`  
-`yarn build` (or `yarn dev-server-https` for automatic frontend rebuilding).  
+`yarn build` (or `yarn dev-server-https` for automatic hot-reloading).  
 `symfony server:start` and access app at [https://localhost:8000](https://localhost:8000/).
 

@@ -144,8 +144,6 @@ class UserCRUD
 	 */
 	private function ensureSafePassword(string $plainPassword): bool
 	{
-		// TODO replace with different zxcvbn library
-		// (this one does not match js zxcvbn scoring)
 		$zxcvbn = new Zxcvbn();
 		$passwordData = $zxcvbn->passwordStrength($plainPassword);
 		

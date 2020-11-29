@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {Card, Col, Container, Row} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import UrlBuilder from "../../utils/UrlBuilder";
-import NewVoting from "./NewVoting";
+import NewVoting from "../__old/NewVoting";
 import VotingGeneral from "./VotingGeneral";
 
 class ThreadListItem extends Component {

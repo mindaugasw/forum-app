@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { getThreads } from "../../redux/threads";
 import {Link} from "react-router-dom";
-import Paginator from "../Paginator";
+import Paginator from "../common/Paginator";
 import UrlBuilder from "../../utils/UrlBuilder";
 import {Row, Button, Card, Col, Container, Spinner} from "react-bootstrap";
 import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
@@ -101,10 +101,16 @@ class ThreadList extends React.Component {
         return (
             <div>
                 {/* --- Title, Create new button --- */}
-                <h2 style={{display: "inline-block"}}>Topics list</h2>
-                <Link to={UrlBuilder.Threads.Create()}> {/* TODO use columns instead of float: right to improve layout on mobile */}
-                    <Button style={{float: "right"}}><FA icon={faPlus}/> Create new</Button>
-                </Link>
+                <Row>
+                    <Col className='pr-0'>
+                        <h2 style={{display: "inline-block"}}>Topics list</h2>
+                    </Col>
+                    <Col className='pl-0'>
+                        <Link to={UrlBuilder.Threads.Create()}>
+                            <Button style={{float: "right"}}><FA icon={faPlus}/> Create new</Button>
+                        </Link>
+                    </Col>
+                </Row>
 
                 <Container fluid className='thread-list-container'>
                     <Card>

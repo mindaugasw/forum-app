@@ -4,15 +4,13 @@ import {withRouter} from "react-router";
 import {Link} from "react-router-dom";
 import UrlBuilder from "../../utils/UrlBuilder";
 import {getSingleThread, getComments} from "../../redux/threads";
-import {editThread, deleteThread} from "../../redux/postsCRUD";
-import PropTypes from "prop-types";
-import Loading from "../Loading";
-import Paginator from "../Paginator";
+import Loading from "../__old/Loading";
+import Paginator from "../common/Paginator";
 import Voting from "../__old/Voting";
-import CommentForm from "./CommentForm";
-import Comment from "./Comment";
+import CommentForm from "../__old/CommentForm";
+import Comment from "../__old/Comment";
 import {canUserManagePost} from "../../redux/auth";
-import ThreadForm from "./ThreadForm";
+import ThreadForm from "../__old/ThreadForm";
 import {Button, Card, Col, Container, Row, Spinner} from "react-bootstrap";
 import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
@@ -23,8 +21,8 @@ const mapDispatchToProps = {
     getSingleThread,
     getComments,
 
-    editThread,
-    deleteThread
+    // editThread,
+    // deleteThread
 }
 const mapStateToProps = state => {
     return {
@@ -35,22 +33,23 @@ const mapStateToProps = state => {
     };
 }
 
-class SingleThread extends React.Component {
+class SingleThreadPage extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
             id: parseInt(this.props.match.params.id), // This thread id
             // TODO show error if id is NaN
+            // TODO show error on 404 response
             editMode: false,
         }
 
         this.getListUrl = this.getListUrl.bind(this);
         this.getPaginationListUrl = this.getPaginationListUrl.bind(this);
         this.handlePageNavigation = this.handlePageNavigation.bind(this);
-        this.handleDeleteClick = this.handleDeleteClick.bind(this);
+        /*this.handleDeleteClick = this.handleDeleteClick.bind(this);
         this.handleEditClick = this.handleEditClick.bind(this);
-        this.handleCancelEditClick = this.handleCancelEditClick.bind(this);
+        this.handleCancelEditClick = this.handleCancelEditClick.bind(this);*/
 
         this.loadThread();
         this.loadComments();
@@ -61,7 +60,7 @@ class SingleThread extends React.Component {
         this.loadComments();
     }
 
-    handleDeleteClick(event) {
+    /*handleDeleteClick(event) {
         event.preventDefault();
 
         if (!canUserManagePost(this.props.user, this.props.thread)) {
@@ -86,7 +85,7 @@ class SingleThread extends React.Component {
     handleCancelEditClick(event) {
         event.preventDefault();
         this.setState({editMode: false});
-    }
+    }*/
 
     /**
      * Checks if currently loaded data matches needed data for this view. If not, loads needed data.
@@ -117,7 +116,7 @@ class SingleThread extends React.Component {
     }
 
     /**
-     * Retrieve url with GET params for currently viewed coments list
+     * Retrieve url with GET params for currently viewed comments list
      * @param page
      * @returns {string}
      */
@@ -141,7 +140,12 @@ class SingleThread extends React.Component {
     /**
      * Used from child paginator component, on navigation click to any other page
      */
-    handlePageNavigation() {}
+    handlePageNavigation() {
+        // Needed in ThreadList but somehow works without it here?
+        /*this.setState({
+            'refreshComponent': Math.random(),
+        });*/
+    }
 
     render() {
         return this.render_new();
@@ -331,7 +335,7 @@ class SingleThread extends React.Component {
     }
 }
 
-SingleThread.propTypes = {
+SingleThreadPage.propTypes = {
     // thread: PropTypes.object.isRequired,
     // authLoaded: PropTypes.bool.isRequired,
     // isLoggedIn: PropTypes.bool.isRequired,
@@ -339,5 +343,5 @@ SingleThread.propTypes = {
 }
 
 export default withRouter(
-    connect(mapStateToProps, mapDispatchToProps)(SingleThread)
+    connect(mapStateToProps, mapDispatchToProps)(SingleThreadPage)
 );

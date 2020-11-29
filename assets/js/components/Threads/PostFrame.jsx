@@ -9,7 +9,7 @@ import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
 import {faEdit, faExclamationCircle, faMinusCircle, faPlusCircle, faTrash} from "@fortawesome/free-solid-svg-icons";
 import VotingGeneral from "./VotingGeneral";
 import {PostFrame_Thread} from "./PostFrameVariants";
-import AlertWithIcon from "../AlertWithIcon";
+import AlertWithIcon from "../common/AlertWithIcon";
 
 const mapStateToProps = state => {
     return {
@@ -79,7 +79,7 @@ class PostFrame extends Component {
     }
 
     // Component variants shortcuts
-    static ThreadCreate = PostFrame_Thread; // TODO rename
+    static Thread = PostFrame_Thread; // TODO rename
 
 
     handleFormChange(event) {

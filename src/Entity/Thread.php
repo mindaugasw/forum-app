@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Thread
 {
-	// TODO add sluggable
+	// TODO FEATURE add sluggable
 	
     /**
      * @ORM\Id
@@ -71,7 +71,7 @@ class Thread
 	 */
 	private $edited = false;
 	
-	// private $lastComment; // TODO
+	// private $lastComment; // TODO FEATURE
 	
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="thread", orphanRemoval=true)

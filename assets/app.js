@@ -18,8 +18,8 @@ import { Provider } from "react-redux";
 import store from "./js/redux/store";
 import {BrowserRouter} from "react-router-dom";
 
-
 // import '@fortawesome/fontawesome-free/js/all';
+
 
 render(
     <Provider store={store}>
