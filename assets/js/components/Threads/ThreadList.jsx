@@ -102,7 +102,7 @@ class ThreadList extends React.Component {
             <div>
                 {/* --- Title, Create new button --- */}
                 <h2 style={{display: "inline-block"}}>Topics list</h2>
-                <Link to={UrlBuilder.Threads.Create()}>
+                <Link to={UrlBuilder.Threads.Create()}> {/* TODO use columns instead of float: right to improve layout on mobile */}
                     <Button style={{float: "right"}}><FA icon={faPlus}/> Create new</Button>
                 </Link>
 

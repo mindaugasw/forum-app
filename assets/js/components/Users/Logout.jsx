@@ -23,7 +23,7 @@ class LogoutPage extends Component {
         this.props.logout()
             .then(action => {
                 redirect(UrlBuilder.Home());
-                Notifications.Add('success', 'Logout successful', null);
+                Notifications.Add({type:'success', headline:'Logout successful'});
             });
     }
 

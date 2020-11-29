@@ -39,14 +39,19 @@ export const createThread = createAsyncThunk(CREATE_THREAD, (params, thunkAPI) =
  */
 export const editThread = createAsyncThunk(EDIT_THREAD, (params, thunkAPI) => {
     return API.Threads.EditThread(params.threadId, params.title, params.content)
-        .then(response => {
+        .then(response => response.json().then(payload => {
+            if (response.ok)
+                return payload;
+            else
+                return thunkAPI.rejectWithValue(payload);
+        }));
+    /*.then(response => {
             let payload = response.json();
             if (response.ok) {
                 return payload;
             } else {
                 return thunkAPI.rejectWithValue(payload);
-            }
-        });
+            }*/
 });
 /**
  * @param {threadId<number>} params
@@ -57,8 +62,7 @@ export const deleteThread = createAsyncThunk(DELETE_THREAD, (params, thunkAPI) =
             if (response.ok) {
                 return true;
             } else {
-                let payload = response.json();
-                return thunkAPI.rejectWithValue(payload);
+                response.json().then(payload => thunkAPI.rejectWithValue(payload));
             }
         });
 });
@@ -116,21 +120,15 @@ export const postsCRUDSlice = createSlice({
     reducers: {},
     extraReducers: builder => {
     builder
-        .addCase(CREATE_THREAD+PENDING, (state, action) => {
-            console.log(CREATE_THREAD+PENDING, action);
-        })
-        .addCase(CREATE_THREAD+FULFILLED, (state, action) => {
-            console.log(CREATE_THREAD+FULFILLED, action);
-        })
-        .addCase(CREATE_THREAD+REJECTED, (state, action) => {
-            console.log(CREATE_THREAD+REJECTED, action);
-        })
+        // NOTE: on any successful CRUD request all threads state is cleared in threads.js reducer
+
         // Catch all failed requests
         .addMatcher(
             action => action.type.startsWith(BASE) && action.type.endsWith('rejected'), (state, action) => {
                 console.error(`Error in action ${action.type}, ${
                     getSafe(() => action.payload.error.status, 'unknown status code')}, ${
-                    getSafe(() => action.payload.error.message, 'unknown error message')}`);
+                    getSafe(() => action.payload.error.message, 'unknown error message')}`,
+                    action);
             })
     }
 });

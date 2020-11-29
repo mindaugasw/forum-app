@@ -1,5 +1,4 @@
 import React, {Component, Fragment} from 'react';
-import PropTypes from 'prop-types';
 import {Navbar, Nav, NavDropdown, Image, Spinner, Button, OverlayTrigger, Tooltip} from 'react-bootstrap';
 import {Link, NavLink} from "react-router-dom";
 import { connect } from "react-redux";
@@ -12,6 +11,26 @@ const mapStateToProps = state => {
 }
 
 class NavBar extends Component {
+    constructor(props) {
+        super(props);
+
+        this.setNavExpanded = this.setNavExpanded.bind(this);
+        this.closeNav = this.closeNav.bind(this);
+
+        this.state = {
+            navExpanded: false,
+        };
+    }
+
+    // setNavExpanded and closeNav are needed to automatically collapse navbar after link click
+    setNavExpanded(expanded) {
+        this.setState({ navExpanded: expanded });
+    }
+
+    closeNav() {
+        this.setState({ navExpanded: false });
+    }
+
     render() {
         const {auth} = this.props;
 
@@ -33,25 +52,25 @@ class NavBar extends Component {
                         roundedCircle />
                     </>} alignRight id="basic-nav-dropdown">
 
-                    <NavDropdown.Item as={NavLink} to={UrlBuilder.Users.Single(auth.user.id)} disabled>My profile</NavDropdown.Item>
-                    <NavDropdown.Item as={NavLink} to={UrlBuilder.Users.Edit(auth.user.id)} disabled>Edit profile</NavDropdown.Item>
-                    <NavDropdown.Item as={NavLink} to={UrlBuilder.Logout()}>Logout</NavDropdown.Item>
+                    <NavDropdown.Item as={NavLink} to={UrlBuilder.Users.Single(auth.user.id)} onClick={this.closeNav} disabled>My profile</NavDropdown.Item>
+                    <NavDropdown.Item as={NavLink} to={UrlBuilder.Users.Edit(auth.user.id)} onClick={this.closeNav} disabled>Edit profile</NavDropdown.Item>
+                    <NavDropdown.Item as={NavLink} to={UrlBuilder.Logout()} onClick={this.closeNav}>Logout</NavDropdown.Item>
                 </NavDropdown>
                 </>;
         } else {
             profileArea =
                 <>
                 <Nav.Item>
-                    <Nav.Link as={NavLink} to={UrlBuilder.Login()}>Login</Nav.Link>
+                    <Nav.Link as={NavLink} to={UrlBuilder.Login()} onClick={this.closeNav}>Login</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                    <Nav.Link as={NavLink} to={UrlBuilder.Register()}>Register</Nav.Link>
+                    <Nav.Link as={NavLink} to={UrlBuilder.Register()} onClick={this.closeNav}>Register</Nav.Link>
                 </Nav.Item>
                 </>;
         }
 
         return (
-            <Navbar bg="light" expand="lg" sticky="top">
+            <Navbar bg="light" expand="lg" sticky="top" onToggle={this.setNavExpanded} expanded={this.state.navExpanded}>
                 <Link to='/'>
                     <Navbar.Brand>Forum app</Navbar.Brand>
                 </Link>
@@ -59,16 +78,16 @@ class NavBar extends Component {
                     <Nav className="mr-auto">
 
                         <Nav.Item>
-                            <Nav.Link as={NavLink} to={UrlBuilder.Threads.Index()}>Topics list</Nav.Link>
+                            <Nav.Link as={NavLink} to={UrlBuilder.Threads.Index()} onClick={this.closeNav}>Topics list</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
-                            <Nav.Link as={NavLink} to={UrlBuilder.Threads.Create()}>New topic</Nav.Link>
+                            <Nav.Link as={NavLink} to={UrlBuilder.Threads.Create()} onClick={this.closeNav}>New topic</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
-                            <Nav.Link as={NavLink} to={UrlBuilder.Users.List()} disabled>Users</Nav.Link>
+                            <Nav.Link as={NavLink} to={UrlBuilder.Users.List()} onClick={this.closeNav} disabled>Users</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
-                            <Nav.Link as={NavLink} to={UrlBuilder.About()} disabled>About</Nav.Link>
+                            <Nav.Link as={NavLink} to={UrlBuilder.About()} onClick={this.closeNav} disabled>About</Nav.Link>
                         </Nav.Item>
 
                     </Nav>
@@ -78,7 +97,7 @@ class NavBar extends Component {
                         {/* Extra login link, visible even when logged in already */}
                         {APP_ENV === 'dev' && auth.isLoggedIn ?
                             <Nav.Item>
-                                <Nav.Link as={NavLink} to={UrlBuilder.Login()}>Login form</Nav.Link>
+                                <Nav.Link as={NavLink} to={UrlBuilder.Login()} onClick={this.closeNav}>Login form</Nav.Link>
                             </Nav.Item>
                             : ''}
                         {profileArea}
@@ -119,7 +138,5 @@ class NavBar extends Component {
         );
     }
 }
-
-NavBar.propTypes = {};
 
 export default connect(mapStateToProps)(NavBar);

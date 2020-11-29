@@ -17,6 +17,7 @@ import {Button, Card, Col, Container, Row, Spinner} from "react-bootstrap";
 import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import PostFrame from "./PostFrame";
+import {PostFrame_Thread} from "./PostFrameVariants";
 
 const mapDispatchToProps = {
     getSingleThread,
@@ -229,7 +230,7 @@ class SingleThread extends React.Component {
 
         // console.log(ci);
 
-
+        // TODO thread 404 page (e.g. threads/900)
 
         // --- Comments ---
         let commentsListJsx = this.render_comments_list();
@@ -269,8 +270,9 @@ class SingleThread extends React.Component {
                 {/* --- Thread --- */}
                 <h2>Thread view</h2>
                 {t.loaded === LoadState.Done ?
-                    <PostFrame post={t.item} formMode={false} />
-
+                    // <PostFrame post={t.item} formMode={false} />
+                    // <PostFrame.Thread thread={ti} isNewThreadForm={false} />
+                    <PostFrame_Thread thread={ti} isNewThreadForm={false} />
                 : null}
                 <br/><br/>
 

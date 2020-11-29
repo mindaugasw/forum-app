@@ -14,7 +14,7 @@ import ThreadRouter from "./Threads/ThreadRouter";
 import RegistrationPage from "./Users/RegistrationPage";
 import UserForm from "./Users/UserForm";
 import LogoutPage from "./Users/Logout";
-import NotificationGenerator from "./NotificationGenerator";
+import NotificationRenderer from "./NotificationRenderer";
 
 export let history;
 
@@ -38,7 +38,7 @@ class ReactApp extends React.Component {
             <>
                 <NavBar />
 
-                <NotificationGenerator />
+                <NotificationRenderer />
 
                 <Container id='app-body' fluid='lg' > {/*fluid-lg = container takes 100% width until lg (on xd sm md, but not lg)*/}
                     <Row className='justify-content-center'>

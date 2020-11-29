@@ -78,14 +78,14 @@ export const authSlice = createSlice({
 
 
         [tokenRefresh.fulfilled]: (state, action) => {
-            console.log('Automatic login successful');
+            console.debug('Automatic login successful');
             const p = action.payload;
             setAuthState(state, true, p.token, p.user, p.timer);
         },
         [tokenRefresh.rejected]: (state, action) => {
             // TODO change .code to .error.status and test it
             const errorCode = getSafe(() => action.payload.code, 'unknown error');
-            console.info('Automatic login failed: ' + errorCode);
+            console.debug('Automatic login failed: ' + errorCode);
             state.loaded = true;
 
             if (state.isLoggedIn && errorCode === 401) {
@@ -95,11 +95,10 @@ export const authSlice = createSlice({
 
 
         [logout.fulfilled]: (state, action) => {
-            console.log('Logout successful');
+            console.debug('Logout successful');
             setAuthState(state, false, null, null, null);
         },
         [logout.rejected]: (state, action) => {
-            // TODO change .code to .error.status and test it
             console.error('Logout failed: ' + getSafe(() => action.payload.code, 'unknown error'));
             setAuthState(state, false, null, null, null);
         },

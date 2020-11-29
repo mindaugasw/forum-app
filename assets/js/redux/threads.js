@@ -208,7 +208,7 @@ export const threadSlice = createSlice({
         })
 
 
-        // Full state reset
+        // Full state reset after any of these actions, as previously loaded data is no longer valid
         .addMatcher(action => {
             const matchingActions = [
                 login.fulfilled.type,

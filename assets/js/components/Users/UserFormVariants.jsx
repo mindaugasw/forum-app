@@ -152,7 +152,7 @@ class UserForm_Register_connected extends Component {
 
             } else {
                 redirect(UrlBuilder.Login());
-                Notifications.Add('success', 'Registration successful', 'You can now log in to your new account');
+                Notifications.Add({type:'success', headline:'Registration successful', message:'You can now log in to your new account'});
                 return;
             }
         });
@@ -254,13 +254,13 @@ class UserForm_Login_connected extends Component {
                 }
 
                 console.error('Unknown error in form', action);
-                Notifications.UnhandledError('Form error in UserForm_Login_unconnected');
+                Notifications.UnhandledError('Form error in UserForm_Login_unconnected', action);
                 return;
 
             } else {
                 console.log('Login success');
                 redirect(UrlBuilder.Home());
-                Notifications.Add('success', 'Login successful', '');
+                Notifications.Add({type:'success', headline:'Login successful'});
                 return;
             }
         });

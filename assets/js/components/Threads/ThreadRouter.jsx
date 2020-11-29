@@ -33,7 +33,7 @@ class ThreadRouter extends React.Component {
                         {/*<ThreadForm editMode={false} />*/}
                         <h2>Create a new topic</h2>
                         {/*<PostFrame post={null} formMode={true} isThread={true} />*/}
-                        <PostFrame.ThreadCreate />
+                        <PostFrame.ThreadCreate isNewThreadForm={true} thread={null} />
                     </Route>
                     {/*<Route path={UrlBuilder.Threads.SingleMatchPath()} >*/}
                     <Route path={`${match.path}/:id`} >

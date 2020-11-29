@@ -123,6 +123,7 @@ class UserForm extends Component {
                                 type='text'
                                 maxLength={25}
                                 value={username}
+                                autoComplete='username'
                                 onChange={this.handleFormChange} />
 
                             {register ?
@@ -141,7 +142,12 @@ class UserForm extends Component {
                         {/* --- Password --- */}
                         <Form.Group controlId='password'>
                             <Form.Label>Password</Form.Label>
-                            <Form.Control type='password' value={password} onChange={this.handleFormChange} />
+                            <Form.Control
+                                type='password'
+                                value={password}
+                                autoComplete={register ? 'new-password' : 'current-password'}
+                                onChange={this.handleFormChange}
+                            />
 
                             {v.password ?
                             <Form.Control.Feedback type='invalid' className='d-block'>{v.password}</Form.Control.Feedback>
@@ -152,7 +158,12 @@ class UserForm extends Component {
                             <>
                             {/* --- Password repeat --- */}
                             <Form.Group controlId='passwordRepeat'>
-                                <Form.Control type='password' value={passwordRepeat} onChange={this.handleFormChange} />
+                                <Form.Control
+                                    type='password'
+                                    value={passwordRepeat}
+                                    autoComplete='new-password'
+                                    onChange={this.handleFormChange}
+                                />
                                 <Form.Text className='text-muted'>Repeat password.</Form.Text>
 
                                 {v.passwordRepeat ?

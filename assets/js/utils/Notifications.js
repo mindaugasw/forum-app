@@ -6,9 +6,11 @@ import {
     faExclamationTriangle,
     faInfoCircle
 } from "@fortawesome/free-solid-svg-icons";
+import {Link} from "react-router-dom";
+import UrlBuilder from "./UrlBuilder";
 
 class Notifications {
-    static ReactComponent = null; // Is set inside <NotificationGenerator />
+    static ReactComponent = null; // Is set inside <NotificationRenderer />
 
     /**
      * Add new notification. Possible options:
@@ -17,9 +19,9 @@ class Notifications {
      * message,
      * timeout,
      * id
-     * @param {type<string>, headline<string>, message<object>, timeout<number>} options
+     * @param {type<string>, headline<string>, message<object>, timeout<number>, id<string|number>} options
      */
-    static AddOptions(options) {
+    static Add(options) {
         const icons = {
             success: faCheck,
             danger: faExclamationTriangle,
@@ -51,31 +53,74 @@ class Notifications {
             type: options.type || 'info',
             headline: null,
             message: body,
-            timeout: options.timeout || options.timeout === 0 ? options.timeout : 5000,
+            timeout: options.timeout || options.timeout === 0 ? options.timeout : 7000,
         });
     }
 
-    static Add(type, headline, message, timeout = 8000) {
-        this.AddOptions({type, headline, message, timeout});
-    }
+    /**
+     * Shortcut for notification informing about unhandled error. Optionally can also include additional
+     * debug info in errorMessage argument
+     * @param args Optional additional info about the error
+     */
+    static UnhandledError(...args) {
 
-    static UnhandledError(errorMessage) {
+        // console.log('c1', errorMessage);
+        const errorDetails = args.map((element, index) => {
+            return <code key={index} className='d-block mb-2'>{JSON.stringify(element)}</code>;
+        });
+
+
         const message =
             <>
-                An unknown error occurred. Try <a href="" className='font-weight-bold'>refreshing</a> the page to fix the error.<br/><br/>
-                More information about the error:<br/>
-                <code>{JSON.stringify(errorMessage)}</code>
+                An unknown error occurred. Try <a href="" className='font-weight-bold'>refreshing</a> the page to fix the error.
+
+                {args.length !== 0 ?
+                    <>
+                        <br/><br/>
+                        More information about the error:<br/>
+                        {/*<code>{JSON.stringify(errorMessage)}</code>*/}
+                        {errorDetails}
+                    </>
+                : null }
             </>;
 
-        this.AddOptions({
+        this.Add({
             type: 'danger',
             headline: 'Error!',
             message,
             timeout: 0,
         });
     }
-}
 
-window.Notifications = Notifications;
+    /**
+     * Shortcut for notification informing that user must be logged in. Provides links to log in and register.
+     * Ensures that only one such notification is displayed at a time, no matter how many times called.
+     */
+    static Unauthenticated() {
+        const message =
+            <>
+                <Link to={UrlBuilder.Login()}>Log in</Link> or <Link to={UrlBuilder.Register()}>Register</Link>.
+            </>;
+
+        this.Add({
+            type: 'danger',
+            headline: 'You must be logged in to do that!',
+            message,
+            id: 'unauthenticated-notification' // Same id for all notifications to keep only one notification of this type
+        });
+    }
+
+    /**
+     * Shortcut for notification informing that user is unauthorized to perform attempted action.
+     */
+    static Unauthorized() {
+        this.Add({
+            type: 'danger',
+            headline: 'You do not have permission to do thatt!',
+            message: null,
+        });
+    }
+
+}
 
 export default Notifications;

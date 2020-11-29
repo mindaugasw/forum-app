@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import { Alert, AlertContainer } from "react-bs-notifier";
 import Notifications from "../utils/Notifications";
 
-class NotificationGenerator extends Component {
+class NotificationRenderer extends Component {
     constructor(props) {
         super(props);
 
@@ -54,4 +54,4 @@ class NotificationGenerator extends Component {
     }
 }
 
-export default NotificationGenerator;
+export default NotificationRenderer;

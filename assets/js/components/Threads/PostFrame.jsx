@@ -8,7 +8,7 @@ import {canUserManagePost} from "../../redux/auth";
 import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
 import {faEdit, faExclamationCircle, faMinusCircle, faPlusCircle, faTrash} from "@fortawesome/free-solid-svg-icons";
 import VotingGeneral from "./VotingGeneral";
-import {PostFrame_Thread_Create} from "./PostFrameVariants";
+import {PostFrame_Thread} from "./PostFrameVariants";
 import AlertWithIcon from "../AlertWithIcon";
 
 const mapStateToProps = state => {
@@ -17,14 +17,11 @@ const mapStateToProps = state => {
     };
 }
 
-const mapDispatchToProps = {
-
-}
-
 /**
- * A general frame for rendering thread or comment.
- * Can render normal view, form for creating or editing, for both thread and comment.
- * See prop types for more info on config or use other wrapper components e.g. Post.Comment.View
+ * A general component for rendering thread or comment.
+ * Responsible only for rendering various forms of threads or comments (plain
+ * view, new item submission form, existing item editing form). Form validation
+ * and submission logic should be handled externally and callbacks passed via props.
  */
 class PostFrame extends Component {
     constructor(props) {
@@ -37,7 +34,7 @@ class PostFrame extends Component {
         this.contentJsx = this.contentJsx.bind(this);
 
         const p = this.props.post;
-        this.state = { // Set initial values to state (they may be edited if rendering a form)
+        let initialState = {
             post: p || {
                 title: '',
                 content: '',
@@ -59,10 +56,30 @@ class PostFrame extends Component {
                 },
             }
         };
+
+        /*
+        // If PostFrame is ever initially rendered as edit form, it should also
+        // validate form data immediately. Currently full form is only validated in
+        // componentWillUpdate, as PostFrame never renders as edit form initially
+        // UNTESTED
+        if (this.props.formMode && !this.props.post) { // is edit mode
+            initialState = mergeDeep(initialState, this.props.onValidateFullForm(initialState));
+        }*/
+
+        this.state = initialState;
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        // Validate form if entering edit mode
+        if (prevProps.formMode === false && this.props.formMode === true) {
+            this.setState({
+                ...mergeDeep(this.state, this.props.onValidateFullForm(this.state))
+            });
+        }
     }
 
     // Component variants shortcuts
-    static ThreadCreate = PostFrame_Thread_Create;
+    static ThreadCreate = PostFrame_Thread; // TODO rename
 
 
     handleFormChange(event) {
@@ -179,13 +196,13 @@ class PostFrame extends Component {
                     {canUserManagePost(u, p) ?
                         <div className='d-inline-block'>
                             <span className='mr-4'>
-                                <a href='#' className='color-vote text-muted' > {/* TODO onClick={this.handleEditClick}*/}
+                                <a href='#' className='color-vote text-muted' onClick={event => this.props.onEditClick(event, true)}>
                                     <FA icon={faEdit} size={'lg'} />
                                     <span className='d-none d-sm-inline ml-1'>Edit</span>
                                 </a>
                             </span>
                             <span className='mr-4'>
-                                <a href='#' className='color-vote text-muted' >{/* TODO onClick={this.handleDeleteClick}*/}
+                                <a href='#' className='color-vote text-muted' onClick={event => this.props.onDeleteClick(event)}>
                                     <FA icon={faTrash} size={'lg'} />
                                     <span className='d-none d-sm-inline ml-1'>Delete</span>
                                 </a>
@@ -239,6 +256,7 @@ class PostFrame extends Component {
                                     type='text'
                                     maxLength={255}
                                     value={p.title}
+                                    autoComplete='off'
                                     onChange={this.handleFormChange}
                                 />
                                 <Form.Text className='text-muted'>
@@ -263,6 +281,7 @@ class PostFrame extends Component {
                                 maxLength={30000}
                                 style={{resize: 'vertical'}}
                                 value={p.content}
+                                autoComplete='off'
                                 onChange={this.handleFormChange}
                             />
                             <Form.Text className='text-muted'>
@@ -289,7 +308,7 @@ class PostFrame extends Component {
                             {editMode ? 'Save' : 'Submit'}
                         </Button>
                         {editMode ?
-                            <Button variant='secondary' onClick={this.props.onCancelClick}>Cancel</Button>
+                            <Button variant='secondary' onClick={/*this.props.onCancelClick*/ event => this.props.onEditClick(event, false)}>Cancel</Button>
                             : null}
                     </fieldset>
                 </Form>;
@@ -346,19 +365,21 @@ class PostFrame extends Component {
 
 PostFrame.propTypes = {
     post: PropTypes.object, // Thread or comment object. If null, will render form for new thread/comment
+    isThread: PropTypes.bool.isRequired, // Is provided post thread or comment
     // parentThread: PropTypes.object, // Thread object. Needed only when rendering as comment frame
-    formMode: PropTypes.bool.isRequired, // Renders as form edit/create, if true
-    isThread: PropTypes.bool.isRequired,
-
+    formMode: PropTypes.bool.isRequired, // If true, renders as form form edit/create
     formLoading: PropTypes.bool, // adjusts form style. Can be set to true e.g. after submitting
 
     onChange: PropTypes.func, // Form inputs change callback
     onSubmit: PropTypes.func, // Form submit callback
-    onCancelClick: PropTypes.func, // Form button "Cancel" callback
+    // onCancelClick: PropTypes.func, // Form button "Cancel" callback
+    onEditClick: PropTypes.func, // Callback for 'Edit' or 'Cancel edit' buttons. Passes event and true/false if starting/ending editing
+    onDeleteClick: PropTypes.func, // Callback for 'Delete' click
+    onValidateFullForm: PropTypes.func, // Callback for initial validation on Edit form variant
 
     // Redux state:
     // user: PropTypes.object,
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(PostFrame);
+export default connect(mapStateToProps)(PostFrame);
