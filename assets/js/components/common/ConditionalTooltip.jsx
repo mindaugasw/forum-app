@@ -1,0 +1,39 @@
+import React from "react";
+import PropTypes, {func} from 'prop-types'
+import {OverlayTrigger, Tooltip} from "react-bootstrap";
+
+/**
+ * Tooltip wrapper, providing easier conditional tooltip showing (only need to toggle show prop).
+ * Also makes it easier to show tooltip on disabled elements (set pointerEventsNone prop to true).
+ */
+function ConditionalTooltip(props) {
+    const show = props.show ? {} : {show: false};
+    const styleProp = props.pointerEventsNone && props.show ? {style: {pointerEvents: 'none'}} : {};
+
+    return (
+        <OverlayTrigger
+            placement={props.placement}
+            overlay={<Tooltip id={props.tooltipId}>
+                {props.tooltip}
+            </Tooltip>}
+            // show={null}
+            {...show}
+        >
+            <div {...props.wrapperProps}> {/* Additional div sometimes needed for tooltips on disabled buttons */}
+                {/*{props.children}*/}
+                {React.cloneElement(props.children, styleProp)}
+            </div>
+        </OverlayTrigger>
+    );
+}
+ConditionalTooltip.propTypes = {
+    placement: PropTypes.oneOf(['top', 'right', 'bottom', 'left']).isRequired,
+    tooltip: PropTypes.any.isRequired, // Tooltip content
+    tooltipId: PropTypes.oneOfType([PropTypes.string, PropTypes.number,]).isRequired,
+
+    show: PropTypes.bool, // should the label be displayed?
+    pointerEventsNone: PropTypes.bool, // If true, will add to the topmost child, when tooltip should be shown: style={{pointerEvents: 'none'}}. Needed on disabled buttons.
+    wrapperProps: PropTypes.object, // Props for div wrapper around children content
+}
+
+export default ConditionalTooltip;

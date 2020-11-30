@@ -8,10 +8,6 @@ import {createThread, deleteThread, editThread} from "../../redux/postsCRUD";
 import PropTypes from 'prop-types';
 import {canUserManagePost} from "../../redux/auth";
 
-class PostFrame_Comment {
-
-}
-
 const mapStateToProps = state => {
     return {
         user: state.auth.user,
@@ -227,7 +223,44 @@ PostFrame_Thread.propTypes = {
     // user: PropTypes.object,
 }
 
-class PostFrame_Comment_Create {
+export class PostFrame_Comment_connected extends Component {
+    constructor(props) {
+        super(props);
 
+        this.state = {
+            formLoading: false,
+            editMode: this.props.isNewThreadForm,
+        }
+    }
+
+    render() {
+        if (this.props.isNewCommentForm === true) { // New comment form
+            console.error('new');
+            // return (
+            //     <PostFrame
+            //
+            //     />
+            // );
+        } else if (this.state.editMode) { // Edit existing comment
+            console.error('edit');
+        } else { // Show comment
+            return (
+                <PostFrame
+                    post={this.props.comment}
+                    isThread={false}
+                    formMode={false}
+                    // onEditClick={} // TODO
+                    // onDeleteClick={} // TODO
+                />
+            );
+        }
+    }
 }
+// export const PostFrame_Comment = PostFrame_Thread_connected;
+// PostFrame_Thread_connected.propTypes = {
+//     isNewCommentForm: PropTypes.bool.isRequired,
+//     comment: PropTypes.object, // Comment object. Not needed if creating new comment
 
+    // Redux state:
+    // user: PropTypes.object,
+// }

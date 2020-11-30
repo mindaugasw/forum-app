@@ -3,8 +3,10 @@ import PropTypes from "prop-types";
 import {Link} from "react-router-dom";
 import {Pagination} from "react-bootstrap";
 
-// Not using React Bootstrap (<Pagination.Item/>) because it's incompatible with React Router
-function MyPage(props) {
+/**
+ * Page Link wrapper, to replace <Link> inside <Pagination.Item>, as they're incompatible.
+ */
+function PageLink(props) {
     const {text, url, active, disabled, onClick} = props;
     return (
         <li className={`page-item ${active ? 'active' : ''} ${disabled ? 'disabled' : ''}`}>
@@ -14,7 +16,7 @@ function MyPage(props) {
         </li>
     );
 }
-MyPage.propTypes = {
+PageLink.propTypes = {
     text: PropTypes.node.isRequired,
     url: PropTypes.string.isRequired,
     active: PropTypes.bool.isRequired,
@@ -28,13 +30,13 @@ class Paginator extends Component {
             lg = this.props.linkGenerator,
             oc = this.props.onClick;
 
-        const first = <MyPage text='«' url={lg(p.first)} active={false} disabled={p.first === p.current} onClick={oc} />;
-        const last = <MyPage text='»' url={lg(p.last)} active={false} disabled={p.last === p.current} onClick={oc} />;
-        const prev = <MyPage text='‹' url={lg(p.previous || -1)} active={false} disabled={!('previous' in p)} onClick={oc} />;
-        const next = <MyPage text='›' url={lg(p.next || -1)} active={false} disabled={!('next' in p)} onClick={oc} />;
+        const first = <PageLink text='«' url={lg(p.first)} active={false} disabled={p.first === p.current} onClick={oc} />;
+        const last = <PageLink text='»' url={lg(p.last)} active={false} disabled={p.last === p.current} onClick={oc} />;
+        const prev = <PageLink text='‹' url={lg(p.previous || -1)} active={false} disabled={!('previous' in p)} onClick={oc} />;
+        const next = <PageLink text='›' url={lg(p.next || -1)} active={false} disabled={!('next' in p)} onClick={oc} />;
 
         const pageRange = p.pagesInRange.map(page => {
-            return <MyPage key={page} text={page} url={lg(page)} active={page === p.current} disabled={false} onClick={oc} />
+            return <PageLink key={page} text={page} url={lg(page)} active={page === p.current} disabled={false} onClick={oc} />
         });
 
         return (

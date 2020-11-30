@@ -11,7 +11,6 @@ class ThreadListItem extends Component {
         const t = this.props.thread;
         return (
             <>
-            {/* TODO border highlight user's threads */}
             <Card.Body className='py-2'>
                 <Container fluid className='p-0'>
                     <Row className='no-gutters'>
@@ -26,7 +25,6 @@ class ThreadListItem extends Component {
                                 WebkitBoxOrient: 'vertical',
                             }} >
                                 {t.title}
-                                {/*There was standing before the hookah out of her swim in a good deal: this remark, and read the way YOU must be executed for her, leaning her. There was standing before the hookah out of her swim in a good deal: this remark, and read the way YOU must be executed for her, leaning her.*/}
                             </Link>
 
                             {/* - CreatedAt, author -*/}
@@ -41,7 +39,6 @@ class ThreadListItem extends Component {
                             {t.commentsCount}
                         </Col>
 
-                        {/*<NewVoting post={t} isThread={true} />*/}
                         <VotingGeneral post={t} isThread={true} isVertical={true} />
 
                     </Row>

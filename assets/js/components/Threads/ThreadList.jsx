@@ -4,10 +4,11 @@ import { getThreads } from "../../redux/threads";
 import {Link} from "react-router-dom";
 import Paginator from "../common/Paginator";
 import UrlBuilder from "../../utils/UrlBuilder";
-import {Row, Button, Card, Col, Container, Spinner} from "react-bootstrap";
+import {OverlayTrigger, Row, Button, Card, Col, Container, Spinner, Tooltip} from "react-bootstrap";
 import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import ThreadListItem from "./ThreadListItem";
+import ConditionalTooltip from "../common/ConditionalTooltip";
 
 const mapDispatchToProps = {
     getThreads
@@ -17,7 +18,8 @@ const mapStateToProps = state => {
     return {
         threads: state.threads.list,
         authLoaded: state.auth.loaded,
-        isLoggedIn: state.auth.isLoggedIn,
+        isLoggedIn: state.auth.isLoggedIn, // TODO remove
+        user: state.auth.user,
     };
 };
 
@@ -101,18 +103,43 @@ class ThreadList extends React.Component {
         return (
             <div>
                 {/* --- Title, Create new button --- */}
-                <Row>
-                    <Col className='pr-0'>
-                        <h2 style={{display: "inline-block"}}>Topics list</h2>
+                <Row className='justify-content-between'>
+                    <Col xs={6} sm='auto' className='pr-0 '>
+                        <h2>Topics list</h2>
                     </Col>
-                    <Col className='pl-0'>
-                        <Link to={UrlBuilder.Threads.Create()}>
-                            <Button style={{float: "right"}}><FA icon={faPlus}/> Create new</Button>
-                        </Link>
+                    <Col xs={6} sm='auto' className='pl-0 text-right'>
+                        {/*<OverlayTrigger
+                            placement='left'
+                            overlay={this.props.u !== null ?
+                                <Tooltip id='create-thread-btn-tooltip'>
+                                    You must be logged in to do that.
+                                </Tooltip>
+                                : <div></div>}
+                        >
+                            <div>
+                                <Link to={UrlBuilder.Threads.Create()} style={{pointerEvents: 'none'}}>
+                                    <Button disabled><FA icon={faPlus}/> Create new</Button>
+                                </Link>
+                            </div>
+                        </OverlayTrigger>*/}
+
+                        <ConditionalTooltip
+                            placement='left'
+                            tooltip='You must be logged in to do that.'
+                            tooltipId='create-thread-btn-tooltip'
+                            show={this.props.user === null}
+                            pointerEventsNone={true}
+                        >
+                            <Link to={UrlBuilder.Threads.Create()}>
+                                <Button disabled={this.props.user === null}><FA icon={faPlus}/> Create new</Button>
+                            </Link>
+                        </ConditionalTooltip>
+
+
                     </Col>
                 </Row>
 
-                <Container fluid className='thread-list-container'>
+                <Container fluid className='full-width-container-md-down'>
                     <Card>
 
                         {/* -- Card header -- */}

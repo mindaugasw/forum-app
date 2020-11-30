@@ -43,7 +43,8 @@ class ReactApp extends React.Component {
 
                 <Container id='app-body' fluid='lg' > {/*fluid-lg = container takes 100% width until lg (on xd sm md, but not lg)*/}
                     <Row className='justify-content-center'>
-                        <Col><br/>
+                        <Col>
+                            <br/>
 
                             <Switch>
                                 <Route exact path={UrlBuilder.Home()}>

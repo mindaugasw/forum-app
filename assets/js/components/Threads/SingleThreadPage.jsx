@@ -15,14 +15,12 @@ import {Button, Card, Col, Container, Row, Spinner} from "react-bootstrap";
 import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import PostFrame from "./PostFrame";
-import {PostFrame_Thread} from "./PostFrameVariants";
+import {PostFrame_Comment, PostFrame_Comment_connected, PostFrame_Thread} from "./PostFrameVariants";
+import ConditionalTooltip from "../common/ConditionalTooltip";
 
 const mapDispatchToProps = {
     getSingleThread,
     getComments,
-
-    // editThread,
-    // deleteThread
 }
 const mapStateToProps = state => {
     return {
@@ -47,9 +45,6 @@ class SingleThreadPage extends React.Component {
         this.getListUrl = this.getListUrl.bind(this);
         this.getPaginationListUrl = this.getPaginationListUrl.bind(this);
         this.handlePageNavigation = this.handlePageNavigation.bind(this);
-        /*this.handleDeleteClick = this.handleDeleteClick.bind(this);
-        this.handleEditClick = this.handleEditClick.bind(this);
-        this.handleCancelEditClick = this.handleCancelEditClick.bind(this);*/
 
         this.loadThread();
         this.loadComments();
@@ -59,33 +54,6 @@ class SingleThreadPage extends React.Component {
         this.loadThread();
         this.loadComments();
     }
-
-    /*handleDeleteClick(event) {
-        event.preventDefault();
-
-        if (!canUserManagePost(this.props.user, this.props.thread)) {
-            console.error('You don\'t have permissions to do that');
-            return;
-        }
-
-        const u = this.props.user;
-        const message = `Delete this thread?${u && u.id !== this.props.thread.author.id ?
-        `\n\nWARNING: you are deleting someone else's thread as an admin!` : ``}`
-        let answer = confirm(message);
-
-        if (answer)
-            this.props.deleteThread({threadId: this.props.thread.id});
-    }
-
-    handleEditClick(event) {
-        event.preventDefault();
-        this.setState({editMode: true});
-    }
-
-    handleCancelEditClick(event) {
-        event.preventDefault();
-        this.setState({editMode: false});
-    }*/
 
     /**
      * Checks if currently loaded data matches needed data for this view. If not, loads needed data.
@@ -147,7 +115,166 @@ class SingleThreadPage extends React.Component {
         });*/
     }
 
+    render_comments_list() {
+        const t = this.props.thread;
+        const c = this.props.thread.comments;
+
+        if (c.loaded !== LoadState.Done) {
+            return <div className='text-center mt-5 pt-5'><Spinner animation="border" /></div>;
+        } else {
+            return c.items.map(comment => {
+                return <Comment key={comment.id} comment={comment} thread={t} />
+            });
+        }
+    }
+
+
+
     render() {
+        /** This thread (wrapper object, not thread item!) */
+        const t = this.props.thread;
+        /** Thread item or null */
+        const ti = t.item || null;
+        /** Comments object (not comment items!) */
+        const c = this.props.thread.comments;
+        /** Comment items array */
+        const ci = c.items || null;
+
+        const u = this.props.user;
+
+        // TODO thread 404 page (e.g. threads/900)
+
+        /**
+         * Thread title and PostFrame
+         */
+        function threadJsx() {
+            return (
+                t.loaded === LoadState.Done ?
+                    <>
+                        <h3 className='mx-15-md-down'>{ti.title}</h3>
+                        {/*<h3 className='margins-md-x15'>{ti.title}</h3>*/}
+                        <PostFrame.Thread thread={ti} isNewThreadForm={false} />
+                    </>
+                : <div className='text-center my-5 pb-5'><Spinner animation='border' /></div>
+            );
+        }
+
+        function commentsListJsx() {
+            // const t = this.props.thread; // thread wrapper object
+            // const c = this.props.thread.comments; // actual comment objects are in c.items
+
+            if (c.loaded !== LoadState.Done) {
+                return <div className='text-center mt-5 pt-5'><Spinner animation="border" /></div>;
+            } else {
+                const headerJsx = // Header - Comments headline, new button
+                    <Row className='justify-content-between mx-0-md-down'>
+                        <Col xs={6} sm='auto' className='pr-0'>
+                            <h2>
+                                {c.items.length !== 0 ? <>Comments ({c.pagination.totalCount})</>
+                                    : 'There are no comments'}
+                            </h2>
+                        </Col>
+                        <Col xs={6} sm='auto' className='pl-0 text-right'>
+                            <ConditionalTooltip
+                                placement='left'
+                                tooltip='You must be logged in to do that.'
+                                tooltipId='create-comment-btn-tooltip'
+                                show={u === null}
+                                pointerEventsNone={true}
+                            >
+                                <Link to={UrlBuilder.Threads.Create()}>
+                                    <Button disabled={u === null}><FA icon={faPlus}/> Add new</Button>
+                                </Link>
+                            </ConditionalTooltip>
+                        </Col>
+                    </Row>;
+                const listJsx = c.items.map(ci => { // ci for comment.item
+                    return (
+                        <div key={ci.id}>
+                            {/*<PostFrame post={ci} isThread={false} formMode={false} />*/}
+                            <PostFrame_Comment_connected comment={ci} isNewCommentForm={false} />
+                            <br/>
+                        </div>
+                    );
+                });
+
+                return (
+                    <>
+                        {headerJsx}
+                        {/*<Container fluid className='thread-list-container'>*/}
+                        {listJsx}
+                        {/*</Container>*/}
+                    </>
+                );
+            }
+        }
+
+        // --- Comments ---
+        // let commentsListJsx = this.render_comments_list();
+        // let commentsListJsx = this.commentsListJsx();
+
+
+        return (
+            <Container fluid className='full-width-container-md-down' > {/*style={{width: 'auto', margin: '0 -15px', padding: '0px'}}*/}
+                {/* --- Thread --- */}
+                {/*{t.loaded === LoadState.Done ?
+                    <>
+                        <h3 className='mx-15-md-down'>{ti.title}</h3>
+                        <PostFrame.Thread thread={ti} isNewThreadForm={false} />
+                    </>
+                : null}*/}
+                {threadJsx()}
+                <br/>
+
+
+                {/* --- Comments, Create new button --- */}
+                {/*<h2 style={{display: "inline-block"}}>Comments (420)</h2>
+                <Link to={UrlBuilder.Threads.Create()}>
+                    <Button style={{float: "right"}}><FA icon={faPlus}/> Add new</Button>
+                </Link>*/}
+
+
+                {/*<Container fluid className='thread-list-container'>*/}
+
+                {commentsListJsx()}
+
+                    {/*<Card>
+
+                        /!* -- Card header -- *
+                        <Card.Header className='py-2'>
+                            <Container fluid className='p-0'>
+                                <Row className='no-gutters'>
+                                    <Col>
+                                        Title
+                                    </Col>
+                                    <Col sm={2} className={'d-none d-sm-block text-center'}> {*Visible on sm and up*}
+                                        Replies
+                                    </Col>
+                                    <Col xs={2} sm={1} className='text-center'>
+                                        Vote
+                                    </Col>
+                                </Row>
+                            </Container>
+                        </Card.Header>
+
+                    </Card>*/}
+
+
+                {/*</Container>*/}
+                <br/>
+                {/*{paginator}*/}
+                {ci && ci.length > 0 ?
+                    <Paginator
+                        pagination={c.pagination}
+                        linkGenerator={this.getPaginationListUrl}
+                        onClick={this.handlePageNavigation}
+                    />
+                : null}
+            </Container>
+        );
+    }
+
+    render_old() {
         return this.render_new();
 
         const t = this.props.thread;
@@ -222,123 +349,15 @@ class SingleThreadPage extends React.Component {
             </div>
         );
     }
-
-    render_new() {
-        /** This thread (not thread item!) */
-        const t = this.props.thread;
-        /** Thread item or null */
-        const ti = t.item || null;
-        /** Comments object from state */
-        const c = this.props.thread.comments;
-        const ci = c.items || null;
-
-        // console.log(ci);
-
-        // TODO thread 404 page (e.g. threads/900)
-
-        // --- Comments ---
-        let commentsListJsx = this.render_comments_list();
-        /*let commentsListJsx;
-        if (c.loaded !== LoadState.Done) {
-            commentsListJsx = <Loading/>;
-        } else {
-            console.log('ASDccc');
-            let listJsx = c.items.map(ci => { // ci for comment item
-                return (
-                    <Comment key={ci.id} comment={ci} thread={t.item} />
-                );
-            });
-
-            const paginator = <Paginator pagination={c.pagination}
-                                         linkGenerator={this.getPaginationListUrl}
-                                         onClick={this.handlePageNavigation} />
-
-            commentsListJsx =
-                <div className='bsr'>
-                    <h3>Comments (total {t.item.commentsCount})</h3>
-                    <ul>{listJsx}</ul>
-                    {paginator}
-                </div>;
-        }*/
-
-
-
-
-        /*const commentsListJsx = c.map(comment => {
-            return <Comment key={comment.id} thread={t} comment={comment} />;
-        });*/
-
-
-        return (
-            <div>
-                {/* --- Thread --- */}
-                <h2>Thread view</h2>
-                {t.loaded === LoadState.Done ?
-                    // <PostFrame post={t.item} formMode={false} />
-                    // <PostFrame.Thread thread={ti} isNewThreadForm={false} />
-                    <PostFrame_Thread thread={ti} isNewThreadForm={false} />
-                : null}
-                <br/><br/>
-
-
-                {/* --- Comments, Create new button --- */}
-                <h2 style={{display: "inline-block"}}>Comments (420)</h2>
-                <Link to={UrlBuilder.Threads.Create()}>
-                    <Button style={{float: "right"}}><FA icon={faPlus}/> Add new</Button>
-                </Link>
-
-
-                <Container fluid className='thread-list-container'>
-
-                    {commentsListJsx}
-
-                    {/*<Card>
-
-                        /!* -- Card header -- *
-                        <Card.Header className='py-2'>
-                            <Container fluid className='p-0'>
-                                <Row className='no-gutters'>
-                                    <Col>
-                                        Title
-                                    </Col>
-                                    <Col sm={2} className={'d-none d-sm-block text-center'}> {*Visible on sm and up*}
-                                        Replies
-                                    </Col>
-                                    <Col xs={2} sm={1} className='text-center'>
-                                        Vote
-                                    </Col>
-                                </Row>
-                            </Container>
-                        </Card.Header>
-
-                    </Card>*/}
-
-
-                </Container>
-                <br/>
-                {/*{paginator}*/}
-            </div>
-        );
-    }
-
-    render_comments_list() {
-        const t = this.props.thread;
-        const c = this.props.thread.comments;
-
-        if (c.loaded !== LoadState.Done) {
-            return <div className='text-center mt-5 pt-5'><Spinner animation="border" /></div>;
-        } else {
-            return c.items.map(comment => {
-                return <Comment key={comment.id} comment={comment} thread={t} />
-            });
-        }
-    }
 }
 
 SingleThreadPage.propTypes = {
+    // Redux state:
     // thread: PropTypes.object.isRequired,
     // authLoaded: PropTypes.bool.isRequired,
     // isLoggedIn: PropTypes.bool.isRequired,
+
+    // Router:
     // match: PropTypes.object.isRequired,
 }
 

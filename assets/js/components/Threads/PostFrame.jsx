@@ -8,8 +8,9 @@ import {canUserManagePost} from "../../redux/auth";
 import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
 import {faEdit, faExclamationCircle, faMinusCircle, faPlusCircle, faTrash} from "@fortawesome/free-solid-svg-icons";
 import VotingGeneral from "./VotingGeneral";
-import {PostFrame_Thread} from "./PostFrameVariants";
+import {PostFrame_Comment, PostFrame_Thread} from "./PostFrameVariants";
 import AlertWithIcon from "../common/AlertWithIcon";
+import ConditionalTooltip from "../common/ConditionalTooltip";
 
 const mapStateToProps = state => {
     return {
@@ -79,8 +80,8 @@ class PostFrame extends Component {
     }
 
     // Component variants shortcuts
-    static Thread = PostFrame_Thread; // TODO rename
-
+    static Thread = PostFrame_Thread;
+    // static Comment = PostFrame_Comment;
 
     handleFormChange(event) {
         const target = event.target;
@@ -158,7 +159,7 @@ class PostFrame extends Component {
                     </Link>
                     <span className='text-muted d-none d-sm-inline small'> {/* Hide on xs */}
                         {/* TODO check if edited ago works */}
-                        {p.edited ?
+                        {/*{p.edited ?
                             <OverlayTrigger overlay={
                                 <Tooltip id={`${isThread ? 't' : 'c'}-edited-${p.id}`}>
                                     Submitted {(new Date(p.createdAt)).timeAgo()}<br/>
@@ -169,7 +170,20 @@ class PostFrame extends Component {
                                 {submittedTimeAgoJsx}
                             </span>
                             </OverlayTrigger>
-                            : submittedTimeAgoJsx}
+                        : submittedTimeAgoJsx}*/}
+                        <ConditionalTooltip
+                            placement='top'
+                            tooltip={<>
+                                Submitted {(new Date(p.createdAt)).timeAgo()}<br/>
+                                Last edit {(new Date(p.updatedAt)).timeAgo()}</>}
+                            tooltipId={`${isThread ? 't' : 'c'}-edited-${p.id}`}
+                            show={p.edited}
+                            wrapperProps={{className: 'd-inline-block'}}
+                        >
+                            <span className='d-inline-block'>
+                                {submittedTimeAgoJsx}
+                            </span>
+                        </ConditionalTooltip>
                         {APP_ENV === 'dev' ? <> &nbsp;·&nbsp; #{p.id}</> : ''}
                 </span>
                 </>;

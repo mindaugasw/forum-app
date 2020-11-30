@@ -3,6 +3,7 @@ import {Navbar, Nav, NavDropdown, Image, Spinner, Button, OverlayTrigger, Toolti
 import {Link, NavLink} from "react-router-dom";
 import { connect } from "react-redux";
 import UrlBuilder from "../../utils/UrlBuilder";
+import ConditionalTooltip from "./ConditionalTooltip";
 
 const mapStateToProps = state => {
     return {
@@ -70,7 +71,7 @@ class NavBar extends Component {
         }
 
         return (
-            <Navbar bg="light" expand="lg" sticky="top" onToggle={this.setNavExpanded} expanded={this.state.navExpanded}>
+            <Navbar bg="light" expand="md" sticky="top" onToggle={this.setNavExpanded} expanded={this.state.navExpanded}>
                 <Link to='/'>
                     <Navbar.Brand>Forum app</Navbar.Brand>
                 </Link>
@@ -113,7 +114,7 @@ class NavBar extends Component {
 
                 {/* Bootstrap breakpoints indicator */}
                 {APP_ENV === 'dev' ?
-                <OverlayTrigger
+                <OverlayTrigger // With ConditionalTooltip layout breaks?
                     placement='bottom'
                     overlay={<Tooltip id='breakpoint-indicator-tooltip'>
                         Bootstrap breakpoint indicator. Shown only on dev.
