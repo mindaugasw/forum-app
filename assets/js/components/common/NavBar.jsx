@@ -3,7 +3,7 @@ import {Navbar, Nav, NavDropdown, Image, Spinner, Button, OverlayTrigger, Toolti
 import {Link, NavLink} from "react-router-dom";
 import { connect } from "react-redux";
 import UrlBuilder from "../../utils/UrlBuilder";
-import ConditionalTooltip from "./ConditionalTooltip";
+import ConditionalTooltip, {msg_MustBeLoggedIn, msg_NotImplemented} from "./ConditionalTooltip";
 
 const mapStateToProps = state => {
     return {
@@ -44,6 +44,7 @@ class NavBar extends Component {
         } else if (auth.isLoggedIn) {
             profileArea =
                 <>
+                {/* --- User --- */}
                 <NavDropdown title={
                     <>
                     {auth.user.username+' '}
@@ -53,17 +54,37 @@ class NavBar extends Component {
                         roundedCircle />
                     </>} alignRight id="basic-nav-dropdown">
 
-                    <NavDropdown.Item as={NavLink} to={UrlBuilder.Users.Single(auth.user.id)} onClick={this.closeNav} disabled>My profile</NavDropdown.Item>
-                    <NavDropdown.Item as={NavLink} to={UrlBuilder.Users.Edit(auth.user.id)} onClick={this.closeNav} disabled>Edit profile</NavDropdown.Item>
+                    {/* --- User links --- */}
+                    <ConditionalTooltip
+                        placement='bottom'
+                        tooltip={msg_NotImplemented}
+                        tooltipId='navbar-myprofile-tooltip'
+                        show={true}
+                    >
+                        <NavDropdown.Item as={NavLink} to={UrlBuilder.Users.Single(auth.user.id)} onClick={this.closeNav} disabled>My profile</NavDropdown.Item>
+                    </ConditionalTooltip>
+
+                    <ConditionalTooltip
+                        placement='bottom'
+                        tooltip={msg_NotImplemented}
+                        tooltipId='navbar-editprofile-tooltip'
+                        show={true}
+                    >
+                        <NavDropdown.Item as={NavLink} to={UrlBuilder.Users.Edit(auth.user.id)} onClick={this.closeNav} disabled>Edit profile</NavDropdown.Item>
+                    </ConditionalTooltip>
+
                     <NavDropdown.Item as={NavLink} to={UrlBuilder.Logout()} onClick={this.closeNav}>Logout</NavDropdown.Item>
                 </NavDropdown>
                 </>;
         } else {
             profileArea =
                 <>
+                {/* --- Login --- */}
                 <Nav.Item>
                     <Nav.Link as={NavLink} to={UrlBuilder.Login()} onClick={this.closeNav}>Login</Nav.Link>
                 </Nav.Item>
+
+                {/* --- Register --- */}
                 <Nav.Item>
                     <Nav.Link as={NavLink} to={UrlBuilder.Register()} onClick={this.closeNav}>Register</Nav.Link>
                 </Nav.Item>
@@ -78,15 +99,40 @@ class NavBar extends Component {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
 
+                        {/* --- Threads list --- */}
                         <Nav.Item>
                             <Nav.Link as={NavLink} to={UrlBuilder.Threads.Index()} onClick={this.closeNav}>Topics list</Nav.Link>
                         </Nav.Item>
-                        <Nav.Item>
-                            <Nav.Link as={NavLink} to={UrlBuilder.Threads.Create()} onClick={this.closeNav}>New topic</Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <Nav.Link as={NavLink} to={UrlBuilder.Users.List()} onClick={this.closeNav} disabled>Users</Nav.Link>
-                        </Nav.Item>
+
+                        {/* --- New thread --- */}
+                        <ConditionalTooltip
+                            placement='bottom'
+                            tooltip={msg_MustBeLoggedIn}
+                            tooltipId='navbar-newthread-loggedin-tooltip'
+                            show={!auth.user}
+                        >
+                            <Nav.Item>
+                                <Nav.Link
+                                    as={NavLink}
+                                    to={UrlBuilder.Threads.Create()}
+                                    onClick={this.closeNav}
+                                    disabled={!auth.user}
+                                >New topic</Nav.Link>
+                            </Nav.Item>
+                        </ConditionalTooltip>
+
+                        {/* --- Users list --- */}
+                        <ConditionalTooltip
+                            placement='bottom'
+                            tooltip={msg_NotImplemented}
+                            tooltipId='navbar-userslist-tooltip'
+                            show={true}
+                        >
+                            <Nav.Item>
+                                <Nav.Link as={NavLink} to={UrlBuilder.Users.List()} onClick={this.closeNav} disabled>Users</Nav.Link>
+                            </Nav.Item>
+                        </ConditionalTooltip>
+
                         <Nav.Item>
                             <Nav.Link
                                 href={"https://github.com/mindaugasw/forum-app/blob/master/docs/README.md"} target='_blank' rel='noopener noreferrer'

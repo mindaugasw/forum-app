@@ -15,8 +15,9 @@ import {Button, Card, Col, Container, Row, Spinner} from "react-bootstrap";
 import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import PostFrame from "./PostFrame";
-import {PostFrame_Comment, PostFrame_Comment_connected, PostFrame_Thread} from "./PostFrameVariants";
-import ConditionalTooltip from "../common/ConditionalTooltip";
+import {PostFrame_Comment, PostFrame_Thread} from "./PostFrameVariants";
+import ConditionalTooltip, {msg_MustBeLoggedIn} from "../common/ConditionalTooltip";
+import Utils from "../../utils/Utils";
 
 const mapDispatchToProps = {
     getSingleThread,
@@ -149,13 +150,12 @@ class SingleThreadPage extends React.Component {
          */
         function threadJsx() {
             return (
-                t.loaded === LoadState.Done ?
+                // t.loaded === LoadState.Done ?
                     <>
                         <h3 className='mx-15-md-down'>{ti.title}</h3>
-                        {/*<h3 className='margins-md-x15'>{ti.title}</h3>*/}
                         <PostFrame.Thread thread={ti} isNewThreadForm={false} />
                     </>
-                : <div className='text-center my-5 pb-5'><Spinner animation='border' /></div>
+                // : <div className='text-center my-5 pb-5'><Spinner animation='border' /></div>
             );
         }
 
@@ -163,28 +163,28 @@ class SingleThreadPage extends React.Component {
             // const t = this.props.thread; // thread wrapper object
             // const c = this.props.thread.comments; // actual comment objects are in c.items
 
-            if (c.loaded !== LoadState.Done) {
-                return <div className='text-center mt-5 pt-5'><Spinner animation="border" /></div>;
-            } else {
+            // if (c.loaded !== LoadState.Done) {
+            //     return <div className='text-center mt-5 pt-5'><Spinner animation="border" /></div>;
+            // } else {
                 const headerJsx = // Header - Comments headline, new button
-                    <Row className='justify-content-between mx-0-md-down'>
+                    <Row className='justify-content-between mx-0-md-down mb-1'>
                         <Col xs={6} sm='auto' className='pr-0'>
-                            <h2>
+                            <h3>
                                 {c.items.length !== 0 ? <>Comments ({c.pagination.totalCount})</>
                                     : 'There are no comments'}
-                            </h2>
+                            </h3>
                         </Col>
                         <Col xs={6} sm='auto' className='pl-0 text-right'>
                             <ConditionalTooltip
                                 placement='left'
-                                tooltip='You must be logged in to do that.'
+                                tooltip={msg_MustBeLoggedIn}
                                 tooltipId='create-comment-btn-tooltip'
                                 show={u === null}
                                 pointerEventsNone={true}
                             >
-                                <Link to={UrlBuilder.Threads.Create()}>
+                                <a href='#new-comment-form'>
                                     <Button disabled={u === null}><FA icon={faPlus}/> Add new</Button>
-                                </Link>
+                                </a>
                             </ConditionalTooltip>
                         </Col>
                     </Row>;
@@ -192,7 +192,7 @@ class SingleThreadPage extends React.Component {
                     return (
                         <div key={ci.id}>
                             {/*<PostFrame post={ci} isThread={false} formMode={false} />*/}
-                            <PostFrame_Comment_connected comment={ci} isNewCommentForm={false} />
+                            <PostFrame.Comment comment={ci} parentThread={ti} isNewCommentForm={false} />
                             <br/>
                         </div>
                     );
@@ -206,8 +206,27 @@ class SingleThreadPage extends React.Component {
                         {/*</Container>*/}
                     </>
                 );
-            }
+            // }
         }
+
+        const paginatorJsx = ci && ci.length > 0 ?
+            <Paginator
+                pagination={c.pagination}
+                linkGenerator={this.getPaginationListUrl}
+                onClick={this.handlePageNavigation}
+            />
+            : null;
+
+        function newCommentFormJsx() {
+            return (
+                <>
+                    <h3 className='mx-15-md-down' id='new-comment-form'>Add new comment</h3>
+                    <PostFrame.Comment comment={null} parentThread={ti} isNewCommentForm={true} />
+                </>
+            );
+        }
+
+        const loaderJsx = <div className='text-center mt-5 pt-5'><Spinner animation='border' /></div>;
 
         // --- Comments ---
         // let commentsListJsx = this.render_comments_list();
@@ -223,8 +242,33 @@ class SingleThreadPage extends React.Component {
                         <PostFrame.Thread thread={ti} isNewThreadForm={false} />
                     </>
                 : null}*/}
-                {threadJsx()}
-                <br/>
+                {t.loaded === LoadState.Done ?
+                    <>
+                        {Utils.Titles.ThreadView(t.item.title)}
+                        {threadJsx()}
+                        <br/>
+
+
+                        {c.loaded === LoadState.Done ?
+                            <>
+                                {commentsListJsx()}
+                                {paginatorJsx}
+                                <br/>
+                                {newCommentFormJsx()}
+                            </>
+                            : loaderJsx
+                        }
+                    </>
+                    :
+                    <>
+                        {Utils.Titles.ThreadView('Topic view')}
+                        {loaderJsx}
+                    </>
+                }
+
+
+                {/*{threadJsx()}
+                <br/>*/}
 
 
                 {/* --- Comments, Create new button --- */}
@@ -236,7 +280,7 @@ class SingleThreadPage extends React.Component {
 
                 {/*<Container fluid className='thread-list-container'>*/}
 
-                {commentsListJsx()}
+                {/*{commentsListJsx()}*/}
 
                     {/*<Card>
 
@@ -260,16 +304,11 @@ class SingleThreadPage extends React.Component {
                     </Card>*/}
 
 
-                {/*</Container>*/}
+                {/*{paginatorJsx}
                 <br/>
-                {/*{paginator}*/}
-                {ci && ci.length > 0 ?
-                    <Paginator
-                        pagination={c.pagination}
-                        linkGenerator={this.getPaginationListUrl}
-                        onClick={this.handlePageNavigation}
-                    />
-                : null}
+
+                {newCommentFormJsx()}*/}
+
             </Container>
         );
     }

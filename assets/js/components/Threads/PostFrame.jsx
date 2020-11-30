@@ -10,7 +10,8 @@ import {faEdit, faExclamationCircle, faMinusCircle, faPlusCircle, faTrash} from 
 import VotingGeneral from "./VotingGeneral";
 import {PostFrame_Comment, PostFrame_Thread} from "./PostFrameVariants";
 import AlertWithIcon from "../common/AlertWithIcon";
-import ConditionalTooltip from "../common/ConditionalTooltip";
+import ConditionalTooltip, {msg_MustBeLoggedIn} from "../common/ConditionalTooltip";
+import Utils from "../../utils/Utils";
 
 const mapStateToProps = state => {
     return {
@@ -35,7 +36,7 @@ class PostFrame extends Component {
         this.contentJsx = this.contentJsx.bind(this);
 
         const p = this.props.post;
-        let initialState = {
+        this.initialState = {
             post: p || {
                 title: '',
                 content: '',
@@ -67,21 +68,23 @@ class PostFrame extends Component {
             initialState = mergeDeep(initialState, this.props.onValidateFullForm(initialState));
         }*/
 
-        this.state = initialState;
+        this.state = this.initialState;
     }
+
+    // static initialState = null; // Needs to be class property to easily reset on new comment submit, as component is not remounted and state not reset automatically
+
+    // Component variants shortcuts
+    static Thread = PostFrame_Thread;
+    static Comment = PostFrame_Comment;
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         // Validate form if entering edit mode
         if (prevProps.formMode === false && this.props.formMode === true) {
             this.setState({
-                ...mergeDeep(this.state, this.props.onValidateFullForm(this.state))
+                ...Utils.MergeDeep(this.state, this.props.onValidateFullForm(this.state))
             });
         }
     }
-
-    // Component variants shortcuts
-    static Thread = PostFrame_Thread;
-    // static Comment = PostFrame_Comment;
 
     handleFormChange(event) {
         const target = event.target;
@@ -93,7 +96,7 @@ class PostFrame extends Component {
 
         this.setState(state => {
             return {
-                ...mergeDeep(state, newStateData),
+                ...Utils.MergeDeep(state, newStateData),
                 post: {
                     ...state.post,
                     [target.id]: target.value,
@@ -106,14 +109,20 @@ class PostFrame extends Component {
         event.preventDefault();
 
         this.props.onSubmit(event, this.state).then(newState => {
-            if (newState) // If any state was returned, it's likely updated validation data, and form was not submitted
-                this.setState(state => {
-                    return {
-                        ...mergeDeep(state, newState),
-                    };
-                })
+            if (newState) { // If any state was returned, it's likely updated validation data, and form was not submitted
+                if (newState.resetState === true)
+                    this.setState({...this.initialState});
+                else
+                    this.setState(state => {
+                        return {
+                            ...Utils.MergeDeep(state, newState),
+                        };
+                    });
+            }
         });
     }
+
+    // TODO move methods inside render
 
     /**
      * User avatar (or placeholder), username, posted time ago
@@ -306,7 +315,7 @@ class PostFrame extends Component {
                             : null}
                         </Form.Group>
 
-                        {/* --- Buttons --- */}
+                        {/* --- Admin alert --- */}
                         {editMode && u && u.id !== p.author.id ?
                             <Alert variant='primary' className='mb-2'>
                                 <FA icon={faExclamationCircle} />
@@ -314,16 +323,39 @@ class PostFrame extends Component {
                             </Alert>
                         : null }
 
-                        <Button variant='primary' type='submit' className='mr-2' disabled={!v.valid}>
+                        {/* --- Submit button --- */}
+                        <ConditionalTooltip
+                            placement='right'
+                            tooltip={msg_MustBeLoggedIn}
+                            tooltipId='postframe-form-submit-auth-tooltip'
+                            show={!u}
+                            pointerEventsNone={true}
+                        >
+                            <Button variant='primary' type='submit' className='mr-2' disabled={!v.valid}>
+                                {formLoading ?
+                                    <Spinner animation='border' size='sm' />
+                                    : null
+                                }{' '}
+                                {editMode ? 'Save' : 'Submit'}
+                            </Button>
+                        </ConditionalTooltip>
+
+                        {/*<Button variant='primary' type='submit' className='mr-2' disabled={!v.valid}>
                             {formLoading ?
                                 <Spinner animation='border' size='sm' />
                                 : null
                             }{' '}
                             {editMode ? 'Save' : 'Submit'}
-                        </Button>
+                        </Button>*/}
+
+
+                        {/* --- Cancel edit button --- */}
                         {editMode ?
-                            <Button variant='secondary' onClick={/*this.props.onCancelClick*/ event => this.props.onEditClick(event, false)}>Cancel</Button>
-                            : null}
+                            <Button
+                                variant='secondary'
+                                onClick={event => this.props.onEditClick(event, false)}
+                            >Cancel</Button>
+                        : null}
                     </fieldset>
                 </Form>;
         }

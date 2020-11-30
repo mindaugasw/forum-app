@@ -12,7 +12,10 @@ import './styles/app.scss';
 
 import React from 'react';
 import { render } from 'react-dom';
-import "./js/utils/utils"; // Must be imported before ReactApp?
+// import Utils from "./js/utils/Utils";
+import "./js/utils/constants";
+import "./js/utils/dateFormat";
+import "./js/utils/prototypes"; // Must be imported before ReactApp?
 import ReactApp from "./js/components/ReactApp";
 import { Provider } from "react-redux";
 import store from "./js/redux/store";

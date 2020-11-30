@@ -106,6 +106,7 @@ class Notifications {
             type: 'danger',
             headline: 'You must be logged in to do that!',
             message,
+            timeout: 5000,
             id: 'unauthenticated-notification' // Same id for all notifications to keep only one notification of this type
         });
     }
@@ -116,7 +117,7 @@ class Notifications {
     static Unauthorized() {
         this.Add({
             type: 'danger',
-            headline: 'You do not have permission to do thatt!',
+            headline: 'You do not have permission to do that!',
             message: null,
         });
     }

@@ -5,6 +5,7 @@ import {submitVote} from "../../redux/threads";
 import {Col} from "react-bootstrap";
 import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
 import {faMinusCircle, faPlusCircle} from "@fortawesome/free-solid-svg-icons";
+import Notifications from "../../utils/Notifications";
 
 const mapDispatchToProps = {
     submitVote
@@ -30,7 +31,7 @@ class VotingGeneral extends Component {
 
         // TODO render appropriately
         if (!this.props.isLoggedIn) {
-            console.error('You need to be logged in to do that.');
+            Notifications.Unauthenticated();
             return;
         }
 

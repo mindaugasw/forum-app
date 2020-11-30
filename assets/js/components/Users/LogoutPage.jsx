@@ -5,6 +5,7 @@ import {Spinner} from "react-bootstrap";
 import {logout} from "../../redux/auth";
 import UrlBuilder from "../../utils/UrlBuilder";
 import Notifications from "../../utils/Notifications";
+import Utils from "../../utils/Utils";
 
 const mapDispatchToProps = {
     logout
@@ -22,7 +23,7 @@ class LogoutPage extends Component {
     componentDidMount() {
         this.props.logout()
             .then(action => {
-                redirect(UrlBuilder.Home());
+                Utils.Redirect(UrlBuilder.Home());
                 Notifications.Add({type:'success', headline:'Logout successful'});
             });
     }

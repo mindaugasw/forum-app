@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import API from "../utils/API";
+import Utils from "../utils/Utils";
 
 
 // --- Actions ---
@@ -72,7 +73,7 @@ export const authSlice = createSlice({
         },
         [login.rejected]: (state, action) => {
             // TODO change .code to .error.status and test it
-            console.error('Manual login failed: ' + getSafe(() => action.payload.code, 'unknown error'));
+            console.error('Manual login failed: ' + Utils.GetSafe(() => action.payload.code, 'unknown error'));
             state.loaded = true;
         },
 
@@ -84,7 +85,7 @@ export const authSlice = createSlice({
         },
         [tokenRefresh.rejected]: (state, action) => {
             // TODO change .code to .error.status and test it
-            const errorCode = getSafe(() => action.payload.code, 'unknown error');
+            const errorCode = Utils.GetSafe(() => action.payload.code, 'unknown error');
             console.debug('Automatic login failed: ' + errorCode);
             state.loaded = true;
 
@@ -99,7 +100,7 @@ export const authSlice = createSlice({
             setAuthState(state, false, null, null, null);
         },
         [logout.rejected]: (state, action) => {
-            console.error('Logout failed: ' + getSafe(() => action.payload.code, 'unknown error'));
+            console.error('Logout failed: ' + Utils.GetSafe(() => action.payload.code, 'unknown error'));
             setAuthState(state, false, null, null, null);
         },
     }

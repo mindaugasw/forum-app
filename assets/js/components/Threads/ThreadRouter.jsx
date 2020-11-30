@@ -12,6 +12,7 @@ import { withRouter } from "react-router";
 import SingleThreadPage from "./SingleThreadPage";
 import UrlBuilder from "../../utils/UrlBuilder";
 import PostFrame from "./PostFrame";
+import Utils from "../../utils/Utils";
 
 class ThreadRouter extends React.Component {
     constructor(props) {
@@ -30,6 +31,7 @@ class ThreadRouter extends React.Component {
 
                 <Route path={UrlBuilder.Threads.Create()} >
                     <h2>Create a new topic</h2>
+                    {Utils.Titles.ThreadNew()}
                     <PostFrame.Thread isNewThreadForm={true} thread={null} />
                 </Route>
 

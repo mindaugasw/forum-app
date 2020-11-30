@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import API from "../utils/API";
+import Utils from "../utils/Utils";
 
 
 // --- Actions ---
@@ -61,8 +62,8 @@ export const usersCRUDSlice = createSlice({
         .addMatcher(
             action => action.type.startsWith(BASE) && action.type.endsWith('rejected'), (state, action) => {
                 console.error(`Error in action ${action.type}, ${
-                    getSafe(() => action.payload.error.status, 'unknown status code')}, ${
-                    getSafe(() => action.payload.error.message, 'unknown error message')}`);
+                    Utils.GetSafe(() => action.payload.error.status, 'unknown status code')}, ${
+                    Utils.GetSafe(() => action.payload.error.message, 'unknown error message')}`);
             })
     },
 });

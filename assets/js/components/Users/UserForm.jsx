@@ -7,6 +7,7 @@ import UrlBuilder from "../../utils/UrlBuilder";
 import {UserForm_Login, UserForm_Register} from "./UserFormVariants";
 import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
 import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
+import Utils from "../../utils/Utils";
 
 const mapDispatchToProps = {}
 
@@ -71,7 +72,7 @@ class UserForm extends Component {
 
         this.setState(state => {
             return {
-                ...mergeDeep(state, newStateData),
+                ...Utils.MergeDeep(state, newStateData),
                 [target.id]: target.value,
                 // ...this.props.onChange(event, state) // doesn't work? Throws up in the console
                 // ...newStateData
@@ -86,7 +87,7 @@ class UserForm extends Component {
             if (newState) // If any state was returned, it's likely updated validation data, and form was not submitted
                 this.setState(state => {
                     return {
-                        ...mergeDeep(state, newState),
+                        ...Utils.MergeDeep(state, newState),
                     };
                 })
         });

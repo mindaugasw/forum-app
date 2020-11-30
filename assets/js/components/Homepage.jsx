@@ -4,6 +4,7 @@ import {Link} from "react-router-dom";
 import UrlBuilder from "../utils/UrlBuilder";
 import {connect} from "react-redux";
 import UnderConstructionNotice from "./common/UnderConstructionNotice";
+import Utils from "../utils/Utils";
 
 const mapStateToProps = state => {
     return {
@@ -17,11 +18,14 @@ class Homepage extends Component {
         const {authLoaded, isLoggedIn} = this.props;
         return (
             <div>
+                {Utils.Titles.Homepage()}
+
                 {APP_ENV === 'prod' ? <UnderConstructionNotice /> : null}
 
                 <h1>Welcome!</h1>
                 This is a general-purpose discussion forum. Find more info in{' '}
-                <Link to={UrlBuilder.About()}>About</Link> section.
+                {/*<Link to={UrlBuilder.About()}>About</Link> section.*/}
+                <a href="https://github.com/mindaugasw/forum-app/blob/master/docs/README.md" target='_blank' rel='noopener noreferrer'>About</a> section.
 
                 {authLoaded && !isLoggedIn ?
                     <>

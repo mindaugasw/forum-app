@@ -9,6 +9,7 @@ import {OverlayTrigger, Tooltip} from "react-bootstrap";
 function ConditionalTooltip(props) {
     const show = props.show ? {} : {show: false};
     const styleProp = props.pointerEventsNone && props.show ? {style: {pointerEvents: 'none'}} : {};
+    const wrapperPropsFinal = props.wrapperProps ? props.wrapperProps : {className: 'd-inline-block'};
 
     return (
         <OverlayTrigger
@@ -19,7 +20,7 @@ function ConditionalTooltip(props) {
             // show={null}
             {...show}
         >
-            <div {...props.wrapperProps}> {/* Additional div sometimes needed for tooltips on disabled buttons */}
+            <div {...wrapperPropsFinal}> {/* Additional div sometimes needed for tooltips on disabled buttons */}
                 {/*{props.children}*/}
                 {React.cloneElement(props.children, styleProp)}
             </div>
@@ -37,3 +38,6 @@ ConditionalTooltip.propTypes = {
 }
 
 export default ConditionalTooltip;
+
+export const msg_MustBeLoggedIn = 'You must be logged in to do that.';
+export const msg_NotImplemented = 'Not implemented yet. Coming soon!';

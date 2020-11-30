@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import API from "../utils/API";
 import {login, logout} from "./auth";
 import * as CRUD from "./postsCRUD";
+import Utils from "../utils/Utils";
 
 /*
  * Contains logic for threads loading, listing and viewing, along with their respective comments loading, viewing.
@@ -142,7 +143,7 @@ export const threadSlice = createSlice({
             state.list.url = action.payload.url;
             state.list.loaded = LoadState.Done;
             // TODO change .code to .error.status and test it
-            console.error('Failed fetching threads: ' + getSafe(() => action.payload.code, 'unknown error'));
+            console.error('Failed fetching threads: ' + Utils.GetSafe(() => action.payload.code, 'unknown error'));
         })
 
         .addCase(getSingleThread.pending, (state, action) => {
@@ -157,7 +158,7 @@ export const threadSlice = createSlice({
             // state.single.id = null;
             // state.single.item = null;
             // state.single.loaded = LoadState.NotRequested; // Commented out because causes infinite loop
-            console.error(`Failed fetching thread #${action.meta.arg}: ${getSafe(() => action.payload.error.status, 'unknown error')}`);
+            console.error(`Failed fetching thread #${action.meta.arg}: ${Utils.GetSafe(() => action.payload.error.status, 'unknown error')}`);
         })
 
         .addCase(getComments.pending, (state, action) => {
@@ -171,7 +172,7 @@ export const threadSlice = createSlice({
         })
         .addCase(getComments.rejected, (state, action) => {
             // state.single.comments.items = null;
-            console.error(`Failed fetching comments: ${action.meta.arg}, error: ${getSafe(() => action.payload.error.status, 'unknown error')}`);
+            console.error(`Failed fetching comments: ${action.meta.arg}, error: ${Utils.GetSafe(() => action.payload.error.status, 'unknown error')}`);
         })
 
         .addCase(submitVote.pending, (state, action) => {
@@ -202,7 +203,7 @@ export const threadSlice = createSlice({
         })
         .addCase(submitVote.rejected, (state, action) => {
             console.error(`Failed voting: ${
-                getSafe(() => action.payload.error.status, 'unknown error')
+                Utils.GetSafe(() => action.payload.error.status, 'unknown error')
                 }, {id: ${action.meta.arg.id}, direction: ${action.meta.arg.direction
                 }, isThread: ${action.meta.arg.isThread}}`);
         })

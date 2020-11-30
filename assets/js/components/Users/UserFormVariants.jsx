@@ -5,6 +5,7 @@ import {register, REGISTER} from "../../redux/usersCRUD";
 import {login, LOG_IN_MANUAL} from "../../redux/auth";
 import UrlBuilder from "../../utils/UrlBuilder";
 import Notifications from "../../utils/Notifications";
+import Utils from "../../utils/Utils";
 // import {REJECTED} from "../../redux/store";
 
 function handleFormChange_Register_Edit(event, state) {
@@ -25,7 +26,7 @@ function handleFormChange_Register_Edit(event, state) {
         validationData = {...validateNewPassword(updatedState)};
 
     // Join all validation data to check full form validity
-    validationData = mergeDeep(state.validation, validationData);
+    validationData = Utils.MergeDeep(state.validation, validationData);
 
     // if (validationData.usernameValid && validationData.passwordValid)
     //     validationData = true;
@@ -151,7 +152,7 @@ class UserForm_Register_connected extends Component {
                 return;
 
             } else {
-                redirect(UrlBuilder.Login());
+                Utils.Redirect(UrlBuilder.Login());
                 Notifications.Add({type:'success', headline:'Registration successful', message:'You can now log in to your new account'});
                 return;
             }
@@ -199,7 +200,7 @@ class UserForm_Login_connected extends Component {
             validationData = {...this.validateFieldNotEmpty(updatedState, 'password')};
 
         // Join all validation data to check full form validity
-        validationData = mergeDeep(state.validation, validationData);
+        validationData = Utils.MergeDeep(state.validation, validationData);
 
         validationData.valid = validationData.usernameValid && validationData.passwordValid;
 
@@ -259,7 +260,7 @@ class UserForm_Login_connected extends Component {
 
             } else {
                 console.log('Login success');
-                redirect(UrlBuilder.Home());
+                Utils.Redirect(UrlBuilder.Home());
                 Notifications.Add({type:'success', headline:'Login successful'});
                 return;
             }

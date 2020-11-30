@@ -8,7 +8,7 @@ import {OverlayTrigger, Row, Button, Card, Col, Container, Spinner, Tooltip} fro
 import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import ThreadListItem from "./ThreadListItem";
-import ConditionalTooltip from "../common/ConditionalTooltip";
+import ConditionalTooltip, {msg_MustBeLoggedIn} from "../common/ConditionalTooltip";
 
 const mapDispatchToProps = {
     getThreads
@@ -125,7 +125,7 @@ class ThreadList extends React.Component {
 
                         <ConditionalTooltip
                             placement='left'
-                            tooltip='You must be logged in to do that.'
+                            tooltip={msg_MustBeLoggedIn}
                             tooltipId='create-thread-btn-tooltip'
                             show={this.props.user === null}
                             pointerEventsNone={true}
