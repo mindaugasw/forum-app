@@ -12,7 +12,6 @@ import Homepage from "./Homepage";
 import {Container, Row, Col} from "react-bootstrap";
 import ThreadRouter from "./Threads/ThreadRouter";
 import RegistrationPage from "./Users/RegistrationPage";
-import UserForm from "./Users/UserForm";
 import LogoutPage from "./Users/LogoutPage";
 import NotificationRenderer from "./common/NotificationRenderer";
 import LoginPage from "./Users/LoginPage";
@@ -41,7 +40,7 @@ class ReactApp extends React.Component {
 
                 <NotificationRenderer />
 
-                <Container id='app-body' fluid='lg' > {/*fluid-lg = container takes 100% width until lg (on xd sm md, but not lg)*/}
+                <Container id='app-body' fluid='lg' > {/*fluid lg = container takes 100% width until lg (on xd sm md, but not lg)*/}
                     <Row className='justify-content-center'>
                         <Col>
                             <br/>

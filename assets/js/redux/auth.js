@@ -18,30 +18,30 @@ const LOG_OUT = BASE + 'logout';
  */
 export const login = createAsyncThunk(LOG_IN_MANUAL, (credentials, thunkAPI) => {
     return API.Auth.LogIn(credentials.username, credentials.password)
-        .then(response => {
+        .then(response => response.json().then(payload => {
             if (response.ok)
-                return response.json().then();
+                return payload;
             else
-                return response.json().then(r => thunkAPI.rejectWithValue(r));
-        });
+                return thunkAPI.rejectWithValue(payload);
+        }));
 });
 export const logout = createAsyncThunk(LOG_OUT, (param, thunkAPI) => {
     return API.Auth.LogOut()
-        .then(response => {
+        .then(response => response.json().then(payload => {
             if (response.ok)
-                return response.json().then();
+                return payload;
             else
-                return response.json().then(r => thunkAPI.rejectWithValue(r));
-        });
+                return thunkAPI.rejectWithValue(payload);
+        }));
 });
 export const tokenRefresh = createAsyncThunk(TOKEN_REFRESH, (param, thunkAPI) => {
     return API.Auth.TokenRefresh()
-        .then(response => {
+        .then(response => response.json().then(payload => {
             if (response.ok)
-                return response.json().then();
+                return payload;
             else
-                return response.json().then(r => thunkAPI.rejectWithValue(r));
-        });
+                return thunkAPI.rejectWithValue(payload);
+        }));
 });
 
 
@@ -72,7 +72,6 @@ export const authSlice = createSlice({
             setAuthState(state, true, p.token, p.user, p.timer);
         },
         [login.rejected]: (state, action) => {
-            // TODO change .code to .error.status and test it
             console.error('Manual login failed: ' + Utils.GetSafe(() => action.payload.code, 'unknown error'));
             state.loaded = true;
         },
@@ -84,7 +83,6 @@ export const authSlice = createSlice({
             setAuthState(state, true, p.token, p.user, p.timer);
         },
         [tokenRefresh.rejected]: (state, action) => {
-            // TODO change .code to .error.status and test it
             const errorCode = Utils.GetSafe(() => action.payload.code, 'unknown error');
             console.debug('Automatic login failed: ' + errorCode);
             state.loaded = true;
@@ -127,7 +125,6 @@ export const authMiddleware = ({ getState, dispatch }) => {
                 case LOG_OUT + FULFILLED:
                 case LOG_OUT + REJECTED:
                     stopTimer(getState().auth.timer);
-                    // TODO redirect to homepage
                     break;
 
             }

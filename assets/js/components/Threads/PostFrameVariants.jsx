@@ -147,57 +147,6 @@ class PostFrame_Thread_connected extends Component {
     }
 
     handleThreadFormSubmit(event, state) {
-        /*if (!state.validation.valid) {
-            console.error('Tried submitting invalid form');
-            return;
-        }
-
-        this.setState({formLoading: true});
-        let response = this.props.isNewThreadForm ?
-            this.props.createThread({title: state.post.title, content: state.post.content}) :
-            this.props.editThread({threadId: this.props.thread.id, title: state.post.title, content: state.post.content});
-
-        return response.then(action => {
-            if (action.type.endsWith(REJECTED)) {
-                this.setState({formLoading: false}); // Do not update state on success, as component is already unmounted
-                const p = action.payload;
-                const e = p.error;
-
-                if (e && e.status === 400) {
-                    return {
-                        validation: {
-                            alert: {
-                                show: true,
-                                type: 'danger',
-                                message: 'Could not complete the request. There were the following errors: ' + e.message,
-                            }
-                        }
-                    };
-                } else if ((e && e.status === 401) || p.code === 401) {
-                    Notifications.Unauthenticated();
-                    return;
-                } else if (e && e.status === 403) {
-                    Notifications.Unauthorized();
-                    return;
-                }
-
-                console.error('Unknown error in thread form', action);
-                Notifications.UnhandledError('Form error in PostFrame_Thread', action);
-                return;
-
-            } else {
-                if (this.props.isNewThreadForm) {
-                    console.debug('Thread created successfully');
-                    Notifications.Add({type:'success', headline:'New topic created'});
-                } else {
-                    console.debug('Thread updated successfully');
-                    Notifications.Add({type:'success', headline:'Topic updated'});
-                }
-                redirect(UrlBuilder.Threads.Single(action.payload.id));
-                return;
-            }
-        });*/
-
         if (!state.validation.valid) {
             console.error('Tried submitting invalid form');
             return;
@@ -312,6 +261,7 @@ PostFrame_Thread.propTypes = {
     // Redux state:
     // user: PropTypes.object,
 }
+
 
 class PostFrame_Comment_connected extends Component {
     constructor(props) {

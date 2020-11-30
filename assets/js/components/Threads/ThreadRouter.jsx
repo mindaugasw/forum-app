@@ -2,9 +2,6 @@ import React from 'react';
 import {
     Switch,
     Route,
-    Link,
-    useRouteMatch,
-    useParams,
     Redirect
 } from "react-router-dom";
 import PropTypes from "prop-types";
@@ -18,7 +15,6 @@ class ThreadRouter extends React.Component {
     constructor(props) {
         super(props);
     }
-
 
     render() {
         const {match} = this.props;
@@ -36,7 +32,6 @@ class ThreadRouter extends React.Component {
                 </Route>
 
                 <Route path={`${match.path}/:id`} >
-                {/*<Route path={`/threads/:id`} >*/}
                     <SingleThreadPage />
                 </Route>
 

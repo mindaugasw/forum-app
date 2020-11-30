@@ -24,7 +24,7 @@ class Homepage extends Component {
 
                 <h1>Welcome!</h1>
                 This is a general-purpose discussion forum. Find more info in{' '}
-                {/*<Link to={UrlBuilder.About()}>About</Link> section.*/}
+                {/* TODO render markdown in page? Instead of linking to the same markdown on github */}
                 <a href="https://github.com/mindaugasw/forum-app/blob/master/docs/README.md" target='_blank' rel='noopener noreferrer'>About</a> section.
 
                 {authLoaded && !isLoggedIn ?

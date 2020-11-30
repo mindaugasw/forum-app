@@ -12,7 +12,6 @@ class RegistrationPage extends Component {
                 {Utils.Titles.Register()}
                 <Col sm={8} md={6} xl={5}>
                     <h2>New user registration</h2>
-                    {/*<UserForm variant='register' />*/}
                     <UserForm.Register />
                 </Col>
             </Row>

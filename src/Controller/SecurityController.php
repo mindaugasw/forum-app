@@ -14,7 +14,7 @@ class SecurityController extends BaseApiController
 		parent::__construct();
 	}
 	
-	// Login and Logout routes are handled by JWT bundle
+	// Login and Logout routes are handled by JWT bundle, Registration handled by UserController
 	
 	/**
 	 * @Route("/api/logout", methods={"POST"})

@@ -29,15 +29,16 @@ class VotingGeneral extends Component {
     handleVoteClick(event, direction) {
         event.preventDefault();
 
-        // TODO render appropriately
         if (!this.props.isLoggedIn) {
+            // Not logged in
             Notifications.Unauthenticated();
             return;
         }
 
-        // TODO render appropriately
         if (this.props.user.id === this.props.post.author.id) {
+            // Voting on own post
             console.error('Voting on your own threads/comments is not allowed.');
+            Notifications.Unauthorized();
             return;
         }
 
@@ -54,8 +55,6 @@ class VotingGeneral extends Component {
         const u = this.props.user;
         const puv = p.userVote;
         const isVertical = this.props.isVertical;
-
-        // TODO add notification if not logged in voting
 
         // --- Colors ---
         let colorUpvote, colorDownvote, colorText;
@@ -75,14 +74,14 @@ class VotingGeneral extends Component {
                 null // Hide voting links on your own posts
                 :
                 isVertical ?
-                    // Vertical icon
+                    // Vertical upvote icon
                     <a href='#' onClick={event => this.handleVoteClick(event, 1)}>
                         <Col xs={12} className='lh-1 p-0 text-center'>
                             {upvoteIcon}
                         </Col>
                     </a>
                     :
-                    // Horizontal icon
+                    // Horizontal upvote icon
                     <a href='#' onClick={event => this.handleVoteClick(event, 1)}>
                         {upvoteIcon}
                     </a>;
@@ -90,14 +89,14 @@ class VotingGeneral extends Component {
             null // Hide voting links on your own posts
             :
             isVertical ?
-                // Vertical icon
+                // Vertical downvote icon
                 <a href='#' onClick={event => this.handleVoteClick(event, -1)}>
                     <Col xs={12} className='lh-1 p-0 text-center'>
                         {downvoteIcon}
                     </Col>
                 </a>
                 :
-                // Horizontal icon
+                // Horizontal downvote icon
                 <a href='#' onClick={event => this.handleVoteClick(event, -1)}>
                     {downvoteIcon}
                 </a>;
@@ -105,7 +104,7 @@ class VotingGeneral extends Component {
 
         return (
             isVertical ?
-                // Vertical vote
+                // Vertical voting component
                 <Col xs={2} sm={1} style={{margin: 'auto 0px'}}> {/* margin: '-5px 0 -5px 0' - more compact, but can't vertical align*/}
 
                     {/* Upvote */}
@@ -119,33 +118,19 @@ class VotingGeneral extends Component {
                     </Col>
 
                     {/* Downvote */}
-                    {/*{u && u.id === p.author.id ? null :
-                        <a href='#' onClick={event => this.handleVoteClick(event, -1)}>
-                            <Col xs={12} className='lh-1 p-0 text-center'>
-                                {downvoteIcon}
-                            </Col>
-                        </a>
-                    }*/}
                     {downvoteLinkJsx}
 
                 </Col>
             :
-                // Horizontal vote
 
-
-
-
+                // Horizontal voting component
                 <div className='d-inline-block color-vote'>
-                    {/*<FA icon={faMinusCircle} size={'lg'} />*/}
                     {downvoteLinkJsx}
-                    {/*{' '}<b>1234</b>{' '}*/}
                     <span className={`font-weight-bold d-inline-block text-center ${colorText}`} style={{minWidth: '2em'}}>
                         {p.votesCount}
                     </span>
-                    {/*<FA icon={faPlusCircle} size={'lg'} />*/}
                     {upvoteLinkJsx}
                 </div>
-            // </div>
         );
     }
 }
@@ -154,7 +139,7 @@ VotingGeneral.propTypes = {
     // From props:
     post: PropTypes.object.isRequired, // Thread or comment object
     isVertical: PropTypes.bool.isRequired, // Vertical or horizontal rendering
-    isThread: PropTypes.bool.isRequired, // is this component on thread or comment? /* TODO is this prop needed? */
+    isThread: PropTypes.bool.isRequired, // is this component on thread or comment?
 
     // Redux state:
     // isLoggedIn: PropTypes.bool.isRequired,

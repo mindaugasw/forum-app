@@ -5,9 +5,8 @@ import {Alert, Button, Form, ProgressBar, Spinner} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import UrlBuilder from "../../utils/UrlBuilder";
 import {UserForm_Login, UserForm_Register} from "./UserFormVariants";
-import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
-import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
 import Utils from "../../utils/Utils";
+import AlertWithIcon from "../common/AlertWithIcon";
 
 const mapDispatchToProps = {}
 
@@ -111,9 +110,12 @@ class UserForm extends Component {
 
                         {/* --- Alert --- */}
                         {v.alert.show ?
-                            <Alert variant={v.alert.type}>
+                            /*<Alert variant={v.alert.type}>
                                 <FA icon={faExclamationCircle} /> {v.alert.message}
-                            </Alert>
+                            </Alert>*/
+                            <AlertWithIcon variant={v.alert.type}>
+                                {v.alert.message}
+                            </AlertWithIcon>
                         : null}
 
 
@@ -227,7 +229,6 @@ UserForm.propTypes = {
 
     // Redux state:
     // user: PropTypes.object, // Currently logged in user
-
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserForm);

@@ -108,20 +108,6 @@ class ThreadList extends React.Component {
                         <h2>Topics list</h2>
                     </Col>
                     <Col xs={6} sm='auto' className='pl-0 text-right'>
-                        {/*<OverlayTrigger
-                            placement='left'
-                            overlay={this.props.u !== null ?
-                                <Tooltip id='create-thread-btn-tooltip'>
-                                    You must be logged in to do that.
-                                </Tooltip>
-                                : <div></div>}
-                        >
-                            <div>
-                                <Link to={UrlBuilder.Threads.Create()} style={{pointerEvents: 'none'}}>
-                                    <Button disabled><FA icon={faPlus}/> Create new</Button>
-                                </Link>
-                            </div>
-                        </OverlayTrigger>*/}
 
                         <ConditionalTooltip
                             placement='left'

@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import {Spinner, Col, Alert, Button, Card, Form, Image, OverlayTrigger, Tooltip, Row, Container} from "react-bootstrap";
+import {Spinner, Alert, Button, Card, Form, Image} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import UrlBuilder from "../../utils/UrlBuilder";
 import {canUserManagePost} from "../../redux/auth";
 import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
-import {faEdit, faExclamationCircle, faMinusCircle, faPlusCircle, faTrash} from "@fortawesome/free-solid-svg-icons";
+import {faEdit, faExclamationCircle, faTrash} from "@fortawesome/free-solid-svg-icons";
 import VotingGeneral from "./VotingGeneral";
 import {PostFrame_Comment, PostFrame_Thread} from "./PostFrameVariants";
 import AlertWithIcon from "../common/AlertWithIcon";
@@ -36,7 +36,7 @@ class PostFrame extends Component {
         this.contentJsx = this.contentJsx.bind(this);
 
         const p = this.props.post;
-        this.initialState = {
+        this.initialState = { // Set to object property to easily reset on new comment submit, as component is not remounted and state not reset automatically
             post: p || {
                 title: '',
                 content: '',
@@ -70,8 +70,6 @@ class PostFrame extends Component {
 
         this.state = this.initialState;
     }
-
-    // static initialState = null; // Needs to be class property to easily reset on new comment submit, as component is not remounted and state not reset automatically
 
     // Component variants shortcuts
     static Thread = PostFrame_Thread;
@@ -122,8 +120,8 @@ class PostFrame extends Component {
         });
     }
 
-    // TODO move methods inside render
 
+    // --- Render methods ---
     /**
      * User avatar (or placeholder), username, posted time ago
      * @param p Post object | null
@@ -167,19 +165,6 @@ class PostFrame extends Component {
                         <span className='ml-2'>{p.author.username}</span>
                     </Link>
                     <span className='text-muted d-none d-sm-inline small'> {/* Hide on xs */}
-                        {/* TODO check if edited ago works */}
-                        {/*{p.edited ?
-                            <OverlayTrigger overlay={
-                                <Tooltip id={`${isThread ? 't' : 'c'}-edited-${p.id}`}>
-                                    Submitted {(new Date(p.createdAt)).timeAgo()}<br/>
-                                    Last edit {(new Date(p.updatedAt)).timeAgo()}
-                                </Tooltip>
-                            }>
-                            <span className='d-inline-block'>
-                                {submittedTimeAgoJsx}
-                            </span>
-                            </OverlayTrigger>
-                        : submittedTimeAgoJsx}*/}
                         <ConditionalTooltip
                             placement='top'
                             tooltip={<>
@@ -317,10 +302,9 @@ class PostFrame extends Component {
 
                         {/* --- Admin alert --- */}
                         {editMode && u && u.id !== p.author.id ?
-                            <Alert variant='primary' className='mb-2'>
-                                <FA icon={faExclamationCircle} />
+                            <AlertWithIcon variant='primary' className='mb-2'>
                                 {` You're editing someone else's ${isThread? 'thread' : 'comment'} as an admin!`}
-                            </Alert>
+                            </AlertWithIcon>
                         : null }
 
                         {/* --- Submit button --- */}
@@ -366,17 +350,12 @@ class PostFrame extends Component {
     render() {
         /** This thread or comment */
         const p = this.props.post;
-        // const p = this.state.post; // Getting from state (instead of props), cuz values may be changed in form inputs
 
         /** Currently logged in user object (or null) */
         const u = this.props.user;
 
         /** Is this thread or comment? */
-        // const isThread = !this.props.parentThread; // if parentThread not null, it is comment
         const isThread = this.props.isThread; // if parentThread not null, it is comment
-
-        /* Thread that this comment belongs to. Null if rendering thread */
-        // const parentThread = this.props.parentThread;
 
         /** Render as form mode for editing/creating post (or view mode otherwise) */
         const formMode = this.props.formMode;
@@ -412,13 +391,11 @@ class PostFrame extends Component {
 PostFrame.propTypes = {
     post: PropTypes.object, // Thread or comment object. If null, will render form for new thread/comment
     isThread: PropTypes.bool.isRequired, // Is provided post thread or comment
-    // parentThread: PropTypes.object, // Thread object. Needed only when rendering as comment frame
     formMode: PropTypes.bool.isRequired, // If true, renders as form form edit/create
     formLoading: PropTypes.bool, // adjusts form style. Can be set to true e.g. after submitting
 
     onChange: PropTypes.func, // Form inputs change callback
     onSubmit: PropTypes.func, // Form submit callback
-    // onCancelClick: PropTypes.func, // Form button "Cancel" callback
     onEditClick: PropTypes.func, // Callback for 'Edit' or 'Cancel edit' buttons. Passes event and true/false if starting/ending editing
     onDeleteClick: PropTypes.func, // Callback for 'Delete' click
     onValidateFullForm: PropTypes.func, // Callback for initial validation on Edit form variant
@@ -426,6 +403,5 @@ PostFrame.propTypes = {
     // Redux state:
     // user: PropTypes.object,
 }
-
 
 export default connect(mapStateToProps)(PostFrame);

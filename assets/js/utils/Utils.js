@@ -2,6 +2,9 @@ import {Helmet} from "react-helmet";
 import React from "react";
 import {history} from "../components/ReactApp";
 
+/**
+ * Various small functions that do not fit anywhere else
+ */
 class Utils {
     static Redirect(path) {
         history.push(path);
@@ -32,6 +35,7 @@ class Utils {
         return output;
     }
 
+    // Used in MergeDeep
     static IsObject(item) {
         return (item && typeof item === 'object' && !Array.isArray(item));
     }

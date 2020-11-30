@@ -17,10 +17,6 @@ const LOAD_SINGLE = BASE + 'loadSingle';
 const LOAD_COMMENTS = BASE + 'loadComments';
 const SUBMIT_VOTE = BASE + 'vote';
 
-// const PENDING = '/pending'; // Used to combine async thunk name, e.g. TOKEN_REFRESH+FULFILLED
-// const FULFILLED = '/fulfilled';
-// const REJECTED = '/rejected';
-
 
 // --- Action Creators ---
 /**
@@ -29,15 +25,12 @@ const SUBMIT_VOTE = BASE + 'vote';
  */
 export const getThreads = createAsyncThunk(LOAD_LIST, (url, thunkAPI) => {
     return API.Threads.GetList(url)
-        .then(response => {
-            let payload = response.json();
-            if (response.ok) {
+        .then(response => response.json().then(payload => {
+            if (response.ok)
                 return payload;
-            }
             else
-                // TODO test if does not return a promise
                 return thunkAPI.rejectWithValue(payload);
-        });
+        }));
 });
 
 /**
@@ -49,14 +42,12 @@ export const getSingleThread = createAsyncThunk(LOAD_SINGLE, (id, thunkAPI) => {
         return findResult;
 
     return API.Threads.GetSingle(id)
-        .then(response => {
-            let payload = response.json();
-            if (response.ok) {
+        .then(response => response.json().then(payload => {
+            if (response.ok)
                 return payload;
-            } else {
-                return payload.then(x => thunkAPI.rejectWithValue(x));
-            }
-        });
+            else
+                return thunkAPI.rejectWithValue(payload);
+        }));
 });
 
 /**
@@ -65,14 +56,12 @@ export const getSingleThread = createAsyncThunk(LOAD_SINGLE, (id, thunkAPI) => {
  */
 export const getComments = createAsyncThunk(LOAD_COMMENTS, (url, thunkAPI) => {
     return API.Threads.GetCommentsList(url)
-        .then(response => {
-            let payload = response.json();
-            if (response.ok) {
+        .then(response => response.json().then(payload => {
+            if (response.ok)
                 return payload;
-            } else {
-                return payload.then(x => thunkAPI.rejectWithValue(x));
-            }
-        });
+            else
+                return thunkAPI.rejectWithValue(payload);
+        }));
 });
 
 /**
@@ -142,8 +131,7 @@ export const threadSlice = createSlice({
         .addCase(getThreads.rejected, (state, action) => {
             state.list.url = action.payload.url;
             state.list.loaded = LoadState.Done;
-            // TODO change .code to .error.status and test it
-            console.error('Failed fetching threads: ' + Utils.GetSafe(() => action.payload.code, 'unknown error'));
+            console.error('Failed fetching threads: ' + Utils.GetSafe(() => action.payload.error.status, 'unknown error'));
         })
 
         .addCase(getSingleThread.pending, (state, action) => {
@@ -228,20 +216,3 @@ export const threadSlice = createSlice({
         })
     }
 });
-
-
-
-
-// --- Middleware ---
-export const threadMiddleware = ({ getState, dispatch }) => {
-    return function (next) {
-        return function (action) {
-            // TODO remove middleware if empty
-            // switch (action.type) {
-            // }
-
-            return next(action);
-
-        }
-    }
-};
