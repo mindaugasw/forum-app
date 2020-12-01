@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {Card, Col, Container, Row} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import UrlBuilder from "../../utils/UrlBuilder";
-import NewVoting from "./NewVoting";
+import NewVoting from "../__old/NewVoting";
 import VotingGeneral from "./VotingGeneral";
 
 class ThreadListItem extends Component {
@@ -25,7 +25,6 @@ class ThreadListItem extends Component {
                                 WebkitBoxOrient: 'vertical',
                             }} >
                                 {t.title}
-                                {/*There was standing before the hookah out of her swim in a good deal: this remark, and read the way YOU must be executed for her, leaning her. There was standing before the hookah out of her swim in a good deal: this remark, and read the way YOU must be executed for her, leaning her.*/}
                             </Link>
 
                             {/* - CreatedAt, author -*/}
@@ -40,7 +39,6 @@ class ThreadListItem extends Component {
                             {t.commentsCount}
                         </Col>
 
-                        {/*<NewVoting post={t} isThread={true} />*/}
                         <VotingGeneral post={t} isThread={true} isVertical={true} />
 
                     </Row>

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import Voting from "../__old/Voting";
+import Voting from "./Voting";
 import {connect} from "react-redux";
 import {canUserManagePost} from "../../redux/auth";
 import {deleteComment} from "../../redux/postsCRUD";

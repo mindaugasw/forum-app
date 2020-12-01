@@ -1,5 +1,5 @@
 import {configureStore, getDefaultMiddleware} from "@reduxjs/toolkit";
-import {threadSlice, threadMiddleware} from "./threads";
+import {threadSlice} from "./threads";
 import {authSlice, authMiddleware} from "./auth";
 import {postsCRUDSlice} from "./postsCRUD";
 import {usersCRUDSlice} from "./usersCRUD";
@@ -13,7 +13,6 @@ const store = configureStore({
     },
     middleware: [
         ...getDefaultMiddleware(),
-        threadMiddleware,
         authMiddleware,
     ]
 });

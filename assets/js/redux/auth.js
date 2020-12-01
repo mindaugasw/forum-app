@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import API from "../utils/API";
+import Utils from "../utils/Utils";
 
 
 // --- Actions ---
@@ -7,9 +8,6 @@ const BASE = 'auth/';
 export const LOG_IN_MANUAL = BASE + 'login'; // When user fills login form
 const TOKEN_REFRESH = BASE + 'refresh'; // Automatic token refresh
 const LOG_OUT = BASE + 'logout';
-
-const FULFILLED = '/fulfilled'; // Used to combine async thunk name, e.g. TOKEN_REFRESH+FULFILLED
-const REJECTED = '/rejected';
 
 
 
@@ -20,30 +18,30 @@ const REJECTED = '/rejected';
  */
 export const login = createAsyncThunk(LOG_IN_MANUAL, (credentials, thunkAPI) => {
     return API.Auth.LogIn(credentials.username, credentials.password)
-        .then(response => {
+        .then(response => response.json().then(payload => {
             if (response.ok)
-                return response.json().then();
+                return payload;
             else
-                return response.json().then(r => thunkAPI.rejectWithValue(r));
-        });
+                return thunkAPI.rejectWithValue(payload);
+        }));
 });
 export const logout = createAsyncThunk(LOG_OUT, (param, thunkAPI) => {
     return API.Auth.LogOut()
-        .then(response => {
+        .then(response => response.json().then(payload => {
             if (response.ok)
-                return response.json().then();
+                return payload;
             else
-                return response.json().then(r => thunkAPI.rejectWithValue(r));
-        });
+                return thunkAPI.rejectWithValue(payload);
+        }));
 });
 export const tokenRefresh = createAsyncThunk(TOKEN_REFRESH, (param, thunkAPI) => {
     return API.Auth.TokenRefresh()
-        .then(response => {
+        .then(response => response.json().then(payload => {
             if (response.ok)
-                return response.json().then();
+                return payload;
             else
-                return response.json().then(r => thunkAPI.rejectWithValue(r));
-        });
+                return thunkAPI.rejectWithValue(payload);
+        }));
 });
 
 
@@ -74,21 +72,19 @@ export const authSlice = createSlice({
             setAuthState(state, true, p.token, p.user, p.timer);
         },
         [login.rejected]: (state, action) => {
-            // TODO change .code to .error.status and test it
-            console.error('Manual login failed: ' + getSafe(() => action.payload.code, 'unknown error'));
+            console.error('Manual login failed: ' + Utils.GetSafe(() => action.payload.code, 'unknown error'));
             state.loaded = true;
         },
 
 
         [tokenRefresh.fulfilled]: (state, action) => {
-            console.log('Automatic login successful');
+            console.debug('Automatic login successful');
             const p = action.payload;
             setAuthState(state, true, p.token, p.user, p.timer);
         },
         [tokenRefresh.rejected]: (state, action) => {
-            // TODO change .code to .error.status and test it
-            const errorCode = getSafe(() => action.payload.code, 'unknown error');
-            console.info('Automatic login failed: ' + errorCode);
+            const errorCode = Utils.GetSafe(() => action.payload.code, 'unknown error');
+            console.debug('Automatic login failed: ' + errorCode);
             state.loaded = true;
 
             if (state.isLoggedIn && errorCode === 401) {
@@ -98,12 +94,11 @@ export const authSlice = createSlice({
 
 
         [logout.fulfilled]: (state, action) => {
-            console.log('Logout successful');
+            console.debug('Logout successful');
             setAuthState(state, false, null, null, null);
         },
         [logout.rejected]: (state, action) => {
-            // TODO change .code to .error.status and test it
-            console.error('Logout failed: ' + getSafe(() => action.payload.code, 'unknown error'));
+            console.error('Logout failed: ' + Utils.GetSafe(() => action.payload.code, 'unknown error'));
             setAuthState(state, false, null, null, null);
         },
     }
@@ -130,7 +125,6 @@ export const authMiddleware = ({ getState, dispatch }) => {
                 case LOG_OUT + FULFILLED:
                 case LOG_OUT + REJECTED:
                     stopTimer(getState().auth.timer);
-                    // TODO redirect to homepage
                     break;
 
             }

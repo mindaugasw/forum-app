@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import API from "../utils/API";
 import {login, logout} from "./auth";
 import * as CRUD from "./postsCRUD";
+import Utils from "../utils/Utils";
 
 /*
  * Contains logic for threads loading, listing and viewing, along with their respective comments loading, viewing.
@@ -16,10 +17,6 @@ const LOAD_SINGLE = BASE + 'loadSingle';
 const LOAD_COMMENTS = BASE + 'loadComments';
 const SUBMIT_VOTE = BASE + 'vote';
 
-// const PENDING = '/pending'; // Used to combine async thunk name, e.g. TOKEN_REFRESH+FULFILLED
-// const FULFILLED = '/fulfilled';
-// const REJECTED = '/rejected';
-
 
 // --- Action Creators ---
 /**
@@ -28,15 +25,12 @@ const SUBMIT_VOTE = BASE + 'vote';
  */
 export const getThreads = createAsyncThunk(LOAD_LIST, (url, thunkAPI) => {
     return API.Threads.GetList(url)
-        .then(response => {
-            let payload = response.json();
-            if (response.ok) {
+        .then(response => response.json().then(payload => {
+            if (response.ok)
                 return payload;
-            }
             else
-                // TODO test if does not return a promise
                 return thunkAPI.rejectWithValue(payload);
-        });
+        }));
 });
 
 /**
@@ -48,14 +42,12 @@ export const getSingleThread = createAsyncThunk(LOAD_SINGLE, (id, thunkAPI) => {
         return findResult;
 
     return API.Threads.GetSingle(id)
-        .then(response => {
-            let payload = response.json();
-            if (response.ok) {
+        .then(response => response.json().then(payload => {
+            if (response.ok)
                 return payload;
-            } else {
-                return payload.then(x => thunkAPI.rejectWithValue(x));
-            }
-        });
+            else
+                return thunkAPI.rejectWithValue(payload);
+        }));
 });
 
 /**
@@ -64,14 +56,12 @@ export const getSingleThread = createAsyncThunk(LOAD_SINGLE, (id, thunkAPI) => {
  */
 export const getComments = createAsyncThunk(LOAD_COMMENTS, (url, thunkAPI) => {
     return API.Threads.GetCommentsList(url)
-        .then(response => {
-            let payload = response.json();
-            if (response.ok) {
+        .then(response => response.json().then(payload => {
+            if (response.ok)
                 return payload;
-            } else {
-                return payload.then(x => thunkAPI.rejectWithValue(x));
-            }
-        });
+            else
+                return thunkAPI.rejectWithValue(payload);
+        }));
 });
 
 /**
@@ -141,8 +131,7 @@ export const threadSlice = createSlice({
         .addCase(getThreads.rejected, (state, action) => {
             state.list.url = action.payload.url;
             state.list.loaded = LoadState.Done;
-            // TODO change .code to .error.status and test it
-            console.error('Failed fetching threads: ' + getSafe(() => action.payload.code, 'unknown error'));
+            console.error('Failed fetching threads: ' + Utils.GetSafe(() => action.payload.error.status, 'unknown error'));
         })
 
         .addCase(getSingleThread.pending, (state, action) => {
@@ -157,7 +146,7 @@ export const threadSlice = createSlice({
             // state.single.id = null;
             // state.single.item = null;
             // state.single.loaded = LoadState.NotRequested; // Commented out because causes infinite loop
-            console.error(`Failed fetching thread #${action.meta.arg}: ${getSafe(() => action.payload.error.status, 'unknown error')}`);
+            console.error(`Failed fetching thread #${action.meta.arg}: ${Utils.GetSafe(() => action.payload.error.status, 'unknown error')}`);
         })
 
         .addCase(getComments.pending, (state, action) => {
@@ -171,7 +160,7 @@ export const threadSlice = createSlice({
         })
         .addCase(getComments.rejected, (state, action) => {
             // state.single.comments.items = null;
-            console.error(`Failed fetching comments: ${action.meta.arg}, error: ${getSafe(() => action.payload.error.status, 'unknown error')}`);
+            console.error(`Failed fetching comments: ${action.meta.arg}, error: ${Utils.GetSafe(() => action.payload.error.status, 'unknown error')}`);
         })
 
         .addCase(submitVote.pending, (state, action) => {
@@ -202,13 +191,13 @@ export const threadSlice = createSlice({
         })
         .addCase(submitVote.rejected, (state, action) => {
             console.error(`Failed voting: ${
-                getSafe(() => action.payload.error.status, 'unknown error')
+                Utils.GetSafe(() => action.payload.error.status, 'unknown error')
                 }, {id: ${action.meta.arg.id}, direction: ${action.meta.arg.direction
                 }, isThread: ${action.meta.arg.isThread}}`);
         })
 
 
-        // Full state reset
+        // Full state reset after any of these actions, as previously loaded data is no longer valid
         .addMatcher(action => {
             const matchingActions = [
                 login.fulfilled.type,
@@ -227,20 +216,3 @@ export const threadSlice = createSlice({
         })
     }
 });
-
-
-
-
-// --- Middleware ---
-export const threadMiddleware = ({ getState, dispatch }) => {
-    return function (next) {
-        return function (action) {
-            // TODO remove middleware if empty
-            // switch (action.type) {
-            // }
-
-            return next(action);
-
-        }
-    }
-};

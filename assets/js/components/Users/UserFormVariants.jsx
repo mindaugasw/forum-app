@@ -1,10 +1,12 @@
 import React, {Component} from "react";
 import UserForm from "./UserForm";
 import {connect} from "react-redux";
-import {register, REGISTER, FULFILLED, REJECTED} from "../../redux/usersCRUD";
+import {register, REGISTER} from "../../redux/usersCRUD";
 import {login, LOG_IN_MANUAL} from "../../redux/auth";
 import UrlBuilder from "../../utils/UrlBuilder";
 import Notifications from "../../utils/Notifications";
+import Utils from "../../utils/Utils";
+// import {REJECTED} from "../../redux/store";
 
 function handleFormChange_Register_Edit(event, state) {
     // TODO method almost the same as login form change handler
@@ -24,7 +26,7 @@ function handleFormChange_Register_Edit(event, state) {
         validationData = {...validateNewPassword(updatedState)};
 
     // Join all validation data to check full form validity
-    validationData = mergeDeep(state.validation, validationData);
+    validationData = Utils.MergeDeep(state.validation, validationData);
 
     // if (validationData.usernameValid && validationData.passwordValid)
     //     validationData = true;
@@ -109,7 +111,7 @@ function validateNewUsername(state) {
     return res;
 }
 
-class UserForm_Register_unconnected extends Component {
+class UserForm_Register_connected extends Component {
     constructor(props) {
         super(props);
 
@@ -150,8 +152,8 @@ class UserForm_Register_unconnected extends Component {
                 return;
 
             } else {
-                redirect(UrlBuilder.Login());
-                Notifications.Add('success', 'Registration successful', 'You can now log in to your new account');
+                Utils.Redirect(UrlBuilder.Login());
+                Notifications.Add({type:'success', headline:'Registration successful', message:'You can now log in to your new account'});
                 return;
             }
         });
@@ -168,7 +170,7 @@ class UserForm_Register_unconnected extends Component {
     }
 }
 
-class UserForm_Login_unconnected extends Component {
+class UserForm_Login_connected extends Component {
     constructor(props) {
         super(props);
 
@@ -187,7 +189,7 @@ class UserForm_Login_unconnected extends Component {
         const updatedState = { // Manual state update, as passed state is late by 1 onChange event
             ...state,
             [target.id]: target.value
-        }
+        };
 
         // Validate only edited field (to not show errors on still untouched fields)
         let validationData = null;
@@ -198,7 +200,7 @@ class UserForm_Login_unconnected extends Component {
             validationData = {...this.validateFieldNotEmpty(updatedState, 'password')};
 
         // Join all validation data to check full form validity
-        validationData = mergeDeep(state.validation, validationData);
+        validationData = Utils.MergeDeep(state.validation, validationData);
 
         validationData.valid = validationData.usernameValid && validationData.passwordValid;
 
@@ -210,6 +212,7 @@ class UserForm_Login_unconnected extends Component {
     }
 
     validateFieldNotEmpty(state, fieldName) {
+        // TODO replace with FormUtils.ValidateTextField
         let res = {
             [[fieldName]+'Valid']: false,
             [fieldName]: false,
@@ -252,13 +255,13 @@ class UserForm_Login_unconnected extends Component {
                 }
 
                 console.error('Unknown error in form', action);
-                Notifications.UnhandledError('Form error in UserForm_Login_unconnected');
+                Notifications.UnhandledError('Form error in UserForm_Login_unconnected', action);
                 return;
 
             } else {
                 console.log('Login success');
-                redirect(UrlBuilder.Home());
-                Notifications.Add('success', 'Login successful', '');
+                Utils.Redirect(UrlBuilder.Home());
+                Notifications.Add({type:'success', headline:'Login successful'});
                 return;
             }
         });
@@ -275,5 +278,5 @@ class UserForm_Login_unconnected extends Component {
     }
 }
 
-export const UserForm_Register = connect(null, {register})(UserForm_Register_unconnected);
-export const UserForm_Login = connect(null, {login})(UserForm_Login_unconnected);
+export const UserForm_Register = connect(null, {register})(UserForm_Register_connected);
+export const UserForm_Login = connect(null, {login})(UserForm_Login_connected);

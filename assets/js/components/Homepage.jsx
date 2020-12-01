@@ -3,7 +3,8 @@ import ThreadList from "./Threads/ThreadList";
 import {Link} from "react-router-dom";
 import UrlBuilder from "../utils/UrlBuilder";
 import {connect} from "react-redux";
-import UnderConstructionNotice from "./UnderConstructionNotice";
+import UnderConstructionNotice from "./common/UnderConstructionNotice";
+import Utils from "../utils/Utils";
 
 const mapStateToProps = state => {
     return {
@@ -17,18 +18,21 @@ class Homepage extends Component {
         const {authLoaded, isLoggedIn} = this.props;
         return (
             <div>
+                {Utils.Titles.Homepage()}
+
                 {APP_ENV === 'prod' ? <UnderConstructionNotice /> : null}
 
                 <h1>Welcome!</h1>
                 This is a general-purpose discussion forum. Find more info in{' '}
-                <Link to={UrlBuilder.About()}>About</Link> section.
+                {/* TODO render markdown in page? Instead of linking to the same markdown on github */}
+                <a href="https://github.com/mindaugasw/forum-app/blob/master/docs/README.md" target='_blank' rel='noopener noreferrer'>About</a> section.
 
                 {authLoaded && !isLoggedIn ?
-                <>
-                <br/>
-                <Link to={UrlBuilder.Login()}>Login</Link> or{' '}
-                <Link to={UrlBuilder.Register()}>Register</Link> to access all features.
-                </>
+                    <>
+                        <br/>
+                        <Link to={UrlBuilder.Login()}>Login</Link> or{' '}
+                        <Link to={UrlBuilder.Register()}>Register</Link> to access all features.
+                    </>
                 : ''}
 
                 <hr/>

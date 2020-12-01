@@ -5,8 +5,8 @@ import {Alert, Button, Form, ProgressBar, Spinner} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import UrlBuilder from "../../utils/UrlBuilder";
 import {UserForm_Login, UserForm_Register} from "./UserFormVariants";
-import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
-import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
+import Utils from "../../utils/Utils";
+import AlertWithIcon from "../common/AlertWithIcon";
 
 const mapDispatchToProps = {}
 
@@ -49,14 +49,14 @@ class UserForm extends Component {
                     show: false,
                     type: false,
                     message: false,
-                }
+                },
             },
 
             ...v, // Overwrite state with any additional values passed
         }
     }
 
-    // Form variants shortcuts
+    // Component variants shortcuts
     static Register = UserForm_Register;
     static Login = UserForm_Login;
     // static Edit = UserForm_Edit;
@@ -69,11 +69,9 @@ class UserForm extends Component {
         if (this.props.onChange)
             newStateData = this.props.onChange(event, this.state);
 
-        // console.log('v1', newStateData);
-
         this.setState(state => {
             return {
-                ...mergeDeep(state, newStateData),
+                ...Utils.MergeDeep(state, newStateData),
                 [target.id]: target.value,
                 // ...this.props.onChange(event, state) // doesn't work? Throws up in the console
                 // ...newStateData
@@ -84,15 +82,11 @@ class UserForm extends Component {
     handleFormSubmit(event) {
         event.preventDefault();
 
-
         this.props.onSubmit(event, this.state).then(newState => {
-
-            console.log('c1', newState);
-            if (newState)
-                console.log('c2');
+            if (newState) // If any state was returned, it's likely updated validation data, and form was not submitted
                 this.setState(state => {
                     return {
-                        ...mergeDeep(state, newState),
+                        ...Utils.MergeDeep(state, newState),
                     };
                 })
         });
@@ -116,9 +110,12 @@ class UserForm extends Component {
 
                         {/* --- Alert --- */}
                         {v.alert.show ?
-                            <Alert variant={v.alert.type}>
+                            /*<Alert variant={v.alert.type}>
                                 <FA icon={faExclamationCircle} /> {v.alert.message}
-                            </Alert>
+                            </Alert>*/
+                            <AlertWithIcon variant={v.alert.type}>
+                                {v.alert.message}
+                            </AlertWithIcon>
                         : null}
 
 
@@ -129,6 +126,7 @@ class UserForm extends Component {
                                 type='text'
                                 maxLength={25}
                                 value={username}
+                                autoComplete='username'
                                 onChange={this.handleFormChange} />
 
                             {register ?
@@ -147,7 +145,12 @@ class UserForm extends Component {
                         {/* --- Password --- */}
                         <Form.Group controlId='password'>
                             <Form.Label>Password</Form.Label>
-                            <Form.Control type='password' value={password} onChange={this.handleFormChange} />
+                            <Form.Control
+                                type='password'
+                                value={password}
+                                autoComplete={register ? 'new-password' : 'current-password'}
+                                onChange={this.handleFormChange}
+                            />
 
                             {v.password ?
                             <Form.Control.Feedback type='invalid' className='d-block'>{v.password}</Form.Control.Feedback>
@@ -158,7 +161,12 @@ class UserForm extends Component {
                             <>
                             {/* --- Password repeat --- */}
                             <Form.Group controlId='passwordRepeat'>
-                                <Form.Control type='password' value={passwordRepeat} onChange={this.handleFormChange} />
+                                <Form.Control
+                                    type='password'
+                                    value={passwordRepeat}
+                                    autoComplete='new-password'
+                                    onChange={this.handleFormChange}
+                                />
                                 <Form.Text className='text-muted'>Repeat password.</Form.Text>
 
                                 {v.passwordRepeat ?
@@ -221,7 +229,6 @@ UserForm.propTypes = {
 
     // Redux state:
     // user: PropTypes.object, // Currently logged in user
-
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserForm);

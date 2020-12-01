@@ -1,13 +1,14 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import API from "../utils/API";
+import Utils from "../utils/Utils";
 
 
 // --- Actions ---
 const BASE = 'users/';
 export const REGISTER = BASE + 'register';
 
-export const FULFILLED = '/fulfilled'; // Used to combine async thunk name, e.g. TOKEN_REFRESH+FULFILLED
-export const REJECTED = '/rejected';
+// export const FULFILLED = '/fulfilled'; // Used to combine async thunk name, e.g. TOKEN_REFRESH+FULFILLED
+// export const REJECTED = '/rejected';
 
 
 
@@ -61,8 +62,8 @@ export const usersCRUDSlice = createSlice({
         .addMatcher(
             action => action.type.startsWith(BASE) && action.type.endsWith('rejected'), (state, action) => {
                 console.error(`Error in action ${action.type}, ${
-                    getSafe(() => action.payload.error.status, 'unknown status code')}, ${
-                    getSafe(() => action.payload.error.message, 'unknown error message')}`);
+                    Utils.GetSafe(() => action.payload.error.status, 'unknown status code')}, ${
+                    Utils.GetSafe(() => action.payload.error.message, 'unknown error message')}`);
             })
     },
 });
@@ -74,9 +75,9 @@ export const authMiddleware = ({ getState, dispatch }) => {
     return function (next) {
         return function (action) {
 
-            switch (action.type) {
+            /*switch (action.type) {
 
-            }
+            }*/
             return next(action);
 
         }

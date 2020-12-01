@@ -90,6 +90,9 @@ UrlBuilder.Users = class Users {
     static Edit(id) { return `${Users.List()}/${id}/edit`; }
 }
 
+/**
+ * Defines GET params for lists: page, perpage, orderby, orderdir
+ */
 export class ListGetParams {
     constructor(page, perpage, orderby, orderdir) {
         this.page = page;

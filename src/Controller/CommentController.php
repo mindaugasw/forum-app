@@ -97,5 +97,5 @@ class CommentController extends BaseApiController
 		return $this->ApiResponse(null, 204);
 	}
 	
-	// TODO add comments search
+	// TODO FEATURE add comments search
 }

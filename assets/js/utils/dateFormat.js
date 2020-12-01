@@ -13,7 +13,7 @@
  */
 
 // http://blog.stevenlevithan.com/archives/date-time-format
-var dateFormat = function () {
+/*var dateFormat = function () {
     var	token = /d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloSZ]|"[^"]*"|'[^']*'/g,
         timezone = /\b(?:[PMCEA][SDP]T|(?:Pacific|Mountain|Central|Eastern|Atlantic) (?:Standard|Daylight|Prevailing) Time|(?:GMT|UTC)(?:[-+]\d{4})?)\b/g,
         timezoneClip = /[^-+\dA-Z]/g,
@@ -124,44 +124,4 @@ dateFormat.i18n = {
 // For convenience...
 Date.prototype.format = function (mask, utc) {
     return dateFormat(this, mask, utc);
-};
-
-Date.prototype.formatDefault = function() {
-    const year = this.getFullYear(),
-        month = this.getMonth(),
-        day = this.getDay(),
-        hour = this.getHours(),
-        min = this.getMinutes();
-
-    return `${year}-${month < 10 ? '0'+month : month}-${day < 10 ? '0'+day : day} ${hour < 10 ? '0'+hour : hour}:${min < 10 ? '0'+min : min}`;
-}
-
-Date.prototype.timeAgo = function () {
-    const seconds = Math.round((Date.now() - this.valueOf()) / 1000), // seconds passed since date
-          minutes = Math.round(seconds / 60),
-          hours = Math.round(minutes / 60),
-          days = Math.round(hours / 24),
-          months = Math.round(days / 30.5),
-          years = Math.round(months / 12);
-
-    const s = number => number % 10 === 1 && number !== 11 ? '' : 's';
-
-    switch (true) {
-        case seconds < 0:
-            return this.formatDefault();
-        case minutes < 1:
-            return 'less than a minute ago';
-        case minutes < 60:
-            return `${minutes} minute${s(minutes)} ago`;
-        case hours < 24:
-            return `${hours} hour${s(hours)} ago`;
-        case days < 31:
-            return `${days} day${s(days)} ago`;
-        case months < 12:
-            return `${months} month${s(months)} ago`;
-        case years > 0:
-            return `${years} year${s(years)} ago`;
-        default:
-            return this.formatDefault();
-    }
-}
+};*/
