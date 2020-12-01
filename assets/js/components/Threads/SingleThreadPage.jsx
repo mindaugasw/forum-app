@@ -10,6 +10,7 @@ import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import PostFrame from "./PostFrame";
 import ConditionalTooltip, {msg_MustBeLoggedIn} from "../common/ConditionalTooltip";
 import Utils from "../../utils/Utils";
+import Page404 from "../common/Page404";
 
 const mapDispatchToProps = {
     getSingleThread,
@@ -32,10 +33,9 @@ class SingleThreadPage extends React.Component {
 
         this.state = {
             id: parseInt(this.props.match.params.id), // This thread id
-            // TODO show error if id is NaN
-            // TODO show error on 404 response
             editMode: false,
-        }
+            notFound: false,
+        };
 
         this.getListUrl = this.getListUrl.bind(this);
         this.getPaginationListUrl = this.getPaginationListUrl.bind(this);
@@ -59,7 +59,10 @@ class SingleThreadPage extends React.Component {
 
         if (this.props.authLoaded) {
             if (t.id !== targetId || t.loaded === LoadState.NotRequested) {
-                this.props.getSingleThread(targetId);
+                this.props.getSingleThread(targetId).then(action => {
+                    if (action.error && action.error.status === 404)
+                        this.setState({notFound: true});
+                });
             }
         }
     }
@@ -73,7 +76,11 @@ class SingleThreadPage extends React.Component {
 
         if (this.props.authLoaded) {
             if (c.url !== targetUrl || c.loaded === LoadState.NotRequested) {
-                this.props.getComments(targetUrl);
+                this.props.getComments(targetUrl).then(action => {
+                    console.log('ax', action);
+                    if (action.payload.error && action.payload.error.status === 404)
+                        this.setState({notFound: true});
+                });
             }
         }
     }
@@ -142,7 +149,8 @@ class SingleThreadPage extends React.Component {
 
         const u = this.props.user;
 
-        // TODO thread 404 page (e.g. threads/900)
+        if (this.state.notFound)
+            return <Page404 />
 
 
         const perPageArr = [10, 20, 40, 100];

@@ -193,7 +193,7 @@ class PostFrame_Thread_connected extends Component {
         }
 
         const u = this.props.user;
-        const message = `Delete this thread?${u && u.id !== this.props.thread.author.id ?
+        const message = `Delete this topic?${u && u.id !== this.props.thread.author.id ?
             `\n\nWARNING: you are deleting someone else's thread as an admin!` : ``}`
         let answer = confirm(message);
 
