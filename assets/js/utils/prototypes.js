@@ -9,8 +9,8 @@ String.prototype.capitalizeFirstLetter = function() {
  */
 Date.prototype.formatDefault = function() {
     const year = this.getFullYear(),
-        month = this.getMonth(),
-        day = this.getDay(),
+        month = this.getMonth()+1,
+        day = this.getDate(),
         hour = this.getHours(),
         min = this.getMinutes();
 

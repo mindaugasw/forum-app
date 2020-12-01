@@ -3,7 +3,8 @@
 // --- Colors ---
 :root {
     --color-upvote: #fd7e14;
-    --color-downvote: #9056fb;
+    //--color-downvote: #9056fb; // violet
+    --color-downvote: #439eff; // close to bs-primary blue
     --color-vote: #717171;
 }
 .color-upvote {
@@ -49,22 +50,28 @@ label.required:after {
     // 0px x-margins on md and smaller. Results in a 15px x-margins inside on smaller sizes
     // when inside .full-width-container-md-down
     .mx-0-md-down {
-        //background-color: #dccbff;
         margin-left: 0px;
         margin-right: 0px;
     }
 
     .mx-15-md-down {
-        //background-color: #dccbff;
         margin-left: 15px;
         margin-right: 15px;
     }
 }
 
-// Applies on lg and bigger
+// md and bigger
+@include media-breakpoint-up(md) {
+    .last-pagination-item-md-up a {
+        border-top-right-radius: 0.25rem;
+        border-bottom-right-radius: 0.25rem;
+    }
+}
+
+// lg and bigger
 @include media-breakpoint-up(lg) {
     .mx-0-md-down {
-        //background-color: #ffdaba;
+
     }
 }
 

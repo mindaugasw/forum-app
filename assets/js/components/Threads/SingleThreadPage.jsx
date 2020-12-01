@@ -1,17 +1,10 @@
 import React from "react";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
-import {Link} from "react-router-dom";
-import UrlBuilder from "../../utils/UrlBuilder";
+import UrlBuilder, {ListGetParams} from "../../utils/UrlBuilder";
 import {getSingleThread, getComments} from "../../redux/threads";
-import Loading from "../__old/Loading";
 import Paginator from "../common/Paginator";
-import Voting from "../__old/Voting";
-import CommentForm from "../__old/CommentForm";
-import Comment from "../__old/Comment";
-import {canUserManagePost} from "../../redux/auth";
-import ThreadForm from "../__old/ThreadForm";
-import {Button, Card, Col, Container, Row, Spinner} from "react-bootstrap";
+import {Button, Col, Container, Row, Spinner} from "react-bootstrap";
 import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import PostFrame from "./PostFrame";
@@ -34,6 +27,8 @@ const mapStateToProps = state => {
 class SingleThreadPage extends React.Component {
     constructor(props) {
         super(props);
+
+        this.defaultGETParams = new ListGetParams(1, 10, 'id', 'ASC');
 
         this.state = {
             id: parseInt(this.props.match.params.id), // This thread id
@@ -89,19 +84,26 @@ class SingleThreadPage extends React.Component {
      * @returns {string}
      */
     getListUrl(page = 1) {
+        const defaults = {...this.defaultGETParams, page: page};
         return this.state.id + '/comments/' +
-            UrlBuilder.ReadParamsWithDefaults({
-                page: page, perpage: 10, orderby: 'id', orderdir: 'ASC'}).GetUrl();
+            UrlBuilder.ReadParamsWithDefaults(defaults).GetUrl();
     }
 
     /**
      * Retrieve url with GET params for specific page, to be used in pagination links
      */
-    getPaginationListUrl(page) {
+    /*getPaginationListUrl(page) {
         return `/threads/${this.state.id}/comments/` +
             UrlBuilder.ReadParamsWithReplace(
                 {page: page},
                 {perpage: 10, orderby: 'id', orderdir: 'ASC'}
+            ).GetUrl();
+    }*/
+    getPaginationListUrl(options) {
+        return `/threads/${this.state.id}/comments/` +
+            UrlBuilder.ReadParamsWithReplace(
+                options,
+                this.defaultGETParams
             ).GetUrl();
     }
 
@@ -142,9 +144,31 @@ class SingleThreadPage extends React.Component {
 
         // TODO thread 404 page (e.g. threads/900)
 
-        /**
-         * Thread title and PostFrame
-         */
+
+        const perPageArr = [10, 20, 40, 100];
+        let orderByArr = [
+            {text: 'Oldest to newest', orderby: 'id', orderdir: 'ASC'},
+            {text: 'Newest to oldest', orderby: 'id', orderdir: 'DESC'},
+            {text: 'Most upvoted', orderby: 'votesCount', orderdir: 'DESC'},
+        ];
+        // Mark selected item for Order by
+        const currentParams = UrlBuilder.ReadParamsWithDefaults(this.defaultGETParams);
+        const selectedIndex = orderByArr.findIndex(el => el.orderby === currentParams.orderby && el.orderdir === currentParams.orderdir);
+        if (selectedIndex !== -1)
+            orderByArr[selectedIndex] = {...orderByArr[selectedIndex], selected: true};
+
+        const paginatorJsx = c.loaded && c.pagination.totalCount > 0 ?
+            <Paginator
+                pagination={c.pagination}
+                linkGenerator={this.getPaginationListUrl}
+                onClick={this.handlePageNavigation}
+                perPage={perPageArr}
+                orderBy={orderByArr}
+            />
+            : null;
+
+        const loaderJsx = <div className='text-center mt-5 pt-5'><Spinner animation='border' /></div>;
+
         function threadJsx() {
             return (
                 <>
@@ -171,7 +195,7 @@ class SingleThreadPage extends React.Component {
                             show={u === null}
                             pointerEventsNone={true}
                         >
-                            <a href='#new-comment-form'>
+                            <a href='#new-comment-form' onClick={(event) => { event.preventDefault(); document.getElementById('content').focus(); }}>
                                 <Button disabled={u === null}><FA icon={faPlus}/> Add new</Button>
                             </a>
                         </ConditionalTooltip>
@@ -189,18 +213,12 @@ class SingleThreadPage extends React.Component {
             return (
                 <>
                     {headerJsx}
+                    {paginatorJsx}
                     {listJsx}
+                    {paginatorJsx}
                 </>
             );
         }
-
-        const paginatorJsx = c.loaded && c.pagination.totalCount > 0 ?
-            <Paginator
-                pagination={c.pagination}
-                linkGenerator={this.getPaginationListUrl}
-                onClick={this.handlePageNavigation}
-            />
-            : null;
 
         function newCommentFormJsx() {
             return (
@@ -211,7 +229,6 @@ class SingleThreadPage extends React.Component {
             );
         }
 
-        const loaderJsx = <div className='text-center mt-5 pt-5'><Spinner animation='border' /></div>;
 
         return (
             <Container fluid className='full-width-container-md-down'>
@@ -226,7 +243,6 @@ class SingleThreadPage extends React.Component {
                         {c.loaded === LoadState.Done ?
                             <>
                                 {commentsListJsx()}
-                                {paginatorJsx}
                                 <br/>
                                 {newCommentFormJsx()}
                             </>

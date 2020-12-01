@@ -36,7 +36,8 @@ class PostFrame extends Component {
         this.contentJsx = this.contentJsx.bind(this);
 
         const p = this.props.post;
-        this.initialState = { // Set to object property to easily reset on new comment submit, as component is not remounted and state not reset automatically
+        // this.initialState = { // Set to object property to easily reset on new comment submit, as component is not remounted and state not reset automatically
+        this.state = {
             post: p || {
                 title: '',
                 content: '',
@@ -68,7 +69,7 @@ class PostFrame extends Component {
             initialState = mergeDeep(initialState, this.props.onValidateFullForm(initialState));
         }*/
 
-        this.state = this.initialState;
+        // this.state = this.initialState;
     }
 
     // Component variants shortcuts
@@ -108,14 +109,16 @@ class PostFrame extends Component {
 
         this.props.onSubmit(event, this.state).then(newState => {
             if (newState) { // If any state was returned, it's likely updated validation data, and form was not submitted
-                if (newState.resetState === true)
+                /*if (newState.resetState === true) { // Reset state after comment submit to use the same form again. Not needed anymore?
+                    console.log('PostFrame state reset');
                     this.setState({...this.initialState});
-                else
-                    this.setState(state => {
-                        return {
-                            ...Utils.MergeDeep(state, newState),
-                        };
-                    });
+                }
+                else*/
+                this.setState(state => {
+                    return {
+                        ...Utils.MergeDeep(state, newState),
+                    };
+                });
             }
         });
     }
@@ -168,10 +171,14 @@ class PostFrame extends Component {
                         <ConditionalTooltip
                             placement='top'
                             tooltip={<>
-                                Submitted {(new Date(p.createdAt)).timeAgo()}<br/>
-                                Last edit {(new Date(p.updatedAt)).timeAgo()}</>}
+                                Submitted {(new Date(p.createdAt)).formatDefault()}
+                                {p.edited ?
+                                    <><br/>Last edit {(new Date(p.updatedAt)).formatDefault()}</>
+                                : null}
+                                </>}
                             tooltipId={`${isThread ? 't' : 'c'}-edited-${p.id}`}
-                            show={p.edited}
+                            // show={p.edited}
+                            show={true}
                             wrapperProps={{className: 'd-inline-block'}}
                         >
                             <span className='d-inline-block'>

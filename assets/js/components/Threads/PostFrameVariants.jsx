@@ -347,9 +347,10 @@ class PostFrame_Comment_connected extends Component {
                 Notifications.Add({type:'success', headline:'Comment updated'});
             }
 
-            return { // Reset form state, as component is not remounted
+            /*return { // Reset form state, as component is not remounted
                 resetState: true,
-            };
+            };*/
+            return false;
         });
     }
 
