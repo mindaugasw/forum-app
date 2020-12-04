@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import {Spinner, Alert, Button, Card, Form, Image} from "react-bootstrap";
+import {Button, Card, Form, Image, Badge} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import UrlBuilder from "../../utils/UrlBuilder";
-import {canUserManagePost} from "../../redux/auth";
 import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
 import {faEdit, faExclamationCircle, faTrash} from "@fortawesome/free-solid-svg-icons";
 import VotingGeneral from "./VotingGeneral";
@@ -12,6 +11,7 @@ import {PostFrame_Comment, PostFrame_Thread} from "./PostFrameVariants";
 import AlertWithIcon from "../common/AlertWithIcon";
 import ConditionalTooltip, {msg_MustBeLoggedIn} from "../common/ConditionalTooltip";
 import Utils from "../../utils/Utils";
+import Loader from "../common/Loader";
 
 const mapStateToProps = state => {
     return {
@@ -132,7 +132,7 @@ class PostFrame extends Component {
      * @param {boolean} isThread is this thread or comment?
      * @param {boolean} newMode if render as form, is for new post or edit existing post?
      */
-    headerLeftJsx(p, u, isThread, newMode) {
+    headerLeftJsx(p, u, isThread, newMode, parentThread) {
         let headerLeftJsx; // Avatar, username, time ago
 
         if (newMode) { // Creating new post. Render logged in user or placeholder
@@ -143,7 +143,8 @@ class PostFrame extends Component {
                             className='avatar-image-small'
                             src={UrlBuilder.RoboHash(u.username, 2, 100)}
                             roundedCircle />
-                        <span className='ml-2'>{u.username}</span>
+                        <span className='ml-2 mr-1'>{u.username}</span>
+                        {Utils.Roles.IsUserAdmin(u) ? <Badge.Admin /> : null}
                     </Link>;
             } else { // Render placeholder
                 headerLeftJsx =
@@ -166,6 +167,8 @@ class PostFrame extends Component {
                             src={UrlBuilder.RoboHash(p.author.username, 2, 100)}
                             roundedCircle />
                         <span className='ml-2'>{p.author.username}</span>
+                        {parentThread && parentThread.author.id === p.author.id ? <Badge.Author /> : null }
+                        {Utils.Roles.IsUserAdmin(p.author) ? <Badge.Admin /> : null}
                     </Link>
                     <span className='text-muted d-none d-sm-inline small'> {/* Hide on xs */}
                         <ConditionalTooltip
@@ -208,7 +211,7 @@ class PostFrame extends Component {
         } else { // View mode: show everything
             headerRightJsx =
                 <div className='d-inline-block float-right'>
-                    {canUserManagePost(u, p) ?
+                    {Utils.Roles.CanUserManagePost(u, p) ?
                         <div className='d-inline-block'>
                             <span className='mr-4'>
                                 <a href='#' className='color-vote text-muted' onClick={event => this.props.onEditClick(event, true)}>
@@ -324,26 +327,18 @@ class PostFrame extends Component {
                         >
                             <Button variant='primary' type='submit' className='mr-2' disabled={!v.valid}>
                                 {formLoading ?
-                                    <Spinner animation='border' size='sm' />
+                                    <Loader.Samll />
                                     : null
                                 }{' '}
                                 {editMode ? 'Save' : 'Submit'}
                             </Button>
                         </ConditionalTooltip>
 
-                        {/*<Button variant='primary' type='submit' className='mr-2' disabled={!v.valid}>
-                            {formLoading ?
-                                <Spinner animation='border' size='sm' />
-                                : null
-                            }{' '}
-                            {editMode ? 'Save' : 'Submit'}
-                        </Button>*/}
-
 
                         {/* --- Cancel edit button --- */}
                         {editMode ?
                             <Button
-                                variant='secondary'
+                                variant='outline-secondary'
                                 onClick={event => this.props.onEditClick(event, false)}
                             >Cancel</Button>
                         : null}
@@ -362,7 +357,10 @@ class PostFrame extends Component {
         const u = this.props.user;
 
         /** Is this thread or comment? */
-        const isThread = this.props.isThread; // if parentThread not null, it is comment
+        const isThread = this.props.isThread;
+
+        /** If this is thread, that equal to props.post. If this is comment, parent thread that this comment belongs to. */
+        const parentThread = this.props.parentThread;
 
         /** Render as form mode for editing/creating post (or view mode otherwise) */
         const formMode = this.props.formMode;
@@ -381,7 +379,7 @@ class PostFrame extends Component {
                 <Card border={u && p && u.id === p.author.id ? 'primary' : null}> {/* Your posts are highlighted */}
                     <Card.Header className='py-2'>
                         <div>
-                            {this.headerLeftJsx(p, u, isThread, newMode)}
+                            {this.headerLeftJsx(p, u, isThread, newMode, parentThread)}
                             {this.headerRightJsx(p, u, isThread, formMode)}
                         </div>
                     </Card.Header>
@@ -400,6 +398,7 @@ PostFrame.propTypes = {
     isThread: PropTypes.bool.isRequired, // Is provided post thread or comment
     formMode: PropTypes.bool.isRequired, // If true, renders as form form edit/create
     formLoading: PropTypes.bool, // adjusts form style. Can be set to true e.g. after submitting
+    parentThread: PropTypes.object, // If this is thread, parentThread should be same as post prop. If this is comment, than parentThread that this comment belongs to. Needed to display author badge.
 
     onChange: PropTypes.func, // Form inputs change callback
     onSubmit: PropTypes.func, // Form submit callback

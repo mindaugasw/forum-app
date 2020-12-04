@@ -14,6 +14,9 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
  */
 class ExceptionListener
 {
+	// TODO FEATURE create exception types
+	// TODO FEATURE create form validation exception
+	
 	private string $app_env;
 	private ApiResponseFactory $responses;
 	

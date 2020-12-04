@@ -1,15 +1,14 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import Voting from "./Voting";
 import {connect} from "react-redux";
-import {canUserManagePost} from "../../redux/auth";
 import {deleteComment} from "../../redux/postsCRUD";
 import CommentForm from "./CommentForm";
-import {Col, Row, Card, CardGroup, Container, Image, NavDropdown, Tooltip, OverlayTrigger} from "react-bootstrap";
+import {Card, Image, Tooltip, OverlayTrigger} from "react-bootstrap";
 import UrlBuilder from "../../utils/UrlBuilder";
 import {Link} from "react-router-dom";
 import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
 import {faEdit, faMinusCircle, faPlusCircle, faTrash} from "@fortawesome/free-solid-svg-icons";
+import Utils from "../../utils/Utils";
 
 const mapStateToProps = state => {
     return {
@@ -37,7 +36,7 @@ class Comment extends Component {
     handleDeleteClick(event) {
         event.preventDefault();
 
-        if (!canUserManagePost(this.props.user, this.props.comment)) {
+        if (!Utils.Roles.CanUserManagePost(this.props.user, this.props.comment)) {
             console.error('You don\'t have permissions to do that');
             return;
         }
@@ -150,7 +149,7 @@ class Comment extends Component {
 
                     {/* -- Edit, Delete, Voting -- */}
                     <div className='d-inline-block float-right'>
-                        {canUserManagePost(u, c) ?
+                        {Utils.Roles.CanUserManagePost(u, c) ?
                         <div className='d-inline-block'>
                             <span className='mr-4'>
                                 <a href='#' className='color-vote text-muted' onClick={this.handleEditClick}>

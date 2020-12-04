@@ -6,7 +6,6 @@ import UrlBuilder from "../../utils/UrlBuilder";
 import {connect} from "react-redux";
 import {createComment, createThread, deleteComment, deleteThread, editComment, editThread} from "../../redux/postsCRUD";
 import PropTypes from 'prop-types';
-import {canUserManagePost} from "../../redux/auth";
 import Utils from "../../utils/Utils";
 
 /**
@@ -187,7 +186,7 @@ class PostFrame_Thread_connected extends Component {
     handleThreadDeleteClick(event) {
         event.preventDefault();
 
-        if (!canUserManagePost(this.props.user, this.props.thread)) {
+        if (!Utils.Roles.CanUserManagePost(this.props.user, this.props.thread)) {
             Notifications.Unauthorized();
             return;
         }
@@ -231,6 +230,7 @@ class PostFrame_Thread_connected extends Component {
             return (
                 <PostFrame
                     post={this.props.thread}
+                    parentThread={this.props.thread}
                     isThread={true}
                     formMode={true}
                     onChange={this.handleThreadFormChange}
@@ -244,6 +244,7 @@ class PostFrame_Thread_connected extends Component {
             return (
                 <PostFrame
                     post={this.props.thread}
+                    parentThread={this.props.thread}
                     isThread={true}
                     formMode={false}
                     onEditClick={this.handleEditModeChange}
@@ -364,7 +365,7 @@ class PostFrame_Comment_connected extends Component {
     handleCommentDeleteClick(event) {
         event.preventDefault();
 
-        if (!canUserManagePost(this.props.user, this.props.comment)) {
+        if (!Utils.Roles.CanUserManagePost(this.props.user, this.props.comment)) {
             Notifications.Unauthorized();
             return;
         }
@@ -404,6 +405,7 @@ class PostFrame_Comment_connected extends Component {
             return (
                 <PostFrame
                     post={this.props.comment}
+                    parentThread={this.props.parentThread}
                     isThread={false}
                     formMode={true}
                     onChange={this.handleCommentFormChange}
@@ -417,6 +419,7 @@ class PostFrame_Comment_connected extends Component {
             return (
                 <PostFrame
                     post={this.props.comment}
+                    parentThread={this.props.parentThread}
                     isThread={false}
                     formMode={false}
                     onEditClick={this.handleEditModeChange}

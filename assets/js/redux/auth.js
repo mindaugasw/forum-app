@@ -17,31 +17,46 @@ const LOG_OUT = BASE + 'logout';
  * @param credentials Credentials object {username: '', password: ''}
  */
 export const login = createAsyncThunk(LOG_IN_MANUAL, (credentials, thunkAPI) => {
-    return API.Auth.LogIn(credentials.username, credentials.password)
+    /*return API.Auth.LogIn(credentials.username, credentials.password)
         .then(response => response.json().then(payload => {
             if (response.ok)
                 return payload;
             else
                 return thunkAPI.rejectWithValue(payload);
-        }));
+        }));*/
+
+    return API.HandleThunkResponse(
+        API.Auth.LogIn(credentials.username, credentials.password),
+        thunkAPI)
+        .then();
 });
 export const logout = createAsyncThunk(LOG_OUT, (param, thunkAPI) => {
-    return API.Auth.LogOut()
+    /*return API.Auth.LogOut()
         .then(response => response.json().then(payload => {
             if (response.ok)
                 return payload;
             else
                 return thunkAPI.rejectWithValue(payload);
-        }));
+        }));*/
+
+    return API.HandleThunkResponse(
+        API.Auth.LogOut(),
+        thunkAPI)
+        .then();
 });
 export const tokenRefresh = createAsyncThunk(TOKEN_REFRESH, (param, thunkAPI) => {
-    return API.Auth.TokenRefresh()
+    /*return API.Auth.TokenRefresh()
         .then(response => response.json().then(payload => {
             if (response.ok)
                 return payload;
             else
                 return thunkAPI.rejectWithValue(payload);
-        }));
+        }));*/
+
+    return API.HandleThunkResponse(
+        API.Auth.TokenRefresh(),
+        thunkAPI)
+        .then();
 });
 
 
@@ -181,22 +196,22 @@ function stopTimer(timer) {
         clearTimeout(timer);
 }
 
-/**
+/*
  * Is the given user admin? Checks for admin role on user object.
  * @param user
  * @returns {*|boolean}
  */
-export function isUserAdmin(user) {
+/*export function isUserAdmin(user) {
     return user && user.roles.indexOf('ROLE_ADMIN') > -1;
-}
+}*/
 
-/**
+/*
  * Does given user have permissions to manage (edit, delete) given thread/comment?
- * Checks if user is admin or is author of that thread/comment.
- * @param user User object
- * @param post Thread or comment object
- * @returns {*|boolean}
+ * Checks if user is admin or author of that thread/comment.
+ * @param {object} user
+ * @param {object} post Thread or comment object
+ * @returns {boolean}
  */
-export function canUserManagePost(user, post) {
+/*export function canUserManagePost(user, post) {
     return isUserAdmin(user) || (user && user.id === post.author.id);
-}
+}*/

@@ -1,18 +1,16 @@
 import React from 'react';
 import {
     Switch,
-    Route,
-    Redirect
+    Route
 } from "react-router-dom";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router";
-import SingleThreadPage from "./SingleThreadPage";
-import UrlBuilder from "../../utils/UrlBuilder";
-import PostFrame from "./PostFrame";
-import Utils from "../../utils/Utils";
 import Page404 from "../common/Page404";
+import UserListPage from "./UserListPage";
+import SingleUserPage from "./SingleUserPage";
+import UrlBuilder from "../../utils/UrlBuilder";
 
-class ThreadRouter extends React.Component {
+class UserRouter extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -23,17 +21,18 @@ class ThreadRouter extends React.Component {
         return (
             <Switch>
                 <Route exact path={match.path}>
-                    <Redirect to={UrlBuilder.Home()} />
+                    <UserListPage />
                 </Route>
 
-                <Route path={UrlBuilder.Threads.Create()} >
-                    <h2>Create a new topic</h2>
-                    {Utils.Titles.ThreadNew()}
-                    <PostFrame.Thread isNewThreadForm={true} thread={null} />
+                <Route path={UrlBuilder.Users.Edit(':id')} >
+                {/*<Route path={`${match.path}/:id/edit`} >*/}
+                    <SingleUserPage editMode={true} />
                 </Route>
 
-                <Route path={`${match.path}/:id`} >
-                    <SingleThreadPage />
+
+                {/*<Route path={`${match.path}/:id`} >*/}
+                <Route path={UrlBuilder.Users.Single(':id')} >
+                    <SingleUserPage editMode={false} />
                 </Route>
 
                 <Route>
@@ -50,4 +49,4 @@ class ThreadRouter extends React.Component {
     }
 }
 
-export default withRouter(ThreadRouter);
+export default withRouter(UserRouter);

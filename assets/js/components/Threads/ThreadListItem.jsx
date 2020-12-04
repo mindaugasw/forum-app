@@ -6,6 +6,7 @@ import UrlBuilder from "../../utils/UrlBuilder";
 import NewVoting from "../__old/NewVoting";
 import VotingGeneral from "./VotingGeneral";
 
+// TODO make functional component?
 class ThreadListItem extends Component {
     render() {
         const t = this.props.thread;

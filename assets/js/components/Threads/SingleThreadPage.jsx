@@ -4,13 +4,14 @@ import {withRouter} from "react-router";
 import UrlBuilder, {ListGetParams} from "../../utils/UrlBuilder";
 import {getSingleThread, getComments} from "../../redux/threads";
 import Paginator from "../common/Paginator";
-import {Button, Col, Container, Row, Spinner} from "react-bootstrap";
+import {Button, Col, Container, Row} from "react-bootstrap";
 import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import PostFrame from "./PostFrame";
 import ConditionalTooltip, {msg_MustBeLoggedIn} from "../common/ConditionalTooltip";
 import Utils from "../../utils/Utils";
 import Page404 from "../common/Page404";
+import Loader from "../common/Loader";
 
 const mapDispatchToProps = {
     getSingleThread,
@@ -32,7 +33,8 @@ class SingleThreadPage extends React.Component {
         this.defaultGETParams = new ListGetParams(1, 10, 'id', 'ASC');
 
         this.state = {
-            id: parseInt(this.props.match.params.id), // This thread id
+            // id: parseInt(this.props.match.params.id), // This thread id
+            id: this.props.match.params.id, // This thread id
             editMode: false,
             notFound: false,
         };
@@ -77,7 +79,6 @@ class SingleThreadPage extends React.Component {
         if (this.props.authLoaded) {
             if (c.url !== targetUrl || c.loaded === LoadState.NotRequested) {
                 this.props.getComments(targetUrl).then(action => {
-                    console.log('ax', action);
                     if (action.payload.error && action.payload.error.status === 404)
                         this.setState({notFound: true});
                 });
@@ -99,13 +100,6 @@ class SingleThreadPage extends React.Component {
     /**
      * Retrieve url with GET params for specific page, to be used in pagination links
      */
-    /*getPaginationListUrl(page) {
-        return `/threads/${this.state.id}/comments/` +
-            UrlBuilder.ReadParamsWithReplace(
-                {page: page},
-                {perpage: 10, orderby: 'id', orderdir: 'ASC'}
-            ).GetUrl();
-    }*/
     getPaginationListUrl(options) {
         return `/threads/${this.state.id}/comments/` +
             UrlBuilder.ReadParamsWithReplace(
@@ -123,19 +117,6 @@ class SingleThreadPage extends React.Component {
             'refreshComponent': Math.random(),
         });*/
     }
-
-    /*render_comments_list() {
-        const t = this.props.thread;
-        const c = this.props.thread.comments;
-
-        if (c.loaded !== LoadState.Done) {
-            return <div className='text-center mt-5 pt-5'><Spinner animation="border" /></div>;
-        } else {
-            return c.items.map(comment => {
-                return <Comment key={comment.id} comment={comment} thread={t} />
-            });
-        }
-    }*/
 
     render() {
         /** This thread (wrapper object, not thread item!) */
@@ -175,7 +156,7 @@ class SingleThreadPage extends React.Component {
             />
             : null;
 
-        const loaderJsx = <div className='text-center mt-5 pt-5'><Spinner animation='border' /></div>;
+        // const loaderJsx = <div className='text-center mt-5 pt-5'><Spinner animation='border' /></div>;
 
         function threadJsx() {
             return (
@@ -221,7 +202,6 @@ class SingleThreadPage extends React.Component {
             return (
                 <>
                     {headerJsx}
-                    {paginatorJsx}
                     {listJsx}
                     {paginatorJsx}
                 </>
@@ -254,13 +234,13 @@ class SingleThreadPage extends React.Component {
                                 <br/>
                                 {newCommentFormJsx()}
                             </>
-                            : loaderJsx
+                            : <Loader />
                         }
                     </>
                     :
                     <>
                         {Utils.Titles.ThreadView('Topic view')}
-                        {loaderJsx}
+                        <Loader />
                     </>
                 }
 

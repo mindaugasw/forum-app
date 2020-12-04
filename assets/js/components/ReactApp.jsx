@@ -16,6 +16,7 @@ import LogoutPage from "./Users/LogoutPage";
 import NotificationRenderer from "./common/NotificationRenderer";
 import LoginPage from "./Users/LoginPage";
 import Page404 from "./common/Page404";
+import UserRouter from "./Users/UserRouter";
 
 export let history; // Used globally for redirecting
 
@@ -53,6 +54,10 @@ class ReactApp extends React.Component {
 
                                 <Route path={UrlBuilder.Threads.Index()}>
                                     <ThreadRouter />
+                                </Route>
+
+                                <Route path={UrlBuilder.Users.List()}>
+                                    <UserRouter />
                                 </Route>
 
                                 <Route exact path={UrlBuilder.Login()}>
