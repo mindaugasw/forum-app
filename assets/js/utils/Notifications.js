@@ -60,8 +60,8 @@ class Notifications {
     }
 
     /**
-     * Shortcut for notification informing about unhandled error. Optionally can also include additional
-     * debug info in errorMessage argument
+     * Shortcut for notification informing about unhandled error. Optionally
+     * can also include additional debug info.
      * @param args Optional additional info about the error
      */
     static UnhandledError(...args) {

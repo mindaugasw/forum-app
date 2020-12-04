@@ -65,6 +65,8 @@ class FormUtils {
 
         if (!psw && !pswRepeat) { // Both passwords empty
             res.newPasswordValid = allowEmpty; // If editing user, password optional and is valid if empty
+            if (!res.newPasswordValid)
+                res.newPasswordRepeat = 'Passwords should not be empty.';
             return res;
         }
 
@@ -81,10 +83,8 @@ class FormUtils {
             score: z.score,
             pass: z.score > 1 || APP_ENV === 'dev', // allow weak password for dev
             feedbackWarning: z.feedback.warning || false,
-            // feedbackSuggestions: z.feedback.suggestions ? z.feedback.suggestions.join(' ') : false,
             feedbackSuggestions: z.feedback.suggestions && z.feedback.suggestions.length > 0 ?
                 z.feedback.suggestions : false,
-            // feedbackSuggestions: z.feedback.suggestions ? Utils.FormatZxcvbnSuggestions(z.feedback.suggestions) : false,
         };
 
         res.newPasswordValid = res.pswStr.pass && !res.newPasswordRepeat; // Only valid if there's no password repeat error message (and zxcvbn passes)

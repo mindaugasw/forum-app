@@ -303,7 +303,7 @@ class PostFrame extends Component {
                                 onChange={this.handleFormChange}
                             />
                             <Form.Text className='text-muted'>
-                                Should not be empty and not exceed 30000 characters.
+                                Should be not empty and not exceed 30000 characters.
                             </Form.Text>
                             {v.content ?
                                 <Form.Control.Feedback type='invalid' className='d-block'>{v.content}</Form.Control.Feedback>

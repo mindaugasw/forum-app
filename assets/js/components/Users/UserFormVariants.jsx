@@ -8,117 +8,14 @@ import UrlBuilder from "../../utils/UrlBuilder";
 import Notifications from "../../utils/Notifications";
 import Utils from "../../utils/Utils";
 import FormUtils from "../../utils/FormUtils";
-import {Form} from "react-bootstrap";
 
-// TODO refactor
 
-function handleFormChange_Register_Edit(event, state) {
-    // TODO method almost the same as login form change handler
-    const target = event.target;
-
-    const updatedState = { // Manual state update, as passed state is late by 1 onChange event
-        ...state,
-        [target.id]: target.value
-    }
-
-    // Validate only edited field (to not show errors on still untouched fields)
-    let validationData = null;
-    if (target.id === 'username')
-        validationData = {...validateNewUsername(updatedState)};
-
-    if (target.id === 'password' || target.id === 'passwordRepeat')
-        validationData = {...validateNewPassword(updatedState)};
-
-    // Join all validation data to check full form validity
-    validationData = Utils.MergeDeep(state.validation, validationData);
-
-    // if (validationData.usernameValid && validationData.passwordValid)
-    //     validationData = true;
-    validationData.valid = validationData.usernameValid && validationData.passwordValid;
-
-    return {
-        validation: {
-            ...validationData
-        }
-    };
-}
-
-function validateNewPassword(state, allowEmpty = false) {
-    const s = state;
-    let res = {
-        passwordValid: false,
-
-        passwordRepeat: false, // error message under password repeat
-        pswStrNumber: false, // strength meter value
-        pswStrFlavor: false, // strength meter color
-        pswStrText: false, // strength meter message
-        pswStrFeedback: false, // zxcvbn feedback
-    };
-
-    if (!s.password && !s.passwordRepeat) { // Both passwords empty
-        res.passwordValid = allowEmpty; // If editing user, password optional and is valid if empty
-        return res;
-    }
-
-    if (s.password !== s.passwordRepeat) {
-        res.passwordRepeat = 'Passwords do not match.';
-        // return res; // Show password strength even if passwords don't match
-    }
-
-    const pswTested = s.password.length > 100 ? s.password.substring(0, 100) : s.password; // Long strings are cut for performance
-    const z = zxcvbn.default(pswTested, [s.username]);
-
-    res.pswStrNumber = Math.max(z.score * 25, 10);
-    switch (z.score) {
-        case 0:
-        case 1:
-            res.pswStrFlavor = 'danger';
-            res.pswStrText = 'too weak'
-            break;
-        case 2:
-            res.pswStrFlavor = 'warning';
-            res.pswStrText = 'weak'
-            break;
-        case 3:
-            res.pswStrFlavor = 'info';
-            res.pswStrText = 'strong'
-            break;
-        case 4:
-            res.pswStrFlavor = 'success';
-            res.pswStrText = 'very strong'
-            break;
-    }
-
-    res.pswStrText = 'Password strength: '+res.pswStrText;
-    res.pswStrFeedbackWarning = z.feedback.warning || false;
-    res.pswStrFeedbackSuggestions = z.feedback.suggestions || false;
-
-    if (z.score > 1 || APP_ENV === 'dev')
-        res.passwordValid = !res.passwordRepeat; // Only valid if there's no password repeat message (ie passwords match)
-
-    return res;
-}
-function validateNewUsername(state) {
-    const s = state;
-    let res = {
-        usernameValid: false,
-        username: false,
-    }
-
-    if (!s.username || s.username.length < 4 || s.username.length > 25) {
-        // v.valid = false;
-        res.username = 'Username does not meet requirements.';
-        return res;
-    }
-
-    res.usernameValid = true;
-    return res;
-}
-
+// --- Registration form ---
 class UserForm_Register_connected extends Component {
     constructor(props) {
         super(props);
 
+        this.handleRegistrationChange = this.handleRegistrationChange.bind(this);
         this.handleRegistrationSubmit = this.handleRegistrationSubmit.bind(this);
 
         this.state = {
@@ -126,18 +23,49 @@ class UserForm_Register_connected extends Component {
         };
     }
 
+    handleRegistrationChange(target, state) {
+        let validationData = {};
+
+        if (target.id === 'username')
+            validationData = FormUtils.ValidateTextField(
+                state.user.username,
+                'username', {
+                    minLength: 4,
+                    maxLength: 25,
+                    errorMessage: 'Username does not meet requirements'
+            });
+
+        if (target.id === 'newPassword' || target.id === 'newPasswordRepeat')
+            validationData = FormUtils.ValidateNewPassword(state, false);
+
+        // Join all validation data to check full form validity
+        validationData = Utils.MergeDeep(state.validation, validationData);
+
+        // validationData.valid = validationData.usernameValid && validationData.passwordValid;
+        validationData.valid = validationData.usernameValid && validationData.newPasswordValid;
+
+        return {
+            validation: {
+                ...validationData
+            }
+        };
+    }
+
     handleRegistrationSubmit(event, state) {
         if (!state.validation.valid) {
             console.error('Tried submitting invalid form');
+            Notifications.UnhandledError('Tried submitting invalid form');
             return;
         }
+
         this.setState({formLoading: true});
 
-        return this.props.register({username: state.username, password: state.password})
+        return this.props.register({username: state.user.username, password: state.user.newPassword})
             .then(action => {
-            this.setState({formLoading: false}); // TODO dont update on success
 
-            if (action.type === REGISTER+REJECTED) {
+            if (action.type.endsWith(REJECTED)) {
+
+                this.setState({formLoading: false});
                 const p = action.payload;
                 const e = p.error;
 
@@ -151,10 +79,9 @@ class UserForm_Register_connected extends Component {
                     }
                 }
 
-                console.error('Unknown error in form', action);
-                Notifications.UnhandledError('Form error in UserForm_Register_unconnected');
+                console.error('UserForm_Register submit error', action);
+                Notifications.UnhandledError('UserForm_Register submit error', action);
                 return;
-
             } else {
                 Utils.Redirect(UrlBuilder.Login());
                 Notifications.Add({type:'success', headline:'Registration successful', message:'You can now log in to your new account'});
@@ -168,13 +95,19 @@ class UserForm_Register_connected extends Component {
             variant='register'
             initialValues={{}}
             formLoading={this.state.formLoading}
+            onChange={this.handleRegistrationChange}
             onSubmit={this.handleRegistrationSubmit}
-            onChange={handleFormChange_Register_Edit}
         />;
     }
 }
-export const UserForm_Register = connect(null, {register})(UserForm_Register_connected);
-
+const mapDispatchToProps_Register = {
+    register
+}
+export const UserForm_Register = connect(null, mapDispatchToProps_Register)(UserForm_Register_connected);
+UserForm_Register.propTypes = {
+    // Redux:
+    // register: PropTypes.func.isRequired,
+}
 
 
 // --- Login form ---
@@ -182,7 +115,6 @@ class UserForm_Login_connected extends Component {
     constructor(props) {
         super(props);
 
-        this.validateFieldNotEmpty = this.validateFieldNotEmpty.bind(this);
         this.handleLoginChange = this.handleLoginChange.bind(this);
         this.handleLoginSubmit = this.handleLoginSubmit.bind(this);
 
@@ -191,26 +123,19 @@ class UserForm_Login_connected extends Component {
         };
     }
 
-    handleLoginChange(event, state) {
-        const target = event.target;
+    handleLoginChange(target, state) {
+        let validationData = {};
 
-        const updatedState = { // Manual state update, as passed state is late by 1 onChange event
-            ...state,
-            [target.id]: target.value
-        };
-
-        // Validate only edited field (to not show errors on still untouched fields)
-        let validationData = null;
         if (target.id === 'username')
-            validationData = {...this.validateFieldNotEmpty(updatedState, 'username')};
+            validationData = FormUtils.ValidateTextField(state.user.username, 'username', {minLength: 1, errorMessage: 'Username should not be empty'});
 
-        if (target.id === 'password')
-            validationData = {...this.validateFieldNotEmpty(updatedState, 'password')};
+        if (target.id === 'currentPassword')
+            validationData = FormUtils.ValidateTextField(state.user.currentPassword, 'currentPassword', {minLength: 1, errorMessage: 'Password should not be empty'});
 
         // Join all validation data to check full form validity
         validationData = Utils.MergeDeep(state.validation, validationData);
 
-        validationData.valid = validationData.usernameValid && validationData.passwordValid;
+        validationData.valid = validationData.usernameValid && validationData.currentPasswordValid;
 
         return {
             validation: {
@@ -219,35 +144,20 @@ class UserForm_Login_connected extends Component {
         };
     }
 
-    validateFieldNotEmpty(state, fieldName) {
-        // TODO replace with FormUtils.ValidateTextField
-        let res = {
-            [[fieldName]+'Valid']: false,
-            [fieldName]: false,
-        }
-
-        if (!state[fieldName] || state[fieldName].length < 1) {
-            res[fieldName] = [fieldName].toString().capitalizeFirstLetter()+' should not be empty.';
-            return res;
-        }
-
-        res[[fieldName]+'Valid'] = true;
-        return res;
-    }
-
     handleLoginSubmit(event, state) {
         if (!state.validation.valid) {
             console.error('Tried submitting invalid form');
+            Notifications.UnhandledError('Tried submitting invalid form');
             return;
         }
 
         this.setState({formLoading: true});
-        let response = this.props.login({username: state.username, password: state.password});
 
-        return response.then(action => {
-            this.setState({formLoading: false});
 
-            if (action.type === LOG_IN_MANUAL+REJECTED) {
+        return this.props.login({username: state.user.username, password: state.user.currentPassword})
+            .then(action => {
+            if (action.type.endsWith(REJECTED)) {
+                this.setState({formLoading: false});
                 const p = action.payload;
 
                 if (p && p.code === 401) {
@@ -262,12 +172,12 @@ class UserForm_Login_connected extends Component {
                     };
                 }
 
-                console.error('Unknown error in form', action);
-                Notifications.UnhandledError('Form error in UserForm_Login_unconnected', action);
+                console.error('UserForm_Login submit error', action);
+                Notifications.UnhandledError('UserForm_Login submit error', action);
                 return;
 
             } else {
-                console.log('Login success');
+                console.debug('Login success');
                 Utils.Redirect(UrlBuilder.Home());
                 Notifications.Add({type:'success', headline:'Login successful'});
                 return;
@@ -280,13 +190,19 @@ class UserForm_Login_connected extends Component {
             variant='login'
             initialValues={{}}
             formLoading={this.state.formLoading}
-            onSubmit={this.handleLoginSubmit}
             onChange={this.handleLoginChange}
+            onSubmit={this.handleLoginSubmit}
         />
     }
 }
-export const UserForm_Login = connect(null, {login})(UserForm_Login_connected);
-
+const mapDispatchToProps_Login = {
+    login
+}
+export const UserForm_Login = connect(null, mapDispatchToProps_Login)(UserForm_Login_connected);
+UserForm_Login.propTypes = {
+    // Redux:
+    // login: PropTypes.func.isRequired,
+}
 
 
 // --- Edit form ---
@@ -387,13 +303,11 @@ class UserForm_Edit_connected extends Component {
     handleEditChange(target, state) {
         let validationData = {};
 
-        // Validate changed field
         if (target.name === 'roles') {
             validationData = FormUtils.ValidateRoles(state, this.props.user, this.props.authUser);
         }
 
         if (target.id === 'currentPassword' || target.id === 'newPassword' || target.id === 'newPasswordRepeat') {
-            // validationData = FormUtils.ValidateNewPassword(state, true);
             validationData = this.validatePasswordChange(state);
         }
 

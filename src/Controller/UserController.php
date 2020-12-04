@@ -50,6 +50,10 @@ class UserController extends BaseApiController
 	}
 	
 	/**
+	 * Can return:
+	 * 		200
+	 * 		400 if username already taken, invalid body, password too weak
+	 * 		500 if no password/username
 	 * @Route("/register/", methods={"POST"})
 	 */
 	public function register(Request $request)
