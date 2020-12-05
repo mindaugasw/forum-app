@@ -73,7 +73,7 @@ function handleDeleteErrors(action) {
             return false;
         }
 
-        console.error('Unknown error in post delete', action);
+        console.error('Thread/Comment delete error', action);
         Notifications.UnhandledError('Thread/Comment delete error', action);
         return false;
     }

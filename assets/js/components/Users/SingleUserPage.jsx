@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {getSingleUser} from "../../redux/usersCRUD";
+import {deleteUser, getSingleUser} from "../../redux/usersCRUD";
 import {Link, withRouter} from "react-router-dom";
 import UrlBuilder from "../../utils/UrlBuilder";
 import {Badge, Col, Image, Row} from "react-bootstrap";
@@ -11,36 +11,48 @@ import UserForm from "./UserForm";
 import Utils from "../../utils/Utils";
 import Loader from "../common/Loader";
 import Page404 from "../common/Page404";
+import Notifications from "../../utils/Notifications";
+import {logout} from "../../redux/auth";
 
-const mapDispatchToProps = {
-    getSingleUser
-}
-
-function mapStateToProps(state) {
-    return {
-        user: state.users.single,
-        authLoaded: state.auth.loaded,
-        authUser: state.auth.user,
-    };
-}
 
 class SingleUserPage extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            id: this.props.match.params.id, // This user id
+        this.handleDeleteClick = this.handleDeleteClick.bind(this);
+
+        let initialState = {
+            id: parseInt(this.props.match.params.id),
             notFound: false,
         }
 
-        this.loadUser();
-        // this.toggleEditMode = this.toggleEditMode.bind(this);
+        if (isNaN(initialState.id)) {
+            initialState.id = -1;
+            initialState.notFound = true;
+        }
+
+        this.state = initialState;
+
+        if (!this.state.notFound)
+            this.loadUser();
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        const newTargetId = this.props.match.params.id;
-        if (prevState.id !== newTargetId)
-            this.setState({id: newTargetId});
+        if (this.state.notFound) {
+            return;
+        }
+
+        let newTargetId = parseInt(this.props.match.params.id);
+        if (isNaN(newTargetId))
+            newTargetId = -1;
+
+
+        if (prevState.id !== newTargetId) {
+            if (newTargetId === -1)
+                this.setState({id: newTargetId, notFound: true});
+            else
+                this.setState({id: newTargetId});
+        }
         else
             this.loadUser();
     }
@@ -56,6 +68,56 @@ class SingleUserPage extends Component {
                         this.setState({notFound: true});
                 });
             }
+        }
+    }
+
+    handleDeleteClick(event) {
+        event.preventDefault();
+        const u = this.props.user; // User subject
+        const au = this.props.authUser; // Currently logged in user
+
+        if (!au || (au.id !== u.id && !Utils.Roles.IsUserAdmin(au))) {
+            Notifications.Unauthorized();
+            return;
+        }
+
+        const message = `Delete this account? Account deletion is permanent!${au.id !== u.id ?
+            `\n\nWARNING: you are deleting someone else's account as an admin!` : ``}`
+        let answer = confirm(message);
+
+        if (answer) {
+            this.props.deleteUser(u.id)
+                .then(action => {
+                    // TODO duplicating code with PostFormVariants.handleDeleteErrors
+                    if (action.type.endsWith(REJECTED)) {
+                        const p = action.payload;
+                        const e = p.error;
+
+                        if ((e && e.status === 401) || p.code === 401) {
+                            Notifications.Unauthenticated();
+                            return false;
+                        } if (e && e.status === 403) {
+                            Notifications.Unauthorized();
+                            return false;
+                        }
+
+                        console.error('User delete error', action);
+                        Notifications.UnhandledError('User delete error', action);
+                        return false;
+                    }
+
+                    // TODO component state is modified after deletion on unmounted component (before redirect, race condition?), which causes warning
+                    console.debug('User deleted');
+                    Notifications.Success('User deleted');
+                    if (au.id === u.id) {
+                        Utils.Redirect(UrlBuilder.Home());
+                        this.props.logout();
+                    } else {
+                        Utils.Redirect(UrlBuilder.Users.List());
+                    }
+                    return true;
+
+                });
         }
     }
 
@@ -81,6 +143,8 @@ class SingleUserPage extends Component {
             return <Loader />;
 
         u = u.item; // Replace with actual user item
+
+        const {handleDeleteClick} = this;
 
 
         function editPageJsx() {
@@ -118,7 +182,7 @@ class SingleUserPage extends Component {
                             <Link to={UrlBuilder.Users.Edit(u.id)} className='color-vote text-muted mr-4'>
                                 <FA icon={faEdit} size={'lg'} /><span className='ml-1'>Edit profile</span>
                             </Link>
-                            <a href='#' className='color-vote text-muted' onClick={null}>
+                            <a href='#' className='color-vote text-muted' onClick={handleDeleteClick}>
                                 <FA icon={faTrash} size={'lg'} /><span className='ml-1'>Delete account</span>
                             </a>
                         </div>
@@ -138,8 +202,34 @@ class SingleUserPage extends Component {
         );
     }
 }
+
 SingleUserPage.propTypes = {
     editMode: PropTypes.bool, // If true, will immediately show edit form
+
+    // Redux:
+    // user: PropTypes.object,
+    // authLoaded: PropTypes.bool.isRequired,
+    // authUser: PropTypes.object,
+
+    // getSingleUser: PropTypes.func.isRequired,
+    // deleteUser: PropTypes.func.isRequired,
+
+    // Router:
+    // match: PropTypes.object,
+}
+
+const mapDispatchToProps = {
+    getSingleUser,
+    deleteUser,
+    logout,
+}
+
+function mapStateToProps(state) {
+    return {
+        user: state.users.single,
+        authLoaded: state.auth.loaded,
+        authUser: state.auth.user,
+    };
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SingleUserPage));

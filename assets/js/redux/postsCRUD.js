@@ -60,11 +60,6 @@ export const deleteThread = createAsyncThunk(DELETE_THREAD, (params, thunkAPI) =
                 return response.json().then(payload => thunkAPI.rejectWithValue(payload));
             }
         });
-
-    /*return API.HandleThunkResponse(
-        API.Threads.DeleteThread(params.threadId),
-        thunkAPI)
-        .then();*/
 });
 
 

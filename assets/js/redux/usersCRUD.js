@@ -62,6 +62,17 @@ export const editUser = createAsyncThunk(EDIT_USER, (params, thunkAPI) => {
     ).then();
 });
 
+export const deleteUser = createAsyncThunk(DELETE_USER, (id, thunkAPI) => {
+    return API.Users.Delete(id)
+        .then(response => {
+            if (response.ok) {
+                return true;
+            } else {
+                return response.json().then(payload => thunkAPI.rejectWithValue(payload));
+            }
+        });
+});
+
 // --- State ---
 const initialState = {
     list: { // Users list
@@ -134,8 +145,7 @@ export const usersCRUDSlice = createSlice({
                 logout.fulfilled.type,
                 register.fulfilled.type,
                 editUser.fulfilled.type,
-                // delete
-                // TODO add other actions after usersCRUD is done
+                deleteUser.fulfilled.type
             ];
 
             return matchingActions.indexOf(action.type) > -1;

@@ -341,6 +341,14 @@ class UserForm extends Component {
             );
         }
 
+        function adminAlertJsx() {
+            return (
+                <AlertWithIcon variant='primary' className='mb-2'>
+                    {` You're editing someone else's profile as an admin!`}
+                </AlertWithIcon>
+            );
+        }
+
         function submitButtonJsx() {
             return (
                 <Button variant='primary' type='submit' className='mr-2' disabled={!v.valid}>
@@ -380,6 +388,10 @@ class UserForm extends Component {
                                     : null}
                             </>
                             : null}
+
+                        {edit && au.id !== u.id ?
+                            adminAlertJsx()
+                            : null }
 
                         {submitButtonJsx()}
 

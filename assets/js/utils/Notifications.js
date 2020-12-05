@@ -60,6 +60,16 @@ class Notifications {
     }
 
     /**
+     * Shortcut for new notification of type success
+     * // TODO replace other notifications with this method
+     * @param {string} headline
+     * @param {string|null} message
+     */
+    static Success(headline, message = null) {
+        this.Add({type:'success', headline, message});
+    }
+
+    /**
      * Shortcut for notification informing about unhandled error. Optionally
      * can also include additional debug info.
      * @param args Optional additional info about the error

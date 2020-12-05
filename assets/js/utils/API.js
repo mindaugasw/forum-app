@@ -58,6 +58,9 @@ API.Threads = class {
 
     static BaseUrl = API.BaseUrl + '/threads';
 
+
+    // --- GET operations ---
+
     /**
      * @param paramsUrl Url defining list GET params, like page, perpage, orderby, orderdir.
      * e.g. url='?page=1&perpage=20&orderby=id&orderdir=DESC'
@@ -79,6 +82,9 @@ API.Threads = class {
     static GetCommentsList(url) {
         return API.Fetch('GET', `${this.BaseUrl}/${url}`, null, true);
     }
+
+
+    // --- VOTE operations ---
 
     static SubmitThreadVote(threadId, voteValue) {
 
@@ -178,5 +184,9 @@ API.Users = class {
         if (oldPassword) body.oldPassword = oldPassword;
 
         return API.Fetch('PATCH', `${this.BaseUrl}/${id}/`, body, true);
+    }
+
+    static Delete(id) {
+        return API.Fetch('DELETE', `${this.BaseUrl}/${id}/`, null, true);
     }
 }
