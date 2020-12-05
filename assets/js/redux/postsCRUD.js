@@ -52,19 +52,19 @@ export const editThread = createAsyncThunk(EDIT_THREAD, (params, thunkAPI) => {
  * @param {threadId<number>} params
  */
 export const deleteThread = createAsyncThunk(DELETE_THREAD, (params, thunkAPI) => {
-    /*return API.Threads.DeleteThread(params.threadId)
+    return API.Threads.DeleteThread(params.threadId)
         .then(response => {
             if (response.ok) {
                 return true;
             } else {
                 return response.json().then(payload => thunkAPI.rejectWithValue(payload));
             }
-        });*/
+        });
 
-    return API.HandleThunkResponse(
+    /*return API.HandleThunkResponse(
         API.Threads.DeleteThread(params.threadId),
         thunkAPI)
-        .then();
+        .then();*/
 });
 
 

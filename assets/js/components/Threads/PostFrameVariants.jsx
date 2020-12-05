@@ -54,6 +54,12 @@ function handleFormSubmitErrors(action) {
         return true;
 }
 
+/**
+ * Checks delete action for possible errors. Returns true if action completed successfully.
+ * Otherwise returns false and adds notification.
+ * @param action
+ * @returns {boolean}
+ */
 function handleDeleteErrors(action) {
     if (action.type.endsWith(REJECTED)) {
         const p = action.payload;
@@ -436,5 +442,5 @@ PostFrame_Comment.propTypes = {
     parentThread: PropTypes.object.isRequired, // Thread that this comment belongs to
 
     // Redux state:
-    // user: PropTypes.object,
+    // user: PropTypes.object.isRequired,
 }

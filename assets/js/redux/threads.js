@@ -45,13 +45,6 @@ export const getSingleThread = createAsyncThunk(LOAD_SINGLE, (id, thunkAPI) => {
     if (findResult !== undefined)
         return findResult;
 
-    /*return API.Threads.GetSingle(id)
-        .then(response => response.json().then(payload => {
-            if (response.ok)
-                return payload;
-            else
-                return thunkAPI.rejectWithValue(payload);
-        }));*/
     return API.HandleThunkResponse(
         API.Threads.GetSingle(id),
         thunkAPI)
@@ -177,6 +170,7 @@ export const threadSlice = createSlice({
         .addCase(submitVote.pending, (state, action) => {
             // Assumes that voting was successful and modifies state immediately, so that voting
             // would be more responsive.
+
             const args = action.meta.arg;
             let items = []; // Array of items (threads/comment) on which to apply the vote
 

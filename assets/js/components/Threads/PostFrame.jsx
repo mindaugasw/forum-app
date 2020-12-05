@@ -292,7 +292,7 @@ class PostFrame extends Component {
                                 <Form.Label>{isThread ? 'Topic' : 'Comment'} content</Form.Label>
                                 : null
                             }
-                            {/* TODO markdown formatting */}
+                            {/* TODO FEATURE markdown formatting */}
                             <Form.Control
                                 as='textarea'
                                 rows={5}
@@ -327,7 +327,7 @@ class PostFrame extends Component {
                         >
                             <Button variant='primary' type='submit' className='mr-2' disabled={!v.valid}>
                                 {formLoading ?
-                                    <Loader.Samll />
+                                    <Loader.Small />
                                     : null
                                 }{' '}
                                 {editMode ? 'Save' : 'Submit'}
@@ -373,6 +373,8 @@ class PostFrame extends Component {
 
         const formLoading = this.props.formLoading;
 
+        // TODO move render methods here
+        // TODO separate render methods into smaller ones
 
         return (
             <div>

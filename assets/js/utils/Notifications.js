@@ -127,7 +127,8 @@ class Notifications {
             message: null,
         });
     }
-
 }
+
+window.notif = Notifications; // TODO remove
 
 export default Notifications;

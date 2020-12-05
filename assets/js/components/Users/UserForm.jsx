@@ -16,7 +16,10 @@ class UserForm extends Component {
         this.handleFormChange = this.handleFormChange.bind(this);
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
 
-        let iv = {...this.props.initialValues} || { // Set initial input values
+        // let iv = {...this.props.initialValues} || { ... // Not working?
+        let iv = this.props.initialValues ? // Set initial input values
+            {...this.props.initialValues}
+        : {
             username: '',
             currentPassword: '',
             newPassword: '',
@@ -402,7 +405,7 @@ class UserForm extends Component {
 UserForm.propTypes = {
     variant: PropTypes.oneOf(['login', 'register', 'edit']).isRequired,
 
-    initialValues: PropTypes.object, // User that is being edited. Can be null if not in edit form
+    initialValues: PropTypes.object, // User that is being edited. Should be null if not in edit form
     formLoading: PropTypes.bool, // adjusts form style. Can be set to true e.g. after submitting
 
     // Event callbacks. Can return updated state data, e.g. validation data

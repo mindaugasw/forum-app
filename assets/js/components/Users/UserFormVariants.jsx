@@ -93,7 +93,7 @@ class UserForm_Register_connected extends Component {
     render() {
         return <UserForm
             variant='register'
-            initialValues={{}}
+            initialValues={null}
             formLoading={this.state.formLoading}
             onChange={this.handleRegistrationChange}
             onSubmit={this.handleRegistrationSubmit}
@@ -188,7 +188,7 @@ class UserForm_Login_connected extends Component {
     render() {
         return <UserForm
             variant='login'
-            initialValues={{}}
+            initialValues={null}
             formLoading={this.state.formLoading}
             onChange={this.handleLoginChange}
             onSubmit={this.handleLoginSubmit}

@@ -79,7 +79,12 @@ class NavBar extends Component {
         }
 
         return (
-            <Navbar bg="light" expand="md" sticky="top" onToggle={this.setNavExpanded} expanded={this.state.navExpanded}>
+            <Navbar
+                bg="light" expand="md" sticky="top"
+                onToggle={this.setNavExpanded}
+                expanded={this.state.navExpanded}
+                style={{zIndex: 10500}} /* So that Navbar would be above notifications */
+            >
                 <Link to='/' onClick={this.closeNav}>
                     <Navbar.Brand>Forum app</Navbar.Brand>
                 </Link>

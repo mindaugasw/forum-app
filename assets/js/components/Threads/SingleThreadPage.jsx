@@ -30,24 +30,36 @@ class SingleThreadPage extends React.Component {
     constructor(props) {
         super(props);
 
-        this.defaultGETParams = new ListGetParams(1, 10, 'id', 'ASC');
-
-        this.state = {
-            // id: parseInt(this.props.match.params.id), // This thread id
-            id: this.props.match.params.id, // This thread id
-            editMode: false,
-            notFound: false,
-        };
-
         this.getListUrl = this.getListUrl.bind(this);
         this.getPaginationListUrl = this.getPaginationListUrl.bind(this);
         this.handlePageNavigation = this.handlePageNavigation.bind(this);
 
-        this.loadThread();
-        this.loadComments();
+        this.defaultGETParams = new ListGetParams(1, 10, 'id', 'ASC');
+
+        let initialState = {
+            id: parseInt(this.props.match.params.id), // This thread id
+            editMode: false,
+            notFound: false,
+        };
+
+        if (isNaN(initialState.id)) {
+            initialState.id = -1;
+            initialState.notFound = true;
+        }
+
+        this.state = initialState;
+
+        if (!this.state.notFound) {
+            this.loadThread();
+            this.loadComments();
+        }
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.state.notFound) {
+            return;
+        }
+
         this.loadThread();
         this.loadComments();
     }
@@ -62,7 +74,7 @@ class SingleThreadPage extends React.Component {
         if (this.props.authLoaded) {
             if (t.id !== targetId || t.loaded === LoadState.NotRequested) {
                 this.props.getSingleThread(targetId).then(action => {
-                    if (action.error && action.error.status === 404)
+                    if (action.payload.error && action.payload.error.status === 404)
                         this.setState({notFound: true});
                 });
             }
@@ -156,7 +168,6 @@ class SingleThreadPage extends React.Component {
             />
             : null;
 
-        // const loaderJsx = <div className='text-center mt-5 pt-5'><Spinner animation='border' /></div>;
 
         function threadJsx() {
             return (
