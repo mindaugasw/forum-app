@@ -116,7 +116,7 @@ class UserCRUD
 			
 			if (!$this->passwordEncoder->isPasswordValid($user, $oldPasswordPlaintext))
 			{
-				throw new ApiBadRequestException('Old password does not match currently set password.');
+				throw new ApiBadRequestException('Password does not match currently set password.');
 			}
 			
 			$this->ensureSafePassword($newPasswordPlaintext);

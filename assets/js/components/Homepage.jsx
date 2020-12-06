@@ -20,7 +20,7 @@ class Homepage extends Component {
             <div>
                 {Utils.Titles.Homepage()}
 
-                {APP_ENV === 'prod' ? <UnderConstructionNotice /> : null}
+                {/*{APP_ENV === 'prod' ? <UnderConstructionNotice /> : null}*/}
 
                 <h1>Welcome!</h1>
                 This is a general-purpose discussion forum. Find more info in{' '}

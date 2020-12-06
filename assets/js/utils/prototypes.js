@@ -1,3 +1,5 @@
+import {BadgeAdmin, BadgeAuthor} from "../components/common/Badges";
+import {Badge} from "react-bootstrap";
 
 String.prototype.capitalizeFirstLetter = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
@@ -50,3 +52,28 @@ Date.prototype.timeAgo = function () {
             return this.formatDefault();
     }
 }
+
+/**
+ * Push element to the array only if it does not exist already. Immutable operation.
+ * @param element
+ */
+Array.prototype.pushIfNotExist = function (element) {
+    let exists = this.indexOf(element) !== -1;
+    let newArray = [...this];
+    if (!exists)
+        newArray.push(element);
+
+    return newArray;
+}
+
+/**
+ * Returns a new array with all occurrences of element removed. Immutable operation.
+ * @param element
+ */
+Array.prototype.removeAll = function (element) {
+    return this.filter(e => e !== element);
+}
+
+
+Badge.Admin = BadgeAdmin;
+Badge.Author = BadgeAuthor;

@@ -4,12 +4,14 @@ import {withRouter} from "react-router";
 import UrlBuilder, {ListGetParams} from "../../utils/UrlBuilder";
 import {getSingleThread, getComments} from "../../redux/threads";
 import Paginator from "../common/Paginator";
-import {Button, Col, Container, Row, Spinner} from "react-bootstrap";
+import {Button, Col, Container, Row} from "react-bootstrap";
 import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import PostFrame from "./PostFrame";
 import ConditionalTooltip, {msg_MustBeLoggedIn} from "../common/ConditionalTooltip";
 import Utils from "../../utils/Utils";
+import Page404 from "../common/Page404";
+import Loader from "../common/Loader";
 
 const mapDispatchToProps = {
     getSingleThread,
@@ -28,24 +30,36 @@ class SingleThreadPage extends React.Component {
     constructor(props) {
         super(props);
 
-        this.defaultGETParams = new ListGetParams(1, 10, 'id', 'ASC');
-
-        this.state = {
-            id: parseInt(this.props.match.params.id), // This thread id
-            // TODO show error if id is NaN
-            // TODO show error on 404 response
-            editMode: false,
-        }
-
         this.getListUrl = this.getListUrl.bind(this);
         this.getPaginationListUrl = this.getPaginationListUrl.bind(this);
         this.handlePageNavigation = this.handlePageNavigation.bind(this);
 
-        this.loadThread();
-        this.loadComments();
+        this.defaultGETParams = new ListGetParams(1, 10, 'id', 'ASC');
+
+        let initialState = {
+            id: parseInt(this.props.match.params.id), // This thread id
+            editMode: false,
+            notFound: false,
+        };
+
+        if (isNaN(initialState.id)) {
+            initialState.id = -1;
+            initialState.notFound = true;
+        }
+
+        this.state = initialState;
+
+        if (!this.state.notFound) {
+            this.loadThread();
+            this.loadComments();
+        }
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.state.notFound) {
+            return;
+        }
+
         this.loadThread();
         this.loadComments();
     }
@@ -59,7 +73,10 @@ class SingleThreadPage extends React.Component {
 
         if (this.props.authLoaded) {
             if (t.id !== targetId || t.loaded === LoadState.NotRequested) {
-                this.props.getSingleThread(targetId);
+                this.props.getSingleThread(targetId).then(action => {
+                    if (action.payload.error && action.payload.error.status === 404)
+                        this.setState({notFound: true});
+                });
             }
         }
     }
@@ -73,7 +90,10 @@ class SingleThreadPage extends React.Component {
 
         if (this.props.authLoaded) {
             if (c.url !== targetUrl || c.loaded === LoadState.NotRequested) {
-                this.props.getComments(targetUrl);
+                this.props.getComments(targetUrl).then(action => {
+                    if (action.payload.error && action.payload.error.status === 404)
+                        this.setState({notFound: true});
+                });
             }
         }
     }
@@ -92,13 +112,6 @@ class SingleThreadPage extends React.Component {
     /**
      * Retrieve url with GET params for specific page, to be used in pagination links
      */
-    /*getPaginationListUrl(page) {
-        return `/threads/${this.state.id}/comments/` +
-            UrlBuilder.ReadParamsWithReplace(
-                {page: page},
-                {perpage: 10, orderby: 'id', orderdir: 'ASC'}
-            ).GetUrl();
-    }*/
     getPaginationListUrl(options) {
         return `/threads/${this.state.id}/comments/` +
             UrlBuilder.ReadParamsWithReplace(
@@ -117,19 +130,6 @@ class SingleThreadPage extends React.Component {
         });*/
     }
 
-    /*render_comments_list() {
-        const t = this.props.thread;
-        const c = this.props.thread.comments;
-
-        if (c.loaded !== LoadState.Done) {
-            return <div className='text-center mt-5 pt-5'><Spinner animation="border" /></div>;
-        } else {
-            return c.items.map(comment => {
-                return <Comment key={comment.id} comment={comment} thread={t} />
-            });
-        }
-    }*/
-
     render() {
         /** This thread (wrapper object, not thread item!) */
         const t = this.props.thread;
@@ -142,7 +142,8 @@ class SingleThreadPage extends React.Component {
 
         const u = this.props.user;
 
-        // TODO thread 404 page (e.g. threads/900)
+        if (this.state.notFound)
+            return <Page404 />
 
 
         const perPageArr = [10, 20, 40, 100];
@@ -167,7 +168,6 @@ class SingleThreadPage extends React.Component {
             />
             : null;
 
-        const loaderJsx = <div className='text-center mt-5 pt-5'><Spinner animation='border' /></div>;
 
         function threadJsx() {
             return (
@@ -213,7 +213,6 @@ class SingleThreadPage extends React.Component {
             return (
                 <>
                     {headerJsx}
-                    {paginatorJsx}
                     {listJsx}
                     {paginatorJsx}
                 </>
@@ -246,13 +245,13 @@ class SingleThreadPage extends React.Component {
                                 <br/>
                                 {newCommentFormJsx()}
                             </>
-                            : loaderJsx
+                            : <Loader />
                         }
                     </>
                     :
                     <>
                         {Utils.Titles.ThreadView('Topic view')}
-                        {loaderJsx}
+                        <Loader />
                     </>
                 }
 

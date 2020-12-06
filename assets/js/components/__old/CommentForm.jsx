@@ -5,9 +5,6 @@ import {createComment, editComment} from "../../redux/postsCRUD";
 import {Card, Image, OverlayTrigger, Tooltip} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import UrlBuilder from "../../utils/UrlBuilder";
-import {canUserManagePost} from "../../redux/auth";
-import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
-import {faEdit, faMinusCircle, faPlusCircle, faTrash} from "@fortawesome/free-solid-svg-icons";
 
 const mapDispatchToProps = {
     createComment,

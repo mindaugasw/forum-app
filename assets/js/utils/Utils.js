@@ -1,6 +1,7 @@
 import {Helmet} from "react-helmet";
 import React from "react";
 import {history} from "../components/ReactApp";
+import {element} from "prop-types";
 
 /**
  * Various small functions that do not fit anywhere else
@@ -65,6 +66,68 @@ class Utils {
             return defaultVal;
         }
     }
+
+    /*
+     * Formats password suggestions from zxcvbn. Adds period where missing,
+     * joins all feedback into a list.
+     * @param {array<string>} arr suggestions array
+     * @constructor
+     */
+    /*static FormatZxcvbnSuggestions(arr) {
+        const arr2 = arr.map(x => <li key={x}>{x[x.length-1] === '.' ? x : x+'.'}</li>);
+
+        return <ul>{arr2}</ul>;
+    }*/
+}
+
+Utils.Roles = class {
+    /**
+     * Checks if given user has given role. If user is null, will return false.
+     * @param {object} user
+     * @param {string} role
+     * @returns {boolean}
+     */
+    static HasUserRole(user, role) {
+        return user && user.roles.indexOf(role) > -1;
+    }
+
+    /**
+     * Checks if given user is an admin (i.e. has ROLE_ADMIN role)
+     * @param {object} user
+     * @returns {boolean}
+     */
+    static IsUserAdmin(user) {
+        return this.HasUserRole(user, 'ROLE_ADMIN');
+    }
+
+    /**
+     * Does given user have permissions to manage (edit, delete) given thread/comment?
+     * Checks if user is admin or author of that thread/comment.
+     * @param {object} user
+     * @param {object} post Thread or comment object
+     * @returns {boolean}
+     */
+    static CanUserManagePost(user, post) {
+        return this.IsUserAdmin(user) || (user && user.id === post.author.id);
+    }
+
+    /*
+     * Adds role to given role array (not user object!). Immutable, returns new array.
+     * @param {array<string>} rolesArray
+     * @param {string} role
+     */
+    /*static AddRole(rolesArray, role) {
+        return rolesArray.pushIfNotExist(role);
+    }*/
+
+    /*
+     * Removes role from given role array (not user object!). Immutable, returns new array.
+     * @param {array<string>} rolesArray
+     * @param {string} role
+     */
+    /*static RemoveRole(rolesArray, role) {
+        return rolesArray.removeAll(element);
+    }*/
 }
 
 /**
@@ -100,6 +163,14 @@ Utils.Titles = class {
 
     static Register() {
         return this.GetTitleWithAppName('Register');
+    }
+
+    static UsersList() {
+        return this.GetTitleWithAppName('Users');
+    }
+
+    static UserSingle(username) {
+        return this.GetTitleWithAppName(username);
     }
 }
 

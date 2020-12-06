@@ -24,13 +24,17 @@ const SUBMIT_VOTE = BASE + 'vote';
  * e.g. url='?page=1&perpage=20&orderby=id&orderdir=DESC'
  */
 export const getThreads = createAsyncThunk(LOAD_LIST, (url, thunkAPI) => {
-    return API.Threads.GetList(url)
+    /*return API.Threads.GetList(url)
         .then(response => response.json().then(payload => {
             if (response.ok)
                 return payload;
             else
                 return thunkAPI.rejectWithValue(payload);
-        }));
+        }));*/
+    return API.HandleThunkResponse(
+        API.Threads.GetList(url),
+        thunkAPI)
+        .then();
 });
 
 /**
@@ -41,13 +45,10 @@ export const getSingleThread = createAsyncThunk(LOAD_SINGLE, (id, thunkAPI) => {
     if (findResult !== undefined)
         return findResult;
 
-    return API.Threads.GetSingle(id)
-        .then(response => response.json().then(payload => {
-            if (response.ok)
-                return payload;
-            else
-                return thunkAPI.rejectWithValue(payload);
-        }));
+    return API.HandleThunkResponse(
+        API.Threads.GetSingle(id),
+        thunkAPI)
+        .then();
 });
 
 /**
@@ -55,13 +56,18 @@ export const getSingleThread = createAsyncThunk(LOAD_SINGLE, (id, thunkAPI) => {
  * e.g. url='/threads/100/comments/?page=1&perpage=20&orderby=id&orderdir=DESC'
  */
 export const getComments = createAsyncThunk(LOAD_COMMENTS, (url, thunkAPI) => {
-    return API.Threads.GetCommentsList(url)
+    /*return API.Threads.GetCommentsList(url)
         .then(response => response.json().then(payload => {
             if (response.ok)
                 return payload;
             else
                 return thunkAPI.rejectWithValue(payload);
-        }));
+        }));*/
+
+    return API.HandleThunkResponse(
+        API.Threads.GetCommentsList(url),
+        thunkAPI)
+        .then();
 });
 
 /**
@@ -73,9 +79,10 @@ export const submitVote = createAsyncThunk(SUBMIT_VOTE, (params, thunkAPI) => {
         API.Threads.SubmitCommentVote(params.id, params.direction) ;
 
     return response.then(r => {
-        if (!r.ok) {
+        if (!r.ok)
             return r.json().then(x => thunkAPI.rejectWithValue(x));
-        }
+        else
+            return true;
     });
 });
 
@@ -84,7 +91,6 @@ const initialState = {
     list: { // Threads list
         url: null, // URL from which list was loaded, including pagination, sorting, filtering params.
                    // Can be used to check if currently loaded list is the needed one, if the url matches.
-                   // For that reason URL generation helper method should be always used to get new url.
         loaded: 0, // LoadState.NotRequested
         pagination: {},
         items: [
@@ -97,8 +103,7 @@ const initialState = {
         ]
     },
     single: { // Single thread, currently viewed
-        id: null, // This thread id, same as in item.id. Repeated here to avoid
-                  // additional item===null check before checking item id
+        id: null, // Requested item id
         item: null, // Actual thread object
         loaded: 0, // LoadState.NotRequested
         comments: { // Comments for currently viewed thread
@@ -114,8 +119,7 @@ const initialState = {
 export const threadSlice = createSlice({
     name: 'thread',
     initialState: initialState,
-    reducers: {
-    },
+    reducers: {},
     extraReducers: builder => {
     builder
         .addCase(getThreads.pending, (state, action) => {
@@ -129,9 +133,9 @@ export const threadSlice = createSlice({
             state.list.items = action.payload.items;
         })
         .addCase(getThreads.rejected, (state, action) => {
-            state.list.url = action.payload.url;
-            state.list.loaded = LoadState.Done;
-            console.error('Failed fetching threads: ' + Utils.GetSafe(() => action.payload.error.status, 'unknown error'));
+            // state.list.url = action.meta.arg;
+            // state.list.loaded = LoadState.Loading;
+            // console.error('Failed fetching threads: ' + Utils.GetSafe(() => action.payload.error.status, 'unknown error'));
         })
 
         .addCase(getSingleThread.pending, (state, action) => {
@@ -146,7 +150,7 @@ export const threadSlice = createSlice({
             // state.single.id = null;
             // state.single.item = null;
             // state.single.loaded = LoadState.NotRequested; // Commented out because causes infinite loop
-            console.error(`Failed fetching thread #${action.meta.arg}: ${Utils.GetSafe(() => action.payload.error.status, 'unknown error')}`);
+            // console.error(`Failed fetching thread #${action.meta.arg}: ${Utils.GetSafe(() => action.payload.error.status, 'unknown error')}`);
         })
 
         .addCase(getComments.pending, (state, action) => {
@@ -160,10 +164,13 @@ export const threadSlice = createSlice({
         })
         .addCase(getComments.rejected, (state, action) => {
             // state.single.comments.items = null;
-            console.error(`Failed fetching comments: ${action.meta.arg}, error: ${Utils.GetSafe(() => action.payload.error.status, 'unknown error')}`);
+            // console.error(`Failed fetching comments: ${action.meta.arg}, error: ${Utils.GetSafe(() => action.payload.error.status, 'unknown error')}`);
         })
 
         .addCase(submitVote.pending, (state, action) => {
+            // Assumes that voting was successful and modifies state immediately, so that voting
+            // would be more responsive.
+
             const args = action.meta.arg;
             let items = []; // Array of items (threads/comment) on which to apply the vote
 
@@ -190,10 +197,19 @@ export const threadSlice = createSlice({
             });
         })
         .addCase(submitVote.rejected, (state, action) => {
-            console.error(`Failed voting: ${
+            /*console.error(`Failed voting: ${
                 Utils.GetSafe(() => action.payload.error.status, 'unknown error')
                 }, {id: ${action.meta.arg.id}, direction: ${action.meta.arg.direction
-                }, isThread: ${action.meta.arg.isThread}}`);
+                }, isThread: ${action.meta.arg.isThread}}`);*/
+        })
+
+
+        // Catch all failed requests
+        .addMatcher(
+    action => action.type.startsWith(BASE) && action.type.endsWith(REJECTED), (state, action) => {
+            console.error(`Error in action ${action.type}, ${
+                Utils.GetSafe(() => action.payload.error.status, 'unknown status code')}, ${
+                Utils.GetSafe(() => action.payload.error.message, 'unknown error message')}`);
         })
 
 

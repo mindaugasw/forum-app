@@ -1,9 +1,11 @@
-import React, {Component, Fragment} from 'react';
-import {Navbar, Nav, NavDropdown, Image, Spinner, Button, OverlayTrigger, Tooltip} from 'react-bootstrap';
+import React, {Component} from 'react';
+import {Navbar, Nav, NavDropdown, Image, Button, OverlayTrigger, Tooltip, Badge} from 'react-bootstrap';
 import {Link, NavLink} from "react-router-dom";
 import { connect } from "react-redux";
 import UrlBuilder from "../../utils/UrlBuilder";
-import ConditionalTooltip, {msg_MustBeLoggedIn, msg_NotImplemented} from "./ConditionalTooltip";
+import ConditionalTooltip, {msg_MustBeLoggedIn} from "./ConditionalTooltip";
+import Loader from "./Loader";
+import Utils from "../../utils/Utils";
 
 const mapStateToProps = state => {
     return {
@@ -39,7 +41,7 @@ class NavBar extends Component {
         if (!auth.loaded) {
             profileArea =
                 <Navbar.Text>
-                    <Spinner animation="border" size="sm" />
+                    <Loader.Small />
                 </Navbar.Text>;
         } else if (auth.isLoggedIn) {
             profileArea =
@@ -47,33 +49,18 @@ class NavBar extends Component {
                 {/* --- User --- */}
                 <NavDropdown title={
                     <>
-                    {auth.user.username+' '}
+                    {auth.user.username}
+                    {Utils.Roles.IsUserAdmin(auth.user) ? <Badge.Admin /> : null}
                     <Image
-                        className='avatar-image-small'
+                        className='avatar-image-small ml-2'
                         src={UrlBuilder.RoboHash(auth.user.username, 2, 100)}
                         roundedCircle />
                     </>} alignRight id="basic-nav-dropdown">
 
                     {/* --- User links --- */}
-                    <ConditionalTooltip
-                        placement='bottom'
-                        tooltip={msg_NotImplemented}
-                        tooltipId='navbar-myprofile-tooltip'
-                        show={true}
-                    >
-                        <NavDropdown.Item as={NavLink} to={UrlBuilder.Users.Single(auth.user.id)} onClick={this.closeNav} disabled>My profile</NavDropdown.Item>
-                    </ConditionalTooltip>
-
-                    <ConditionalTooltip
-                        placement='bottom'
-                        tooltip={msg_NotImplemented}
-                        tooltipId='navbar-editprofile-tooltip'
-                        show={true}
-                    >
-                        <NavDropdown.Item as={NavLink} to={UrlBuilder.Users.Edit(auth.user.id)} onClick={this.closeNav} disabled>Edit profile</NavDropdown.Item>
-                    </ConditionalTooltip>
-
-                    <NavDropdown.Item as={NavLink} to={UrlBuilder.Logout()} onClick={this.closeNav}>Logout</NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to={UrlBuilder.Users.Single(auth.user.id)} onClick={this.closeNav}>My profile</NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to={UrlBuilder.Users.Edit(auth.user.id)} onClick={this.closeNav}>Edit profile</NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to={UrlBuilder.Logout()} onClick={this.closeNav}>Logout</NavDropdown.Item>
                 </NavDropdown>
                 </>;
         } else {
@@ -92,8 +79,13 @@ class NavBar extends Component {
         }
 
         return (
-            <Navbar bg="light" expand="md" sticky="top" onToggle={this.setNavExpanded} expanded={this.state.navExpanded}>
-                <Link to='/'>
+            <Navbar
+                bg="light" expand="md" sticky="top"
+                onToggle={this.setNavExpanded}
+                expanded={this.state.navExpanded}
+                style={{zIndex: 10500}} /* So that Navbar would be above notifications */
+            >
+                <Link to='/' onClick={this.closeNav}>
                     <Navbar.Brand>Forum app</Navbar.Brand>
                 </Link>
                 <Navbar.Collapse id="basic-navbar-nav">
@@ -122,16 +114,9 @@ class NavBar extends Component {
                         </ConditionalTooltip>
 
                         {/* --- Users list --- */}
-                        <ConditionalTooltip
-                            placement='bottom'
-                            tooltip={msg_NotImplemented}
-                            tooltipId='navbar-userslist-tooltip'
-                            show={true}
-                        >
-                            <Nav.Item>
-                                <Nav.Link as={NavLink} to={UrlBuilder.Users.List()} onClick={this.closeNav} disabled>Users</Nav.Link>
-                            </Nav.Item>
-                        </ConditionalTooltip>
+                        <Nav.Item>
+                            <Nav.Link as={NavLink} to={UrlBuilder.Users.List()} onClick={this.closeNav}>Users</Nav.Link>
+                        </Nav.Item>
 
                         <Nav.Item>
                             <Nav.Link

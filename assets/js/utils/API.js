@@ -38,11 +38,28 @@ export default class API {
             body: body
         });//.then(response => response);
     }
+
+    /**
+     * If response was ok, Jsonify and return it. Otherwise rejectWithValue, including payload.
+     * @param apiResponsePromise API call promise
+     * @param thunkAPI
+     */
+    static HandleThunkResponse(apiResponsePromise, thunkAPI) {
+        return apiResponsePromise.then(response => response.json().then(payload => {
+            if (response.ok)
+                return payload;
+            else
+                return thunkAPI.rejectWithValue(payload);
+        }));
+    }
 }
 
 API.Threads = class {
 
     static BaseUrl = API.BaseUrl + '/threads';
+
+
+    // --- GET operations ---
 
     /**
      * @param paramsUrl Url defining list GET params, like page, perpage, orderby, orderdir.
@@ -65,6 +82,9 @@ API.Threads = class {
     static GetCommentsList(url) {
         return API.Fetch('GET', `${this.BaseUrl}/${url}`, null, true);
     }
+
+
+    // --- VOTE operations ---
 
     static SubmitThreadVote(threadId, voteValue) {
 
@@ -143,5 +163,30 @@ API.Users = class {
         };
 
         return API.Fetch('POST', `${this.BaseUrl}/register/`, body, false);
+    }
+
+    /**
+     * @param paramsUrl Url defining list GET params, like page, perpage, orderby, orderdir.
+     * e.g. url='?page=1&perpage=20&orderby=id&orderdir=DESC'
+     */
+    static GetList(paramsUrl) {
+        return API.Fetch('GET', `${this.BaseUrl}/${paramsUrl}`, null, false);
+    }
+
+    static GetSingle(id) {
+        return API.Fetch('GET', `${this.BaseUrl}/${id}/`, null, true);
+    }
+
+    static Edit(id, roles = null, newPassword = null, oldPassword = null) {
+        let body = {};
+        if (roles) body.roles = roles;
+        if (newPassword) body.password = newPassword;
+        if (oldPassword) body.oldPassword = oldPassword;
+
+        return API.Fetch('PATCH', `${this.BaseUrl}/${id}/`, body, true);
+    }
+
+    static Delete(id) {
+        return API.Fetch('DELETE', `${this.BaseUrl}/${id}/`, null, true);
     }
 }

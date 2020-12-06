@@ -6,7 +6,6 @@ import UrlBuilder from "../../utils/UrlBuilder";
 import {connect} from "react-redux";
 import {createComment, createThread, deleteComment, deleteThread, editComment, editThread} from "../../redux/postsCRUD";
 import PropTypes from 'prop-types';
-import {canUserManagePost} from "../../redux/auth";
 import Utils from "../../utils/Utils";
 
 /**
@@ -55,6 +54,12 @@ function handleFormSubmitErrors(action) {
         return true;
 }
 
+/**
+ * Checks delete action for possible errors. Returns true if action completed successfully.
+ * Otherwise returns false and adds notification.
+ * @param action
+ * @returns {boolean}
+ */
 function handleDeleteErrors(action) {
     if (action.type.endsWith(REJECTED)) {
         const p = action.payload;
@@ -68,7 +73,7 @@ function handleDeleteErrors(action) {
             return false;
         }
 
-        console.error('Unknown error in post delete', action);
+        console.error('Thread/Comment delete error', action);
         Notifications.UnhandledError('Thread/Comment delete error', action);
         return false;
     }
@@ -187,13 +192,13 @@ class PostFrame_Thread_connected extends Component {
     handleThreadDeleteClick(event) {
         event.preventDefault();
 
-        if (!canUserManagePost(this.props.user, this.props.thread)) {
+        if (!Utils.Roles.CanUserManagePost(this.props.user, this.props.thread)) {
             Notifications.Unauthorized();
             return;
         }
 
         const u = this.props.user;
-        const message = `Delete this thread?${u && u.id !== this.props.thread.author.id ?
+        const message = `Delete this topic?${u && u.id !== this.props.thread.author.id ?
             `\n\nWARNING: you are deleting someone else's thread as an admin!` : ``}`
         let answer = confirm(message);
 
@@ -231,6 +236,7 @@ class PostFrame_Thread_connected extends Component {
             return (
                 <PostFrame
                     post={this.props.thread}
+                    parentThread={this.props.thread}
                     isThread={true}
                     formMode={true}
                     onChange={this.handleThreadFormChange}
@@ -244,6 +250,7 @@ class PostFrame_Thread_connected extends Component {
             return (
                 <PostFrame
                     post={this.props.thread}
+                    parentThread={this.props.thread}
                     isThread={true}
                     formMode={false}
                     onEditClick={this.handleEditModeChange}
@@ -364,7 +371,7 @@ class PostFrame_Comment_connected extends Component {
     handleCommentDeleteClick(event) {
         event.preventDefault();
 
-        if (!canUserManagePost(this.props.user, this.props.comment)) {
+        if (!Utils.Roles.CanUserManagePost(this.props.user, this.props.comment)) {
             Notifications.Unauthorized();
             return;
         }
@@ -404,6 +411,7 @@ class PostFrame_Comment_connected extends Component {
             return (
                 <PostFrame
                     post={this.props.comment}
+                    parentThread={this.props.parentThread}
                     isThread={false}
                     formMode={true}
                     onChange={this.handleCommentFormChange}
@@ -417,6 +425,7 @@ class PostFrame_Comment_connected extends Component {
             return (
                 <PostFrame
                     post={this.props.comment}
+                    parentThread={this.props.parentThread}
                     isThread={false}
                     formMode={false}
                     onEditClick={this.handleEditModeChange}
@@ -433,5 +442,5 @@ PostFrame_Comment.propTypes = {
     parentThread: PropTypes.object.isRequired, // Thread that this comment belongs to
 
     // Redux state:
-    // user: PropTypes.object,
+    // user: PropTypes.object.isRequired,
 }

@@ -50,6 +50,10 @@ class UserController extends BaseApiController
 	}
 	
 	/**
+	 * Can return:
+	 * 		200
+	 * 		400 if username already taken, invalid body, password too weak
+	 * 		500 if no password/username
 	 * @Route("/register/", methods={"POST"})
 	 */
 	public function register(Request $request)
@@ -62,8 +66,13 @@ class UserController extends BaseApiController
 	}
 	
 	/**
-	 * Edit that is called by the user himself (instead of admin).
-	 * Allows changing password, does not allow changing roles.
+	 * User edit. Allows editing roles (for admin), password (for user himself).
+	 * Can return: 
+	 * 		200
+	 * 		400 - if old password wrong, new password too weak, invalid body
+	 * 		401 JWT bundle - invalid JWT
+	 * 		401 API - unauthorized (editing not yourself and are not admin)
+	 * 		404
 	 * 
 	 * @Route("/{user}/", methods={"PATCH"})
 	 * @IsGranted(User::ROLE_USER)
@@ -71,7 +80,7 @@ class UserController extends BaseApiController
 	public function edit(User $user, Request $request)
 	{
 		$this->userCRUD->edit($user, $request);
-		
+		//return $this->responses->ErrorResponse('$type', 400, 'msg', 'detail');
 		$this->em->flush();
 		
 		return $this->ApiResponse($user, 200, ['user_read']);

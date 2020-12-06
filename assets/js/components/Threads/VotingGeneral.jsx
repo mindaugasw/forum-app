@@ -19,6 +19,7 @@ const mapStateToProps = state => {
 }
 
 // TODO add Voting variants
+// TODO rename
 class VotingGeneral extends Component {
     constructor(props) {
         super(props);
@@ -29,14 +30,12 @@ class VotingGeneral extends Component {
     handleVoteClick(event, direction) {
         event.preventDefault();
 
-        if (!this.props.isLoggedIn) {
-            // Not logged in
+        if (!this.props.isLoggedIn) { // Not logged in
             Notifications.Unauthenticated();
             return;
         }
 
-        if (this.props.user.id === this.props.post.author.id) {
-            // Voting on own post
+        if (this.props.user.id === this.props.post.author.id) { // Voting on own post
             console.error('Voting on your own threads/comments is not allowed.');
             Notifications.Unauthorized();
             return;

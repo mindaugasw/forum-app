@@ -21,7 +21,6 @@ function ConditionalTooltip(props) {
             {...show}
         >
             <div {...wrapperPropsFinal}> {/* Additional div sometimes needed for tooltips on disabled buttons */}
-                {/*{props.children}*/}
                 {React.cloneElement(props.children, styleProp)}
             </div>
         </OverlayTrigger>

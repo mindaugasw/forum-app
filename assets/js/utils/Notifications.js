@@ -37,7 +37,9 @@ class Notifications {
                         <FA icon={icons[options.type]} size='2x' className='mr-2' />
                     </td>
                     <td>
-                        <h4 className='d-inline-block mr-2 mb-0'>{options.headline}</h4>
+                        <h4 className='d-inline-block mr-2 mb-0' style={{overflowWrap: 'anywhere'}}>
+                            {options.headline}
+                        </h4>
                     </td>
                 </tr>
                 <tr>
@@ -58,15 +60,29 @@ class Notifications {
     }
 
     /**
-     * Shortcut for notification informing about unhandled error. Optionally can also include additional
-     * debug info in errorMessage argument
+     * Shortcut for new notification of type success
+     * // TODO replace other notifications with this method
+     * @param {string} headline
+     * @param {string|null} message
+     */
+    static Success(headline, message = null) {
+        this.Add({type:'success', headline, message});
+    }
+
+    /**
+     * Shortcut for notification informing about unhandled error. Optionally
+     * can also include additional debug info.
      * @param args Optional additional info about the error
      */
     static UnhandledError(...args) {
 
         // console.log('c1', errorMessage);
         const errorDetails = args.map((element, index) => {
-            return <code key={index} className='d-block mb-2'>{JSON.stringify(element)}</code>;
+            return (
+                <code key={index} className='d-block mb-2' style={{overflowWrap: 'anywhere'}}>
+                    {JSON.stringify(element)}
+                </code>
+            );
         });
 
 
@@ -121,7 +137,8 @@ class Notifications {
             message: null,
         });
     }
-
 }
+
+window.notif = Notifications; // TODO remove
 
 export default Notifications;

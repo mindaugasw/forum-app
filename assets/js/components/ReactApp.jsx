@@ -15,6 +15,8 @@ import RegistrationPage from "./Users/RegistrationPage";
 import LogoutPage from "./Users/LogoutPage";
 import NotificationRenderer from "./common/NotificationRenderer";
 import LoginPage from "./Users/LoginPage";
+import Page404 from "./common/Page404";
+import UserRouter from "./Users/UserRouter";
 
 export let history; // Used globally for redirecting
 
@@ -54,6 +56,10 @@ class ReactApp extends React.Component {
                                     <ThreadRouter />
                                 </Route>
 
+                                <Route path={UrlBuilder.Users.List()}>
+                                    <UserRouter />
+                                </Route>
+
                                 <Route exact path={UrlBuilder.Login()}>
                                     <LoginPage />
                                 </Route>
@@ -67,10 +73,7 @@ class ReactApp extends React.Component {
                                 </Route>
 
                                 <Route>
-                                    <div>
-                                        Oh no.<br/>
-                                        {`It's `}<b>404</b>.<br/>
-                                    </div>
+                                    <Page404 />
                                 </Route>
                             </Switch>
 
