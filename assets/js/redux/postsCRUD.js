@@ -103,19 +103,19 @@ export const editComment = createAsyncThunk(EDIT_COMMENT, (params, thunkAPI) => 
  * @param {threadId<number>, commentId<number>} params Thread and comment id
  */
 export const deleteComment = createAsyncThunk(DELETE_COMMENT, (params, thunkAPI) => {
-    /*return API.Threads.DeleteComment(params.threadId, params.commentId)
+    return API.Threads.DeleteComment(params.threadId, params.commentId)
         .then(response => {
             if (response.ok) {
                 return true; // Dont return any payload as endpoint returns 204 No content
             } else {
                 return response.json().then(payload => thunkAPI.rejectWithValue(payload));
             }
-        });*/
+        });
 
-    return API.HandleThunkResponse(
+    /*return API.HandleThunkResponse(
         API.Threads.DeleteComment(params.threadId, params.commentId),
         thunkAPI)
-        .then();
+        .then();*/
 });
 
 
