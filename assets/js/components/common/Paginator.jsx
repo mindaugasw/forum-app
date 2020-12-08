@@ -23,7 +23,7 @@ PageLink.propTypes = {
     active: PropTypes.bool.isRequired,
     disabled: PropTypes.bool.isRequired,
     onClick: PropTypes.func.isRequired,
-    borderRadius: PropTypes.bool,
+    borderRadius: PropTypes.bool, // If true, border radius will be applied to style this link like the last item in <Pagination> element
 }
 
 class Paginator extends Component {
@@ -192,40 +192,37 @@ class Paginator extends Component {
             </div>
         );
     }
+}
+Paginator.propTypes = {
+    linkGenerator: PropTypes.func.isRequired, // Should be a function from parent component, accepting page number and returning target link
+    onClick: PropTypes.func.isRequired, // Page click callback, can be used to force update component on page navigation
+    perPage: PropTypes.oneOfType([PropTypes.array, PropTypes.bool,]).isRequired, // Items for Per page control, e.g. [10, 20, ...]. If false, control won't be rendered
+    orderBy: PropTypes.oneOfType([PropTypes.array, PropTypes.bool,]).isRequired, // Items for Sort by control, e.g. [{text<string>, orderby<string>, orderdir<string>, selected<bool>}, ...]. If false, control won't be rendered
+    pagination: PropTypes.object.isRequired, /* pagination structure: {
+            "totalCount": 100,      // Total items matching criteria
+            "pageCount": 5,         // Total pages count of matching items
+            "currentItemCount": 20, // Actual items in this page
+            "numItemsPerPage": 20,  // Requested items per page
 
-    static get propTypes() {
-        return {
-            linkGenerator: PropTypes.func.isRequired, // Should be a function from parent component, accepting page number and returning target link
-            onClick: PropTypes.func.isRequired, // Can be used to force update component on page navigation
-            perPage: PropTypes.oneOfType([PropTypes.array, PropTypes.bool,]).isRequired, // Items for Per page control, e.g. [10, 20, ...]. If false, control won't be rendered
-            orderBy: PropTypes.oneOfType([PropTypes.array, PropTypes.bool,]).isRequired, // Items for Sort by control, e.g. [{text<string>, orderby<string>, orderdir<string>, selected<bool>}, ...]. If false, control won't be rendered
-            pagination: PropTypes.object.isRequired, /* pagination structure: {
-                "totalCount": 100,      // Total items matching criteria
-                "pageCount": 5,         // Total pages count of matching items
-                "currentItemCount": 20, // Actual items in this page
-                "numItemsPerPage": 20,  // Requested items per page
+            "firstItemNumber": 1,   // Page start item id
+            "lastItemNumber": 20,   // Page end item id
 
-                "firstItemNumber": 1,   // Page start item id
-                "lastItemNumber": 20,   // Page end item id
+            // Page navigation:
+            "first": 1,
+            "previous": 1,          // Not available on 1st page
+            "current": 2,
+            "next": 3,              // Not available on last page
+            "last": 5,
 
-                // Page navigation:
-                "first": 1,
-                "previous": 1,          // Not available on 1st page
-                "current": 2,
-                "next": 3,              // Not available on last page
-                "last": 5,
+            // Page range:
+            "pageRange": 5,         // Items count in this page range
+            "firstPageInRange": 1,  // First page number in range
+            "pagesInRange": [1, 2, 3, 4, 5],
+            "lastPageInRange": 5,   // Last page number in range
 
-                // Page range:
-                "pageRange": 5,         // Items count in this page range
-                "firstPageInRange": 1,  // First page number in range
-                "pagesInRange": [1, 2, 3, 4, 5],
-                "lastPageInRange": 5,   // Last page number in range
-
-                "startPage": 1,         // same as firstPageInRange (?)
-                "endPage": 5            // same as lastPageInRange (?)
-            }*/
-        };
-    }
+            "startPage": 1,         // same as firstPageInRange (?)
+            "endPage": 5            // same as lastPageInRange (?)
+        }*/
 }
 
 export default Paginator;

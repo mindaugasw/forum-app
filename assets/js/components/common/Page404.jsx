@@ -18,5 +18,8 @@ function Page404(props) {
         </Container>
     );
 }
+Page404.propTypes = {
+    // No props
+}
 
 export default Page404;

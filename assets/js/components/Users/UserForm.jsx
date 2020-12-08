@@ -9,6 +9,10 @@ import Utils from "../../utils/Utils";
 import AlertWithIcon from "../common/AlertWithIcon";
 import Loader from "../common/Loader";
 
+/**
+ * Form for user object.
+ * Use Login, Register, or Edit components from UserFormVariants.jsx
+ */
 class UserForm extends Component {
     constructor(props) {
         super(props);
@@ -16,7 +20,6 @@ class UserForm extends Component {
         this.handleFormChange = this.handleFormChange.bind(this);
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
 
-        // let iv = {...this.props.initialValues} || { ... // Not working?
         let iv = this.props.initialValues ? // Set initial input values
             {...this.props.initialValues}
         : {
@@ -133,10 +136,6 @@ class UserForm extends Component {
     }
 
     render() {
-        window.getStuff = () => {
-            console.log('STATE', this.state, 'PROPS', this.props);
-        };
-
         if (!this.props.authLoaded) // Auth is needed on edit form
             return <Loader />;
 
@@ -258,10 +257,6 @@ class UserForm extends Component {
             return (
                 <Form.Group controlId='newPassword'>
                     <Form.Label>{register ? 'Password' : 'New password'}</Form.Label>
-                    {/*{edit ?
-                        <Form.Text className='text-muted mt-0'>If you do not want to change password, leave both fields empty.</Form.Text>
-                        : null}*/}
-
                     <Form.Control
                         type='password'
                         value={u.newPassword}
@@ -427,8 +422,9 @@ UserForm.propTypes = {
 
     onValidateFullForm: PropTypes.func, // Full form validation callback, used for pre-filled data on edit form
 
-    // Redux state:
+    // Redux:
     // authUser: PropTypes.object, // Currently logged in user
+    // authLoaded: PropTypes.bool.isRequired,
 }
 
 const mapStateToProps = state => {

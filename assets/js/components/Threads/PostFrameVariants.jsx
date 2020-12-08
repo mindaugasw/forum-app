@@ -19,7 +19,7 @@ function handleFormSubmitErrors(action) {
         const p = action.payload;
         const e = p.error;
 
-        const emptyAlert = {
+        const emptyAlert = { // Return this to clear alert (in case there's some different error and alert from previous request)
             validation: {
                 alert: {
                     show: false,
@@ -27,7 +27,7 @@ function handleFormSubmitErrors(action) {
                     message: false,
                 }
             }
-        }; // Return this to clear alert, if there's some different error and previous alert from 400 request is no longer relevant
+        };
 
         if (e && e.status === 400) {
             return {
@@ -82,12 +82,6 @@ function handleDeleteErrors(action) {
 }
 
 
-const mapStateToProps = state => {
-    return {
-        user: state.auth.user,
-    }
-}
-
 class PostFrame_Thread_connected extends Component {
     constructor(props) {
         super(props);
@@ -121,23 +115,14 @@ class PostFrame_Thread_connected extends Component {
         };
     }
 
-    handleThreadFormChange(event, state) {
-        const target = event.target;
-
-        const updatedState = { // Manual state update, as passed state is late by 1 onChange event
-            ...state,
-            [target.id]: target.value
-        };
-
+    handleThreadFormChange(target, state) {
         // Validate only edited field (to not show errors on still untouched fields)
-        let validationData = null;
+        let validationData = {};
         if (target.id === 'title')
-            // validationData = {...this.validateFieldNotEmpty(updatedState, 'username')};
-            validationData = {...FormUtils.ValidateTextField(target.value, 'title', {minLength: 10, maxLength: 255})};
+            validationData = FormUtils.ValidateTextField(target.value, 'title', {minLength: 10, maxLength: 255});
 
         if (target.id === 'content')
-            // validationData = {...this.validateFieldNotEmpty(updatedState, 'password')};
-            validationData = {...FormUtils.ValidateTextField(target.value, 'content', {minLength: 1, maxLength: 30000})};
+            validationData = FormUtils.ValidateTextField(target.value, 'content', {minLength: 1, maxLength: 30000});
 
         // Join all validation data to check full form validity
         validationData = Utils.MergeDeep(state.validation, validationData);
@@ -154,6 +139,7 @@ class PostFrame_Thread_connected extends Component {
     handleThreadFormSubmit(event, state) {
         if (!state.validation.valid) {
             console.error('Tried submitting invalid form');
+            Notifications.UnhandledError('Tried submitting invalid form');
             return;
         }
 
@@ -172,10 +158,10 @@ class PostFrame_Thread_connected extends Component {
 
             if (this.props.isNewThreadForm) {
                 console.debug('Thread created successfully');
-                Notifications.Add({type:'success', headline:'New topic created'});
+                Notifications.Success('New topic created');
             } else {
                 console.debug('Thread updated successfully');
-                Notifications.Add({type:'success', headline:'Topic updated'});
+                Notifications.Success('Topic updated');
             }
             Utils.Redirect(UrlBuilder.Threads.Single(action.payload.id));
             return false;
@@ -210,7 +196,7 @@ class PostFrame_Thread_connected extends Component {
                         return errorsHandler;
 
                     console.debug('Thread deleted successfully');
-                    Notifications.Add({type:'success', headline:'Topic deleted'});
+                    Notifications.Success('Topic deleted');
                     Utils.Redirect(UrlBuilder.Home());
                     return;
                     // TODO successful thread delete prints errors in console,  as
@@ -260,7 +246,15 @@ class PostFrame_Thread_connected extends Component {
         }
     }
 }
-export const PostFrame_Thread = connect(mapStateToProps, {createThread, editThread, deleteThread})(PostFrame_Thread_connected);
+
+const mapStateToProps_thread = state => {
+    return {
+        user: state.auth.user,
+    }
+}
+
+export const PostFrame_Thread = connect(mapStateToProps_thread, {createThread, editThread, deleteThread})(PostFrame_Thread_connected);
+
 PostFrame_Thread.propTypes = {
     isNewThreadForm: PropTypes.bool.isRequired,
     thread: PropTypes.object, // Thread object. Not needed if creating new thread
@@ -268,6 +262,7 @@ PostFrame_Thread.propTypes = {
     // Redux state:
     // user: PropTypes.object,
 }
+
 
 
 class PostFrame_Comment_connected extends Component {
@@ -302,18 +297,11 @@ class PostFrame_Comment_connected extends Component {
         };
     }
 
-    handleCommentFormChange(event, state) {
-        const target = event.target;
-
-        const updatedState = { // Manual state update, as passed state is late by 1 onChange event
-            ...state,
-            [target.id]: target.value
-        };
-
+    handleCommentFormChange(target, state) {
         // Validate only edited field (to not show errors on still untouched fields)
-        let validationData = null;
+        let validationData = {};
         if (target.id === 'content')
-            validationData = {...FormUtils.ValidateTextField(target.value, 'content', {minLength: 1, maxLength: 30000})};
+            validationData = FormUtils.ValidateTextField(target.value, 'content', {minLength: 1, maxLength: 30000});
 
         // Join all validation data to check full form validity
         validationData = Utils.MergeDeep(state.validation, validationData);
@@ -330,6 +318,7 @@ class PostFrame_Comment_connected extends Component {
     handleCommentFormSubmit(event, state) {
         if (!state.validation.valid) {
             console.error('Tried submitting invalid form');
+            Notifications.UnhandledError('Tried submitting invalid form');
             return;
         }
 
@@ -348,15 +337,12 @@ class PostFrame_Comment_connected extends Component {
 
             if (this.props.isNewCommentForm) {
                 console.debug('Comment created successfully');
-                Notifications.Add({type:'success', headline:'Comment submitted'});
+                Notifications.Success('Comment submitted');
             } else {
                 console.debug('Thread updated successfully');
-                Notifications.Add({type:'success', headline:'Comment updated'});
+                Notifications.Success('Comment updated');
             }
 
-            /*return { // Reset form state, as component is not remounted
-                resetState: true,
-            };*/
             return false;
         });
     }
@@ -389,7 +375,7 @@ class PostFrame_Comment_connected extends Component {
                         return errorsHandler;
 
                     console.debug('Thread deleted successfully');
-                    Notifications.Add({type:'success', headline:'Comment deleted'});
+                    Notifications.Success('Comment deleted');
                     return;
                 });
         }
@@ -435,7 +421,14 @@ class PostFrame_Comment_connected extends Component {
         }
     }
 }
-export const PostFrame_Comment = connect(mapStateToProps, {createComment, editComment, deleteComment})(PostFrame_Comment_connected);
+
+const mapStateToProps_comment = state => {
+    return {
+        user: state.auth.user,
+    }
+}
+
+export const PostFrame_Comment = connect(mapStateToProps_comment, {createComment, editComment, deleteComment})(PostFrame_Comment_connected);
 PostFrame_Comment.propTypes = {
     isNewCommentForm: PropTypes.bool.isRequired,
     comment: PropTypes.object, // Comment object. Not needed if creating new comment

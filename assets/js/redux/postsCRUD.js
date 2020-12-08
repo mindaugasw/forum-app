@@ -18,14 +18,6 @@ const DELETE_COMMENT = BASE + 'delete_comment';
  * @param {title<string>, content<string>} params
  */
 export const createThread = createAsyncThunk(CREATE_THREAD, (params, thunkAPI) => {
-    /*return API.Threads.CreateThread(params.title, params.content)
-        .then(response => response.json().then(payload => { // TODO check if all thunks use the same promise return structure
-            if (response.ok)
-                return payload;
-            else
-                return thunkAPI.rejectWithValue(payload);
-        }));*/
-
     return API.HandleThunkResponse(
         API.Threads.CreateThread(params.title, params.content),
         thunkAPI)
@@ -67,15 +59,6 @@ export const deleteThread = createAsyncThunk(DELETE_THREAD, (params, thunkAPI) =
  * @param {threadId<number>, content<string>} params Thread id and comment content
  */
 export const createComment = createAsyncThunk(CREATE_COMMENT, (params, thunkAPI) => {
-    /*return API.Threads.CreateComment(params.threadId, params.content)
-        .then(response => response.json().then(payload => {
-            if (response.ok) {
-                return payload;
-            } else {
-                return thunkAPI.rejectWithValue(payload);
-            }
-        }));*/
-
     return API.HandleThunkResponse(
         API.Threads.CreateComment(params.threadId, params.content),
         thunkAPI)
@@ -85,15 +68,6 @@ export const createComment = createAsyncThunk(CREATE_COMMENT, (params, thunkAPI)
  * @param {threadId<number>, commentId<number>, content<string>} params Thread and comment ids, updated comment content
  */
 export const editComment = createAsyncThunk(EDIT_COMMENT, (params, thunkAPI) => {
-    /*return API.Threads.EditComment(params.threadId, params.commentId, params.content)
-        .then(response => response.json().then(payload => {
-            if (response.ok) {
-                return payload;
-            } else {
-                return thunkAPI.rejectWithValue(payload);
-            }
-        }));*/
-
     return API.HandleThunkResponse(
         API.Threads.EditComment(params.threadId, params.commentId, params.content),
         thunkAPI)
@@ -111,11 +85,6 @@ export const deleteComment = createAsyncThunk(DELETE_COMMENT, (params, thunkAPI)
                 return response.json().then(payload => thunkAPI.rejectWithValue(payload));
             }
         });
-
-    /*return API.HandleThunkResponse(
-        API.Threads.DeleteComment(params.threadId, params.commentId),
-        thunkAPI)
-        .then();*/
 });
 
 

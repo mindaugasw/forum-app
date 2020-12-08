@@ -1,13 +1,11 @@
 /**
- * See backend API documentation at:
+ * Class for making requests to the backend API.
+ * See API documentation at:
  * https://documenter.getpostman.com/view/2542393/TVRg6V1E
  */
 export default class API {
 
     static BaseUrl = '/api';
-    /*static Threads = Threads; // Not working with static properties?
-    static Users = Users;
-    static Auth = Auth;*/
 
     /**
      * Generic call to the backend API
@@ -17,7 +15,6 @@ export default class API {
      * @param authHeader Should Authorization header be included? Will be only included if jwt token is found in redux store.
      */
     static Fetch(method, url, body = null, authHeader = true) {
-        // url = API.BaseUrl + url;
 
         const headers = new Headers();
         headers.append('Accept', 'application/json');
@@ -36,7 +33,7 @@ export default class API {
             method: method,
             headers: headers,
             body: body
-        });//.then(response => response);
+        });
     }
 
     /**
@@ -67,12 +64,10 @@ API.Threads = class {
      */
     static GetList(paramsUrl) {
         return API.Fetch('GET', `${this.BaseUrl}/${paramsUrl}`, null, true);
-            // .then(response => response);
     }
 
     static GetSingle(id) {
         return API.Fetch('GET', `${this.BaseUrl}/${id}/`, null, true);
-            // .then(response => response);
     }
 
     /**
@@ -138,17 +133,14 @@ API.Auth = class {
         };
 
         return API.Fetch('POST', `${this.BaseUrl}/login_check`, body, false);
-            // .then(response => response);
     }
 
     static TokenRefresh() {
         return API.Fetch('POST', `${this.BaseUrl}/token/refresh`, null, false);
-            // .then(response => response);
     }
 
     static LogOut() {
         return API.Fetch('POST', `${this.BaseUrl}/logout`, null, false);
-            // .then(response => response);
     }
 }
 

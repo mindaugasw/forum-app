@@ -1,7 +1,6 @@
 import {Helmet} from "react-helmet";
 import React from "react";
 import {history} from "../components/ReactApp";
-import {element} from "prop-types";
 
 /**
  * Various small functions that do not fit anywhere else
@@ -66,20 +65,11 @@ class Utils {
             return defaultVal;
         }
     }
-
-    /*
-     * Formats password suggestions from zxcvbn. Adds period where missing,
-     * joins all feedback into a list.
-     * @param {array<string>} arr suggestions array
-     * @constructor
-     */
-    /*static FormatZxcvbnSuggestions(arr) {
-        const arr2 = arr.map(x => <li key={x}>{x[x.length-1] === '.' ? x : x+'.'}</li>);
-
-        return <ul>{arr2}</ul>;
-    }*/
 }
 
+/**
+ * User-roles related utils
+ */
 Utils.Roles = class {
     /**
      * Checks if given user has given role. If user is null, will return false.
@@ -110,29 +100,10 @@ Utils.Roles = class {
     static CanUserManagePost(user, post) {
         return this.IsUserAdmin(user) || (user && user.id === post.author.id);
     }
-
-    /*
-     * Adds role to given role array (not user object!). Immutable, returns new array.
-     * @param {array<string>} rolesArray
-     * @param {string} role
-     */
-    /*static AddRole(rolesArray, role) {
-        return rolesArray.pushIfNotExist(role);
-    }*/
-
-    /*
-     * Removes role from given role array (not user object!). Immutable, returns new array.
-     * @param {array<string>} rolesArray
-     * @param {string} role
-     */
-    /*static RemoveRole(rolesArray, role) {
-        return rolesArray.removeAll(element);
-    }*/
 }
 
 /**
  * Provides tab titles for various pages. Returned result needs to be rendered to take effect.
- * @type {Utils.Titles}
  */
 Utils.Titles = class {
     static appName = 'Forum App';

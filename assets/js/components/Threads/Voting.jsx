@@ -7,20 +7,10 @@ import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
 import {faMinusCircle, faPlusCircle} from "@fortawesome/free-solid-svg-icons";
 import Notifications from "../../utils/Notifications";
 
-const mapDispatchToProps = {
-    submitVote
-}
-
-const mapStateToProps = state => {
-    return {
-        isLoggedIn: state.auth.isLoggedIn,
-        user: state.auth.user,
-    };
-}
-
-// TODO add Voting variants
-// TODO rename
-class VotingGeneral extends Component {
+/**
+ * Voting component for thread or comment
+ */
+class Voting extends Component {
     constructor(props) {
         super(props);
 
@@ -30,7 +20,7 @@ class VotingGeneral extends Component {
     handleVoteClick(event, direction) {
         event.preventDefault();
 
-        if (!this.props.isLoggedIn) { // Not logged in
+        if (!this.props.isLoggedIn) { // Can't vote if not logged in
             Notifications.Unauthenticated();
             return;
         }
@@ -134,18 +124,27 @@ class VotingGeneral extends Component {
     }
 }
 
-VotingGeneral.propTypes = {
-    // From props:
+Voting.propTypes = {
     post: PropTypes.object.isRequired, // Thread or comment object
     isVertical: PropTypes.bool.isRequired, // Vertical or horizontal rendering
     isThread: PropTypes.bool.isRequired, // is this component on thread or comment?
 
-    // Redux state:
+    // Redux:
     // isLoggedIn: PropTypes.bool.isRequired,
     // user: PropTypes.object,
 
-    // Redux actions:
     // submitVote: PropTypes.func.isRequired,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(VotingGeneral);
+const mapDispatchToProps = {
+    submitVote
+}
+
+const mapStateToProps = state => {
+    return {
+        isLoggedIn: state.auth.isLoggedIn,
+        user: state.auth.user,
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Voting);

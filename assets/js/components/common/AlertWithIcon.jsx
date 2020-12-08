@@ -3,10 +3,9 @@ import {FontAwesomeIcon as FA} from "@fortawesome/react-fontawesome";
 import {faCheck, faExclamationCircle, faExclamationTriangle, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {Alert} from "react-bootstrap";
 
-// TODO replace all alerts with this
 /**
  * Renders alert with appropriate icon included
- * @param props Same as Alert props
+ * @param props All props will be passed to inner <Alert/> element
  * @returns {JSX.Element}
  */
 function AlertWithIcon(props) {
@@ -44,6 +43,10 @@ function AlertWithIcon(props) {
             </table>
         </Alert>
     );
+}
+AlertWithIcon.propTypes = {
+    // Props same as <Alert/>
+    // All props will be passed to the inner <Alert/>
 }
 
 export default AlertWithIcon;

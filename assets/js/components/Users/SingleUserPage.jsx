@@ -14,7 +14,9 @@ import Page404 from "../common/Page404";
 import Notifications from "../../utils/Notifications";
 import {logout} from "../../redux/auth";
 
-
+/**
+ * Can display user profile or profile edit form
+ */
 class SingleUserPage extends Component {
     constructor(props) {
         super(props);
@@ -106,7 +108,7 @@ class SingleUserPage extends Component {
                         return false;
                     }
 
-                    // TODO component state is modified after deletion on unmounted component (before redirect, race condition?), which causes warning
+                    // TODO component state is modified after deletion on unmounted component (before redirect, race condition?), causes warning
                     console.debug('User deleted');
                     Notifications.Success('User deleted');
                     if (au.id === u.id) {
@@ -120,16 +122,6 @@ class SingleUserPage extends Component {
                 });
         }
     }
-
-    /*toggleEditMode(event) {
-        event.preventDefault();
-
-        this.setState(s => {
-            return {
-                editMode: !s.editMode,
-            };
-        });
-    }*/
 
     render() {
         let u = this.props.user; // User object wrapper

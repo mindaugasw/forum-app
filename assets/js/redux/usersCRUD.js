@@ -1,16 +1,17 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import API from "../utils/API";
 import Utils from "../utils/Utils";
-import {login, logout, tokenRefresh} from "./auth";
+import {login, logout} from "./auth";
 
 
 // --- Actions ---
 const BASE = 'users/';
-export const REGISTER = BASE + 'register'; // TODO remove export
+const REGISTER = BASE + 'register';
 const LOAD_LIST = BASE + 'loadList';
 const LOAD_SINGLE = BASE + 'loadSingle';
 const EDIT_USER = BASE + 'edit';
 const DELETE_USER = BASE + 'delete';
+
 
 // --- Action creators ---
 /**
@@ -18,16 +19,6 @@ const DELETE_USER = BASE + 'delete';
  * @param {username<string>, password<string>} credentials Credentials object
  */
 export const register = createAsyncThunk(REGISTER, (credentials, thunkAPI) => {
-    /*return API.Users.Register(credentials.username, credentials.password)
-        .then(response => {
-            if (response.ok) {
-                return response.json().then();
-            }
-            else {
-                return response.json().then(r => thunkAPI.rejectWithValue(r));
-            }
-        });*/
-
     return API.HandleThunkResponse(
         API.Users.Register(credentials.username, credentials.password),
         thunkAPI)
@@ -154,24 +145,3 @@ export const usersCRUDSlice = createSlice({
         })
     },
 });
-
-
-
-// --- Middleware ---
-export const authMiddleware = ({ getState, dispatch }) => {
-    return function (next) {
-        return function (action) {
-
-            // TODO remove middleware?
-            /*switch (action.type) {
-
-            }*/
-            return next(action);
-
-        }
-    }
-};
-
-
-
-// --- Helper methods ---

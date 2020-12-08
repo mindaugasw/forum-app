@@ -1,5 +1,5 @@
 import React from "react";
-import PropTypes, {func} from 'prop-types'
+import PropTypes from 'prop-types'
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 
 /**
@@ -31,7 +31,7 @@ ConditionalTooltip.propTypes = {
     tooltip: PropTypes.any.isRequired, // Tooltip content
     tooltipId: PropTypes.oneOfType([PropTypes.string, PropTypes.number,]).isRequired,
 
-    show: PropTypes.bool, // should the label be displayed?
+    show: PropTypes.bool, // should the tooltip be displayed?
     pointerEventsNone: PropTypes.bool, // If true, will add to the topmost child, when tooltip should be shown: style={{pointerEvents: 'none'}}. Needed on disabled buttons.
     wrapperProps: PropTypes.object, // Props for div wrapper around children content
 }

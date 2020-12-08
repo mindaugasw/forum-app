@@ -8,17 +8,6 @@ import UserListItem from "./UserListItem";
 import Utils from "../../utils/Utils";
 import Loader from "../common/Loader";
 
-const mapDispatchToProps = {
-    getUsers
-}
-
-const mapStateToProps = state => {
-    return {
-        users: state.users.list,
-        authLoaded: state.auth.loaded,
-        authUser: state.auth.user,
-    }
-}
 
 class UserListPage extends Component {
     constructor(props) {
@@ -59,9 +48,9 @@ class UserListPage extends Component {
     /**
      * Retrieve url with GET params for currently viewed list.
      * Used to check if requested data (url) matches currently loaded data in redux state.
-     * // TODO move this somewhere outside, to reuse between UserListPage, ThreadList, SingleThreadPage?
      * @param page
      * @returns {string}
+     * // TODO move outside for code reuse?
      */
     getListUrl(page = 1) {
         const defaults = {...this.defaultGETParams, page: page};
@@ -155,6 +144,18 @@ class UserListPage extends Component {
             </div>
         );
     }
+}
+
+const mapStateToProps = state => {
+    return {
+        users: state.users.list,
+        authLoaded: state.auth.loaded,
+        authUser: state.auth.user,
+    }
+}
+
+const mapDispatchToProps = {
+    getUsers
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserListPage);

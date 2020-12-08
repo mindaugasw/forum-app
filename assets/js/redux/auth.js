@@ -5,7 +5,7 @@ import Utils from "../utils/Utils";
 
 // --- Actions ---
 const BASE = 'auth/';
-export const LOG_IN_MANUAL = BASE + 'login'; // When user fills login form
+const LOG_IN_MANUAL = BASE + 'login'; // When user fills login form
 const TOKEN_REFRESH = BASE + 'refresh'; // Automatic token refresh
 const LOG_OUT = BASE + 'logout';
 
@@ -17,42 +17,18 @@ const LOG_OUT = BASE + 'logout';
  * @param credentials Credentials object {username: '', password: ''}
  */
 export const login = createAsyncThunk(LOG_IN_MANUAL, (credentials, thunkAPI) => {
-    /*return API.Auth.LogIn(credentials.username, credentials.password)
-        .then(response => response.json().then(payload => {
-            if (response.ok)
-                return payload;
-            else
-                return thunkAPI.rejectWithValue(payload);
-        }));*/
-
     return API.HandleThunkResponse(
         API.Auth.LogIn(credentials.username, credentials.password),
         thunkAPI)
         .then();
 });
 export const logout = createAsyncThunk(LOG_OUT, (param, thunkAPI) => {
-    /*return API.Auth.LogOut()
-        .then(response => response.json().then(payload => {
-            if (response.ok)
-                return payload;
-            else
-                return thunkAPI.rejectWithValue(payload);
-        }));*/
-
     return API.HandleThunkResponse(
         API.Auth.LogOut(),
         thunkAPI)
         .then();
 });
 export const tokenRefresh = createAsyncThunk(TOKEN_REFRESH, (param, thunkAPI) => {
-    /*return API.Auth.TokenRefresh()
-        .then(response => response.json().then(payload => {
-            if (response.ok)
-                return payload;
-            else
-                return thunkAPI.rejectWithValue(payload);
-        }));*/
-
     return API.HandleThunkResponse(
         API.Auth.TokenRefresh(),
         thunkAPI)
@@ -66,10 +42,10 @@ const initialState = {
             id, username, roles: [], iat, exp
         },*/
     loaded: false,  // Is the initial TOKEN_REFRESH request finished?
-    isLoggedIn: false, // TODO remove isLoggedIn. Check authentication by whether user is null or not
+    isLoggedIn: false,
     jwt: null,      // Full encoded token
     timer: null,    // Timer used for automatic token refresh
-    // TODO add property: admin: bool
+    // TODO add property: admin<bool>
 }
 
 
@@ -77,12 +53,10 @@ const initialState = {
 export const authSlice = createSlice({
     name: 'auth',
     initialState: initialState,
-    reducers: {
-
-    },
+    reducers: {},
     extraReducers: {
         [login.fulfilled]: (state, action) => {
-            console.log('Manual login successful');
+            console.debug('Manual login successful');
             const p = action.payload;
             setAuthState(state, true, p.token, p.user, p.timer);
         },
@@ -195,23 +169,3 @@ function stopTimer(timer) {
     if (timer !== null)
         clearTimeout(timer);
 }
-
-/*
- * Is the given user admin? Checks for admin role on user object.
- * @param user
- * @returns {*|boolean}
- */
-/*export function isUserAdmin(user) {
-    return user && user.roles.indexOf('ROLE_ADMIN') > -1;
-}*/
-
-/*
- * Does given user have permissions to manage (edit, delete) given thread/comment?
- * Checks if user is admin or author of that thread/comment.
- * @param {object} user
- * @param {object} post Thread or comment object
- * @returns {boolean}
- */
-/*export function canUserManagePost(user, post) {
-    return isUserAdmin(user) || (user && user.id === post.author.id);
-}*/

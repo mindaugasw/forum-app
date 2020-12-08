@@ -24,13 +24,6 @@ const SUBMIT_VOTE = BASE + 'vote';
  * e.g. url='?page=1&perpage=20&orderby=id&orderdir=DESC'
  */
 export const getThreads = createAsyncThunk(LOAD_LIST, (url, thunkAPI) => {
-    /*return API.Threads.GetList(url)
-        .then(response => response.json().then(payload => {
-            if (response.ok)
-                return payload;
-            else
-                return thunkAPI.rejectWithValue(payload);
-        }));*/
     return API.HandleThunkResponse(
         API.Threads.GetList(url),
         thunkAPI)
@@ -56,14 +49,6 @@ export const getSingleThread = createAsyncThunk(LOAD_SINGLE, (id, thunkAPI) => {
  * e.g. url='/threads/100/comments/?page=1&perpage=20&orderby=id&orderdir=DESC'
  */
 export const getComments = createAsyncThunk(LOAD_COMMENTS, (url, thunkAPI) => {
-    /*return API.Threads.GetCommentsList(url)
-        .then(response => response.json().then(payload => {
-            if (response.ok)
-                return payload;
-            else
-                return thunkAPI.rejectWithValue(payload);
-        }));*/
-
     return API.HandleThunkResponse(
         API.Threads.GetCommentsList(url),
         thunkAPI)
@@ -149,7 +134,7 @@ export const threadSlice = createSlice({
         .addCase(getSingleThread.rejected, (state, action) => {
             // state.single.id = null;
             // state.single.item = null;
-            // state.single.loaded = LoadState.NotRequested; // Commented out because causes infinite loop
+            // state.single.loaded = LoadState.NotRequested; // Causes infinite loop
             // console.error(`Failed fetching thread #${action.meta.arg}: ${Utils.GetSafe(() => action.payload.error.status, 'unknown error')}`);
         })
 

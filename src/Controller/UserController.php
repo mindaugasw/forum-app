@@ -95,7 +95,5 @@ class UserController extends BaseApiController
 		$this->em->remove($user);
 		$this->em->flush();
 		return $this->ApiResponse(null, 204);
-		
-		// TODO: should user threads and comments also be deleted on user delete?
 	}
 }

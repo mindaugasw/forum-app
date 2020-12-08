@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {logout} from "../../redux/auth";
 import UrlBuilder from "../../utils/UrlBuilder";
@@ -7,13 +6,6 @@ import Notifications from "../../utils/Notifications";
 import Utils from "../../utils/Utils";
 import Loader from "../common/Loader";
 
-const mapDispatchToProps = {
-    logout
-}
-
-const mapStateToProps = state => {
-    return {};
-}
 
 class LogoutPage extends Component {
     constructor(props) {
@@ -37,6 +29,13 @@ class LogoutPage extends Component {
     }
 }
 
-LogoutPage.propTypes = {}
+LogoutPage.propTypes = {
+    // Redux:
+    // logout: PropTypes.func.isRequired,
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(LogoutPage);
+const mapDispatchToProps = {
+    logout
+}
+
+export default connect(null, mapDispatchToProps)(LogoutPage);

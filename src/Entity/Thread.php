@@ -25,7 +25,7 @@ class Thread
      * @ORM\Column(type="integer")
 	 * @Groups({"thread_read"})
      */
-    private $id; // TODO replace with uuid?
+    private $id; // TODO change to uuid?
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -100,7 +100,6 @@ class Thread
     private $userVote = 0;
 
     /**
-	 * TODO change to votesSum
      * @ORM\Column(type="integer")
 	 * @Groups({"thread_read"})
      */

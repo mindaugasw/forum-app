@@ -2,8 +2,8 @@ import React, {Component} from "react";
 import PropTypes from 'prop-types';
 import UserForm from "./UserForm";
 import {connect} from "react-redux";
-import {editUser, register, REGISTER} from "../../redux/usersCRUD";
-import {login, LOG_IN_MANUAL, tokenRefresh} from "../../redux/auth";
+import {editUser, register} from "../../redux/usersCRUD";
+import {login, tokenRefresh} from "../../redux/auth";
 import UrlBuilder from "../../utils/UrlBuilder";
 import Notifications from "../../utils/Notifications";
 import Utils from "../../utils/Utils";
@@ -100,14 +100,19 @@ class UserForm_Register_connected extends Component {
         />;
     }
 }
+
 const mapDispatchToProps_Register = {
     register
 }
+
 export const UserForm_Register = connect(null, mapDispatchToProps_Register)(UserForm_Register_connected);
+
 UserForm_Register.propTypes = {
     // Redux:
     // register: PropTypes.func.isRequired,
 }
+
+
 
 
 // --- Login form ---
@@ -195,14 +200,19 @@ class UserForm_Login_connected extends Component {
         />
     }
 }
+
 const mapDispatchToProps_Login = {
     login
 }
+
 export const UserForm_Login = connect(null, mapDispatchToProps_Login)(UserForm_Login_connected);
+
 UserForm_Login.propTypes = {
     // Redux:
     // login: PropTypes.func.isRequired,
 }
+
+
 
 
 // --- Edit form ---
@@ -227,13 +237,11 @@ class UserForm_Edit_connected extends Component {
      */
     validatePasswordChange(state) {
         const u = state.user;
-        // let currentPasswordValidated = false;
 
         // If either newPassword or newPasswordRepeat not blank, validate all 3 fields (including current password)
         if (   (u.newPassword && u.newPassword.length > 0)
             || (u.newPasswordRepeat && u.newPasswordRepeat.length > 0)  ) {
 
-            // currentPasswordValidated = true;
             return {
                 ...FormUtils.ValidateTextField(
                     u.currentPassword,
@@ -242,25 +250,7 @@ class UserForm_Edit_connected extends Component {
                 ),
                 ...FormUtils.ValidateNewPassword(state, true),
             };
-        }
-
-        // if (!currentPasswordValidated && state.validation.currentPassword) {
-        //
-        // }
-
-        /*if ((u.currentPassword && u.currentPassword.length > 0) // if at least one field isn't empty, validate all
-            || (u.newPassword && u.newPassword.length > 0)
-            || (u.newPasswordRepeat && u.newPasswordRepeat.length > 0) )
-        {
-            return {
-                ...FormUtils.ValidateTextField(
-                    u.currentPassword,
-                    'currentPassword',
-                    {minLength: 1, errorMessage: 'Current password should not be empty.'}
-                ),
-                ...FormUtils.ValidateNewPassword(state, false),
-            };
-        }*/ else {
+        } else {
             return {
                 currentPasswordValid: true,
                 newPasswordValid: true,
@@ -403,16 +393,20 @@ class UserForm_Edit_connected extends Component {
         );
     }
 }
-const mapDispatchToProps_Edit = {
-    editUser,
-    tokenRefresh,
-}
+
 const mapStateToProps_Edit = state => {
     return {
         authUser: state.auth.user,
     };
 }
+
+const mapDispatchToProps_Edit = {
+    editUser,
+    tokenRefresh,
+}
+
 export const UserForm_Edit = connect(mapStateToProps_Edit, mapDispatchToProps_Edit)(UserForm_Edit_connected);
+
 UserForm_Edit.propTypes = {
     user: PropTypes.object.isRequired, // User object to edit
 
