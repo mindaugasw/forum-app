@@ -43,6 +43,7 @@ function UserListItem(props) {
         </>
     );
 }
+
 UserListItem.propTypes = {
     user: PropTypes.object.isRequired,
 }

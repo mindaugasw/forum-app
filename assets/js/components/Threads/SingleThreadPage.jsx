@@ -13,18 +13,6 @@ import Utils from "../../utils/Utils";
 import Page404 from "../common/Page404";
 import Loader from "../common/Loader";
 
-const mapDispatchToProps = {
-    getSingleThread,
-    getComments,
-}
-const mapStateToProps = state => {
-    return {
-        thread: state.threads.single,
-        authLoaded: state.auth.loaded,
-        isLoggedIn: state.auth.isLoggedIn,
-        user: state.auth.user,
-    };
-}
 
 class SingleThreadPage extends React.Component {
     constructor(props) {
@@ -137,9 +125,10 @@ class SingleThreadPage extends React.Component {
         const ti = t.item || null;
         /** Comments object (not comment items!) */
         const c = this.props.thread.comments;
-        /** Comment items array */
-        const ci = c.items || null;
+        /* Comment items array */
+        // const ci = c.items || null;
 
+        /** Logged in user or null */
         const u = this.props.user;
 
         if (this.state.notFound)
@@ -268,6 +257,20 @@ SingleThreadPage.propTypes = {
 
     // Router:
     // match: PropTypes.object.isRequired,
+}
+
+const mapStateToProps = state => {
+    return {
+        thread: state.threads.single,
+        authLoaded: state.auth.loaded,
+        isLoggedIn: state.auth.isLoggedIn,
+        user: state.auth.user,
+    };
+}
+
+const mapDispatchToProps = {
+    getSingleThread,
+    getComments,
 }
 
 export default withRouter(

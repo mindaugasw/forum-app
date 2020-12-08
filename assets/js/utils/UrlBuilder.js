@@ -80,7 +80,6 @@ class UrlBuilder {
 UrlBuilder.Threads = class Threads {
     static Index() { return '/threads'; }
     static Single(id) { return `${Threads.Index()}/${id}`; }
-    // static SingleMatchPath() { return `${Threads.Index()}/:id`; }
     static Create() { return `${Threads.Index()}/create`; }
 }
 

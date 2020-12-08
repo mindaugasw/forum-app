@@ -4,7 +4,7 @@
 :root {
     --color-upvote: #fd7e14;
     //--color-downvote: #9056fb; // violet
-    --color-downvote: #439eff; // close to bs-primary blue
+    --color-downvote: #439eff; // closer to bs-primary blue
     --color-vote: #717171;
 }
 .color-upvote {
@@ -26,21 +26,12 @@ label.required:after {
     color: red;
 }
 
-/*.thread-list-container {
-    padding: 0;
-}*/
-
 .full-width-container-md-down {
     padding: 0;
 }
 
 // Applies on md and smaller
 @include media-breakpoint-down(md) {
-    /*.thread-list-container { // TODO remove
-        margin: 0 -15px;
-        width: auto;
-    }*/
-
     // Negative x-margins so that container would edge-to-edge on smaller sizes
     .full-width-container-md-down {
         margin: 0 -15px;

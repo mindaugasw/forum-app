@@ -18,11 +18,7 @@ import LoginPage from "./Users/LoginPage";
 import Page404 from "./common/Page404";
 import UserRouter from "./Users/UserRouter";
 
-export let history; // Used globally for redirecting
-
-const mapDispatchToProps = {
-    tokenRefresh
-}
+export let history; // Used as global var for redirecting
 
 class ReactApp extends React.Component {
     constructor(props) {
@@ -84,6 +80,17 @@ class ReactApp extends React.Component {
             </>
         );
     }
+}
+
+ReactApp.propTypes = {
+    // Redux:
+    // tokenRefresh: PropTypes.func.isRequired,
+
+    // ReactRouter props
+}
+
+const mapDispatchToProps = {
+    tokenRefresh
 }
 
 export default withRouter(

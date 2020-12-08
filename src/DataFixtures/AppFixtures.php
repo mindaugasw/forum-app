@@ -20,9 +20,8 @@ class AppFixtures extends Fixture
 	
 	const USERS_NUMBERED_COUNT = 10; // Numbered users, e.g. user5
 	const USERS_NUMBERED_ADMIN_COUNT = 3; // How many admins in USERS_COUNT?
-	//const USERS_NAMED_COUNT = 300; // Named users, e.g. John.Smith
-	const USERS_NAMED_COUNT = 40; // Named users, e.g. John.Smith
-	//const THREADS_COUNT = 1000;
+	const USERS_NAMED_COUNT = 100; // Named users, e.g. John.Smith
+	const THREADS_COUNT_MAX = 100;
 	
 	
 	private array $entities = []; // Store here all created objects, in sub-arrays
@@ -76,6 +75,7 @@ class AppFixtures extends Fixture
 				'titlesFile' => './src/DataFixtures/data/threadTitles.txt',
 				'threadsKey' => self::THREADS_KEY,
 				'usersKey' => self::USERS_KEY,
+				'maxCount' => self::THREADS_COUNT_MAX,
 			]
 		],
 		'comments' => [
@@ -87,17 +87,6 @@ class AppFixtures extends Fixture
 				'threadsKey' => self::THREADS_KEY,
 			]
 		],
-		'commentVotes' => [
-			'name' => 'Comment Votes',
-			'callback' => 'loadVotes',
-			'args' => [
-				'isThreads' => false,
-				'postsKey' => self::COMMENTS_KEY,
-				'usersKey' => self::USERS_KEY,
-				'votesKey' => self::COMMENT_VOTES_KEY,
-				'breakpoints' => 50,
-			]
-		],
 		'threadVotes' => [
 			'name' => 'Thread Votes',
 			'callback' => 'loadVotes',
@@ -107,6 +96,17 @@ class AppFixtures extends Fixture
 				'usersKey' => self::USERS_KEY,
 				'votesKey' => self::THREAD_VOTES_KEY,
 				'breakpoints' => 3,
+			]
+		],
+		'commentVotes' => [
+			'name' => 'Comment Votes',
+			'callback' => 'loadVotes',
+			'args' => [
+				'isThreads' => false,
+				'postsKey' => self::COMMENTS_KEY,
+				'usersKey' => self::USERS_KEY,
+				'votesKey' => self::COMMENT_VOTES_KEY,
+				'breakpoints' => 20,
 			]
 		],
 	];
@@ -128,6 +128,7 @@ class AppFixtures extends Fixture
 	{
 		$totalStartTime = microtime(true);
 		$this->em = $manager;
+		$this->em->getConnection()->getConfiguration()->setSQLLogger(null); // slightly improves performance
 		
 		$i = 1; // Fixture number
 		foreach ($this->fixturesConfig as $entity)
@@ -155,36 +156,6 @@ class AppFixtures extends Fixture
 			$totalEndTime - $totalStartTime));
 	}
 	
-	/*public function load_old(ObjectManager $manager)
-    {
-    	$totalStartTime = microtime(true);
-    	$this->em = $manager;
-		
-		$i = 1; // Fixture number
-		foreach ($this->entityNames as $entity)
-		{
-			$startTime = microtime(true);
-			$fullCallback = 'load'.$entity;
-			$this->$fullCallback();
-			$this->em->flush();
-			$endTime = microtime(true);
-			
-			$this->log(sprintf(
-				"Loaded %5d %11s in %5d ms. %d/%d fixtures done.",
-				//count($this->entities[strtolower($entity)]), // Loaded objects count 
-				count($this->entities[$entity]), // Loaded objects count 
-				$entity, // Entity name
-				($endTime - $startTime) * 1000, // Time taken, ms
-				$i++, // Fixtures done
-				count($this->entityNames) // Total fixtures			
-			));
-		}
-		$totalEndTime = microtime(true);
-		
-		$this->log(sprintf("All fixtures successfully loaded in %d ms.",
-			($totalEndTime - $totalStartTime) * 1000));
-    }*/
-    
     private function log(string $text)
 	{
 		$this->console->writeln('   <comment>></comment> <info>'.$text.'</info>');
@@ -276,6 +247,8 @@ class AppFixtures extends Fixture
 		$titlesFile = $args['titlesFile'];
 		$threadsKey = $args['threadsKey'];
 		$usersKey = $args['usersKey'];
+		$maxCount = $args['maxCount'];
+		
 		$f = $this->faker;
 		$titles = [];
 		
@@ -291,12 +264,13 @@ class AppFixtures extends Fixture
 		$updatedAtProp = new \ReflectionProperty(Thread::class, 'updatedAt');
 		$updatedAtProp->setAccessible(true);
 		
-		for ($i = 0; $i < count($titles); $i++)
+		
+		$limit = min($maxCount, count($titles));
+		for ($i = 0; $i < $limit; $i++)
 		{
 			$thread = new Thread();
 			$thread->setTitle($titles[$i]);
 			
-			//$thread->setContent($f->realText(rand(40, 300)));
 			$thread->setContent($this->randomPostContent());
 			$thread->setAuthor($f->randomElement($this->entities[$usersKey]));
 			
@@ -398,13 +372,20 @@ class AppFixtures extends Fixture
 			
 			$p->setVotesCount($p->getVotesCount() + $postTotalVotes);
 			
+			// Optimisation system
 			if ($i > $nextBreakpoint)
 			{
 				$this->em->flush();
 				
 				// Clear flushed posts
 				for ($j = 0; $j < $i; $j++)
+				{
+					// TODO make not crash, improve votes fixtures performance
+					//$this->em->detach($this->entities[$postsKey][$j]); // Crashes
 					$this->entities[$postsKey][$j] = null;
+				}
+				
+				//$this->em->clear(); // Crashes
 				
 				$nextBreakpoint += $itemsPerBreakpoint;
 				$breakpointEndTime = microtime(true);
@@ -557,110 +538,4 @@ class AppFixtures extends Fixture
 		}
 	}
 	
-	
-    function loadNumberedUsers_old()
-	{
-		$hash = null; // use same hash for all users to speed up fixtures loading
-		
-		// user1-10, 1-3 are admins
-		for ($i = 0; $i < self::USERS_COUNT; $i++)
-		{
-			$user = new User();
-			$user->setUsername("user".($i+1));
-			
-			if ($hash === null)
-				$hash = $this->passwordEncoder->encodePassword($user, 'password');
-			$user->setPassword($hash);
-			
-			if ($i < self::USERS_ADMINS_COUNT) // First 3 users admin
-				$user->setRoles([User::ROLE_ADMIN]);
-			
-			$this->entities['NumberedUsers'][] = $user;
-			$this->em->persist($user);
-		}
-	}
-	function loadComments_old()
-	{
-		$f = $this->faker;
-		foreach ($this->entities['Threads'] as $thread)
-		{
-			for ($i = 0; $i < $f->numberBetween(self::COMMENTS_COUNT, self::COMMENTS_COUNT * 2); $i++)
-			{
-				$comment = new Comment();
-				if ($f->boolean(65))
-					$comment->setContent($f->realText(rand(30, 150)));
-				else
-					$comment->setContent($f->text(rand(30, 150)));
-				$comment->setAuthor($f->randomElement($this->entities['NumberedUsers']));
-				$comment->setThread($thread);
-				$this->entities['Comments'][] = $comment;
-				$this->em->persist($comment);
-			}
-		}
-		
-		foreach ($this->entities['Comments'] as $c)
-		{
-			$c->getThread()->setCommentsCount($c->getThread()->getCommentsCount() + 1);
-		}
-	}
-	function loadVoteThread()
-	{
-		$f = $this->faker;
-		
-		$allVotes = [];
-		foreach ($this->entities['Threads'] as $t)
-		{
-			foreach ($this->entities['NumberedUsers'] as $u)
-			{
-				if ($t->getAuthor() === $u)
-					continue; // Prevent authors voting on their own threads
-				
-				if ($f->boolean(self::VOTE_THREAD_CHANCE)) // % chance for each user to vote on each thread
-				{
-					$newVote = VoteThread::create($t, $u, $f->boolean(70) ? 1 : -1);
-					$allVotes[] = $newVote;
-					$this->em->persist($newVote);
-				}
-			}
-		}
-		$this->em->flush();
-		
-		// Recount votes on threads
-		foreach ($allVotes as $v)
-		{
-			$v->getThread()->setVotesCount($v->getThread()->getVotesCount() + $v->getVote());
-		}
-		
-		$this->entities['VoteThread'] = $allVotes;
-	}
-	function loadVoteComment()
-	{
-		$f = $this->faker;
-		
-		$allVotes = [];
-		foreach ($this->entities['Comments'] as $c)
-		{
-			foreach ($this->entities['NumberedUsers'] as $u)
-			{
-				if ($c->getAuthor() === $u)
-					continue; // Prevent authors voting on their own threads
-				
-				if ($f->boolean(self::VOTE_COMMENT_CHANCE)) // % chance for each user to vote on each thread
-				{
-					$newVote = VoteComment::create($c, $u, $f->boolean(70) ? 1 : -1);
-					$allVotes[] = $newVote;
-					$this->em->persist($newVote);
-				}
-			}
-		}
-		$this->em->flush();
-		
-		// Recount votes on comments
-		foreach ($allVotes as $v)
-		{
-			$v->getComment()->setVotesCount($v->getComment()->getVotesCount() + $v->getVote());
-		}
-		
-		$this->entities['Votecomment'] = $allVotes;
-	}
 }

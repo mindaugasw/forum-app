@@ -19,15 +19,10 @@ module.exports = {
         "react/prop-types": 0
     },
     globals: {
-        "getSafe": true,
         "store": true,
         "LoadState": true,
-        "APP_ENV": true,
-        "importZxcvbn": true,
         "zxcvbn": true,
-        "isObject": true,
-        "mergeDeep": true,
-        "redirect": true,
+        "APP_ENV": true,
         "FULFILLED": true,
         "REJECTED": true,
         "PENDING": true,

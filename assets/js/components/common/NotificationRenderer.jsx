@@ -2,6 +2,10 @@ import React, {Component} from "react";
 import { Alert, AlertContainer } from "react-bs-notifier";
 import Notifications from "../../utils/Notifications";
 
+/**
+ * This needs to be rendered for notifications to work. Preferably in a top-level component.
+ * Use Notifications class to add notifications.
+ */
 class NotificationRenderer extends Component {
     constructor(props) {
         super(props);
@@ -52,6 +56,9 @@ class NotificationRenderer extends Component {
             </AlertContainer>
         );
     }
+}
+NotificationRenderer.propTypes = {
+    // No props
 }
 
 export default NotificationRenderer;

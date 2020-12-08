@@ -11,18 +11,6 @@ import ThreadListItem from "./ThreadListItem";
 import ConditionalTooltip, {msg_MustBeLoggedIn} from "../common/ConditionalTooltip";
 import Loader from "../common/Loader";
 
-const mapDispatchToProps = {
-    getThreads
-}
-
-const mapStateToProps = state => {
-    return {
-        threads: state.threads.list,
-        authLoaded: state.auth.loaded,
-        isLoggedIn: state.auth.isLoggedIn, // TODO remove
-        user: state.auth.user,
-    };
-};
 
 class ThreadList extends Component {
     constructor(props) {
@@ -177,6 +165,29 @@ class ThreadList extends Component {
             </div>
         );
     }
+}
+
+ThreadList.propTypes = {
+    // Redux:
+    // threads: PropTypes.object,
+    // authLoaded: PropTypes.bool.isRequired,
+    // isLoggedIn: PropTypes.bool.isRequired,
+    // user: PropTypes.object,
+
+    // getThreads: PropTypes.func.isRequired,
+}
+
+const mapStateToProps = state => {
+    return {
+        threads: state.threads.list,
+        authLoaded: state.auth.loaded,
+        isLoggedIn: state.auth.isLoggedIn,
+        user: state.auth.user,
+    };
+};
+
+const mapDispatchToProps = {
+    getThreads
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ThreadList);

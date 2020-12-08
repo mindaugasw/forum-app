@@ -33,7 +33,7 @@ abstract class PaginatedBaseRepository extends ServiceEntityRepository
 		$countFunc = function () use ($repo, $criteria) {
 			return $repo->count($criteria);
 			// TODO implement checking if doCount is true
-			// Results should not be counted on expensive queries (full text search)
+			//      Results should not be counted on expensive queries (full text search)
 			
 			// TODO create a custom paginator to use with unknown total items count
 		};

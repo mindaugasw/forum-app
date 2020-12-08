@@ -7,11 +7,6 @@ import ConditionalTooltip, {msg_MustBeLoggedIn} from "./ConditionalTooltip";
 import Loader from "./Loader";
 import Utils from "../../utils/Utils";
 
-const mapStateToProps = state => {
-    return {
-        auth: state.auth,
-    };
-}
 
 class NavBar extends Component {
     constructor(props) {
@@ -175,6 +170,18 @@ class NavBar extends Component {
             </Navbar>
         );
     }
+}
+NavBar.propTypes = {
+    // No props
+
+    // Redux:
+    //auth: PropTypes.object, // Full authentication info
+}
+
+const mapStateToProps = state => {
+    return {
+        auth: state.auth,
+    };
 }
 
 export default connect(mapStateToProps)(NavBar);

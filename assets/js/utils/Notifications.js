@@ -60,8 +60,7 @@ class Notifications {
     }
 
     /**
-     * Shortcut for new notification of type success
-     * // TODO replace other notifications with this method
+     * Shortcut for new success notification
      * @param {string} headline
      * @param {string|null} message
      */
@@ -75,8 +74,6 @@ class Notifications {
      * @param args Optional additional info about the error
      */
     static UnhandledError(...args) {
-
-        // console.log('c1', errorMessage);
         const errorDetails = args.map((element, index) => {
             return (
                 <code key={index} className='d-block mb-2' style={{overflowWrap: 'anywhere'}}>
@@ -94,7 +91,6 @@ class Notifications {
                     <>
                         <br/><br/>
                         More information about the error:<br/>
-                        {/*<code>{JSON.stringify(errorMessage)}</code>*/}
                         {errorDetails}
                     </>
                 : null }
@@ -138,7 +134,5 @@ class Notifications {
         });
     }
 }
-
-window.notif = Notifications; // TODO remove
 
 export default Notifications;
