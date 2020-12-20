@@ -30,6 +30,9 @@ class UserController extends BaseApiController
 	 * Defaults to 1st page with 20 items, and no ordering.
 	 * More info in QueryParamsValidator.
 	 *
+	 * Can return:
+	 * 		200
+	 * 
 	 * @Route("/", methods={"GET"})
 	 */
 	public function getList(Request $request)
@@ -42,6 +45,10 @@ class UserController extends BaseApiController
 	}
 	
 	/**
+	 * Can return:
+	 * 		200
+	 * 		404 if user not found
+	 * 
 	 * @Route("/{user}/", methods={"GET"})
 	 */
 	public function getOne(User $user)
@@ -53,7 +60,7 @@ class UserController extends BaseApiController
 	 * Can return:
 	 * 		200
 	 * 		400 if username already taken, invalid body, password too weak
-	 * 		500 if no password/username
+	 * 
 	 * @Route("/register/", methods={"POST"})
 	 */
 	public function register(Request $request)
@@ -69,10 +76,9 @@ class UserController extends BaseApiController
 	 * User edit. Allows editing roles (for admin), password (for user himself).
 	 * Can return: 
 	 * 		200
-	 * 		400 - if old password wrong, new password too weak, invalid body
-	 * 		401 JWT bundle - invalid JWT
-	 * 		401 API - unauthorized (editing not yourself and are not admin)
-	 * 		404
+	 * 		400 if old password wrong, new password too weak, invalid body
+	 * 		401 if invalid JWT or unauthorized (editing not yourself and are not admin)
+	 * 		404 if user not found
 	 * 
 	 * @Route("/{user}/", methods={"PATCH"})
 	 * @IsGranted(User::ROLE_USER)
@@ -87,6 +93,11 @@ class UserController extends BaseApiController
 	}
 	
 	/**
+	 * Can return:
+	 * 		204
+	 * 		401 if deleting not yourself and are not admin
+	 * 		404 if user not found
+	 * 
 	 * @Route("/{user}/", methods={"DELETE"})
 	 * @IsGranted("MANAGE", subject="user")
 	 */

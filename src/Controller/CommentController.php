@@ -30,6 +30,9 @@ class CommentController extends BaseApiController
 	 * Supported query params: orderby, orderdir, page, perpage.
 	 * Defaults to 1st page with 20 items, and no ordering.
 	 * More info in QueryParamsValidator.
+	 * 
+	 * Can return:
+	 * 		200
 	 *
 	 * @Route("/{thread}/comments/", methods={"GET"})
 	 */
@@ -43,6 +46,10 @@ class CommentController extends BaseApiController
 	
 	/**
 	 * Get a single comment.
+	 * 
+	 * Can return:
+	 * 		200
+	 * 		404 if comment not found
 	 *
 	 * @Route("/{thread}/comments/{comment}/", methods={"GET"})
 	 */
@@ -52,6 +59,12 @@ class CommentController extends BaseApiController
 	}
 	
 	/**
+	 * Can return:
+	 * 		200
+	 * 		400 if content invalid, invalid request body
+	 * 		401 if unauthenticated
+	 * 		404 if thread not found
+	 * 
 	 * @Route("/{thread}/comments/", methods={"POST"})
 	 * @IsGranted(User::ROLE_USER)
 	 */
@@ -64,6 +77,12 @@ class CommentController extends BaseApiController
 	}
 	
 	/**
+	 * Can return:
+	 * 		200
+	 *		400 if content invalid, invalid request body
+	 * 		401 if invalid JWT or unauthorized (editing not your own content and are not admin)
+	 * 		404 if comment not found
+	 *  
 	 * @Route("/{thread}/comments/{comment}/", methods={"PATCH"})
 	 * @IsGranted("MANAGE", subject="comment")
 	 */
@@ -75,6 +94,11 @@ class CommentController extends BaseApiController
 	}
 	
 	/**
+	 * Can return:
+	 * 		204
+	 * 		401 if invalid JWT or unauthorized (editing not your own content and are not admin)
+	 * 		404 if thread or comment not found
+	 * 
 	 * @Route("/{thread}/comments/{comment}/", methods={"DELETE"})
 	 * @IsGranted("MANAGE", subject="comment")
 	 */
@@ -87,6 +111,11 @@ class CommentController extends BaseApiController
 	}
 	
 	/**
+	 * Can return:
+	 * 		204
+	 *		400 if invalid vote value, voting on your own content
+	 *		404 if comment not found
+	 * 
 	 * @Route("/comments/{comment}/vote/{voteValue}/", methods={"POST"}, requirements={"voteValue"="1|0|-1"})
 	 * @IsGranted(User::ROLE_USER)
 	 */

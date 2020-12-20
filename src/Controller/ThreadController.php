@@ -31,6 +31,9 @@ class ThreadController extends BaseApiController
 	 * Defaults to 1st page with 20 items, and no ordering.
 	 * More info in QueryParamsValidator.
 	 * 
+	 * Can return:
+	 * 		200
+	 * 
      * @Route("/", methods={"GET"})
      */
     public function getList(Request $request)
@@ -45,6 +48,10 @@ class ThreadController extends BaseApiController
 	/**
 	 * Get a single thread, NOT including its comments.
 	 * 
+	 * Can return:
+	 * 		200
+	 * 		404 if thread not found
+	 * 
 	 * @Route("/{id}/", methods={"GET"})
 	 */
 	public function getOne(Thread $thread)
@@ -53,6 +60,11 @@ class ThreadController extends BaseApiController
 	}
     
     /**
+	 * Can return:
+	 * 		200
+	 * 		400 if title or content invalid, invalid request body
+	 *		401 if unauthenticated
+	 * 
      * @Route("/", methods={"POST"})
 	 * @IsGranted(User::ROLE_USER)
      */
@@ -66,6 +78,12 @@ class ThreadController extends BaseApiController
     }
 
     /**
+	 * Can return:
+	 * 		200
+	 * 		400 if title or content invalid, invalid request body
+	 * 		401 if invalid JWT or unauthorized (editing not your own content and are not admin)
+	 * 		404 if thread not found
+	 * 
      * @Route("/{id}/", methods={"PATCH"})
 	 * @IsGranted("MANAGE", subject="thread")
      */
@@ -77,6 +95,11 @@ class ThreadController extends BaseApiController
 	}
 
     /**
+	 * Can return:
+	 * 		204
+	 * 		401 if invalid JWT or unauthorized (deleting your own content and are not admin)
+	 * 		404 if thread not found
+	 * 
      * @Route("/{id}/", methods={"DELETE"})
 	 * @IsGranted("MANAGE", subject="thread")
      */
@@ -88,6 +111,11 @@ class ThreadController extends BaseApiController
 	}
 	
 	/**
+	 * Can return:
+	 * 		204
+	 *		400 if invalid vote value, voting on your own content
+	 *		404 if thread not found 
+	 * 
 	 * @Route("/{id}/vote/{voteValue}/", methods={"POST"}, requirements={"voteValue"="1|0|-1"})
 	 * @IsGranted(User::ROLE_USER)
 	 */
